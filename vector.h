@@ -16,7 +16,7 @@ typedef struct Vector {
 void init_vector(Vector *v, char *name, int rows);
 void free_vector(Vector *v);
 
-void add_to_vector(Vector *v, int n, int idx);
+void update_vector(Vector *v, int n, int idx);
 void print_vector(Vector *v);
 
 #endif

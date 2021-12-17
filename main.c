@@ -6,8 +6,8 @@ int main() {
     init_vector(&u, "U", 3);
     init_vector(&v, "V", 3);
 
-    add_to_vector(&u, 10, 0);
-    add_to_vector(&v, -5, 0);
+    update_vector(&u, 10, 0);
+    update_vector(&v, -5, 0);
 
     print_vector(&u);
     print_vector(&v);

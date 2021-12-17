@@ -32,13 +32,13 @@ void free_vector(Vector *v) {
 }
 
 /**
- * @brief Add an element to a vector
+ * @brief Update a vector element
  * 
  * @param v vector to update
  * @param n element to add
  * @param idx position at which n is to be added
  */
-void add_to_vector(Vector *v, int n, int idx) {
+void update_vector(Vector *v, int n, int idx) {
     assert(idx > -1);
     assert(idx < MAX_VEC_CAPACITY);
     
@@ -52,7 +52,7 @@ void add_to_vector(Vector *v, int n, int idx) {
  */
 void print_vector(Vector *v) {
     assert(v->capacity > 0);
-    
+
     printf("%s = (", v->name);
     for (int i = 0; i < v->capacity; i++) {
         if (i == v->capacity - 1)
