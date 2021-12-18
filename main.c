@@ -36,6 +36,8 @@ int main() {
     print_vector(&u);
     print_vector(&v);
 
+    printf("prod = %d\n", scalar_product(&u, &v));
+
     free_vector(&u);
     free_vector(&v);
 }

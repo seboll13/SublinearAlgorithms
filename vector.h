@@ -19,9 +19,9 @@ void free_vector(Vector *v);
 void update_vector(Vector *v, int n, int idx);
 
 // Vector basic operations
-Vector *vector_add(Vector *u, Vector *v);
-Vector *vector_sub(Vector *u, Vector *v);
-Vector *scalar_mult(Vector *u, int a);
+Vector vector_add(Vector *u, Vector *v);
+Vector vector_sub(Vector *u, Vector *v);
+Vector scalar_mult(Vector *u, int a);
 int scalar_product(Vector *u, Vector *v);
 
 // Vector str handling
