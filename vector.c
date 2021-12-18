@@ -46,6 +46,73 @@ void update_vector(Vector *v, int n, int idx) {
 }
 
 /**
+ * @brief Computes the sum of two vectors
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return Vector* u+v
+ */
+Vector *vector_add(Vector *u, Vector *v) {
+    assert(u->capacity == v->capacity);
+
+    Vector *w ;
+    init_vector(w, "W", u->capacity);
+
+    for (int i = 0; i < u->capacity; i++)
+        update_vector(w, u->items[i] + v->items[i], i);
+    return w;
+}
+
+/**
+ * @brief Computes the difference between two vectors
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return Vector* u-v
+ */
+Vector *vector_sub(Vector *u, Vector *v) {
+    assert(u->capacity == v->capacity);
+
+    Vector *w ;
+    init_vector(w, "W", u->capacity);
+
+    for (int i = 0; i < u->capacity; i++)
+        update_vector(w, u->items[i] - v->items[i], i);
+    return w;
+}
+
+/**
+ * @brief Computes the multiplication of a vector by a scalar
+ * 
+ * @param u vector
+ * @param a scalar
+ * @return Vector* scaled vector
+ */
+Vector *scalar_mult(Vector *u, int a) {
+    Vector *v;
+    init_vector(v, "V", u->capacity);
+
+    for (int i = 0; i < u->capacity; i++)
+        update_vector(v, a * u->items[i], i);
+    return v;
+}
+
+/**
+ * @brief Returns the scalar product of two vectors
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return int sum of products of each coefficient
+ */
+int scalar_product(Vector *u, Vector *v) {
+    assert(u->capacity == v->capacity);
+    int res = 0;
+    for (int i = 0; i < u->capacity; i++)
+        res += u->items[i] * v->items[i];
+    return res;
+}
+
+/**
  * @brief Print vector elements to screen
  * 
  * @param v vector to be printed
