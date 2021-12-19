@@ -113,6 +113,64 @@ int scalar_product(Vector *u, Vector *v) {
 }
 
 /**
+ * @brief Computes the L1 norm of a vector
+ * 
+ * @param u vector
+ * @return int sum of absolute values of each element of u
+ */
+int L1_norm(Vector *u) {
+    int res = 0;
+    for (int i = 0; i < u->capacity; i++)
+        res += abs(u->items[i]);
+    return res;
+}
+
+/**
+ * @brief Computes the L2 norm of a vector
+ * 
+ * @param u vector
+ * @return double square root of the sum of squares
+ */
+double L2_norm(Vector *u) {
+    double res = 0;
+    for (int i = 0; i < u->capacity; i++)
+        res += pow(u->items[i], 2.0);
+    return sqrt(res); 
+}
+
+/**
+ * @brief Computes the Lp norm of a vector
+ * 
+ * @param u vector
+ * @param p power parameter
+ * @return double p'th root of the sum of p-powers
+ */
+double Lp_norm(Vector *u, int p) {
+    if (p == 1)
+        return L1_norm(u);
+    if (p == 2)
+        return L2_norm(u);
+    double res = 0;
+    for (int i = 0; i < u->capacity; i++)
+        res += pow(u->items[i], (double) p);
+    return pow(res, 1/p);
+}
+
+/**
+ * @brief Computes the L-infinity norm of a vector
+ * 
+ * @param u vector
+ * @return int maximum absolute value in u
+ */
+int Linf_norm(Vector *u) {
+    int res = abs(u->items[0]);
+    for (int i = 1; i < u->capacity; i++)
+        if (abs(u->items[i]) > res)
+            res = abs(u->items[i]);
+    return res;
+}
+
+/**
  * @brief Print vector elements to screen
  * 
  * @param v vector to be printed

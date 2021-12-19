@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #define MAX_VEC_CAPACITY 1000
 
@@ -23,6 +24,12 @@ Vector vector_add(Vector *u, Vector *v);
 Vector vector_sub(Vector *u, Vector *v);
 Vector scalar_mult(Vector *u, int a);
 int scalar_product(Vector *u, Vector *v);
+
+// Norms
+int L1_norm(Vector *u);
+double L2_norm(Vector *u);
+double Lp_norm(Vector *u, int p);
+int Linf_norm(Vector *u);
 
 // Vector str handling
 void print_vector(Vector *v);

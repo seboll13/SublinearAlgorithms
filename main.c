@@ -22,8 +22,6 @@ int main() {
     srand(time(NULL)); // Set a different seed for probability generations
     double p = generate_probability();
     double q = generate_probability();
-    printf("p=%f\n", p);
-    printf("q=%f\n", q);
     for (int i = 0; i < DIM; i++) {
         // W.p. p, we replace the 0 by a 1 in u
         if (generate_probability() < p/2)
@@ -36,7 +34,10 @@ int main() {
     print_vector(&u);
     print_vector(&v);
 
-    printf("prod = %d\n", scalar_product(&u, &v));
+    printf("L1 norm = %d\n", L1_norm(&u));
+    printf("L2 norm = %f\n", L2_norm(&u));
+    printf("Lp norm = %f\n", Lp_norm(&u, 3));
+    printf("Li norm = %d\n", Linf_norm(&u));
 
     free_vector(&u);
     free_vector(&v);
