@@ -1,10 +1,7 @@
 #ifndef VECTOR_HEADER
 #define VECTOR_HEADER
 
-#include <assert.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+#include "libs.h"
 
 #define MAX_VEC_CAPACITY 1000
 

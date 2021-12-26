@@ -1,7 +1,10 @@
 #include <time.h>
 #include "vector.h"
+#include "matrix.h"
 
 #define DIM 30
+#define ROWS 4
+#define COLS 4
 
 /**
  * @brief Generates a number between 0 and 1 uniformly at random
@@ -34,11 +37,21 @@ int main() {
     print_vector(&u);
     print_vector(&v);
 
-    printf("L1 norm = %d\n", L1_norm(&u));
-    printf("L2 norm = %f\n", L2_norm(&u));
-    printf("Lp norm = %f\n", Lp_norm(&u, 3));
-    printf("Li norm = %d\n", Linf_norm(&u));
-
     free_vector(&u);
     free_vector(&v);
+    
+    Matrix m;
+    
+    init_matrix(&m, "M", ROWS, COLS);
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            //W.p. p, replace the 0 by a 1
+            if (generate_probability() < p/2)
+                update_matrix(&m, 1, i, j);
+        }
+    }
+    
+    print_matrix(&m);
+
+    free_matrix(&m);
 }
