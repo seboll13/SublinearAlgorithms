@@ -106,10 +106,34 @@ Vector scalar_mult(Vector *u, int a) {
  */
 int scalar_product(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
+
     int res = 0;
     for (int i = 0; i < u->capacity; i++)
         res += u->items[i] * v->items[i];
     return res;
+}
+
+/**
+ * @brief Returns the vector product of two vectors
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return Vector result of vec prod
+ */
+Vector vector_product(Vector *u, Vector *v) {
+    assert(u->capacity == v->capacity);
+
+    Vector w;
+    int vec_size = u->capacity;
+    init_vector(&w, "W", vec_size);
+
+    for (int i = 0; i < vec_size; i++) {
+        int u_index = (vec_size-2+i) % vec_size;
+        int v_index = (u_index + 1) % vec_size;
+        // obtain each element by circular permutation
+        update_vector(&w, u->items[u_index]*v->items[v_index]-u->items[v_index]*v->items[u_index], i);
+    }
+    return w;
 }
 
 /**

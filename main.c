@@ -2,7 +2,7 @@
 #include "vector.h"
 #include "matrix.h"
 
-#define DIM 30
+#define DIM 4
 #define ROWS 4
 #define COLS 4
 
@@ -27,20 +27,24 @@ int main() {
     double q = generate_probability();
     for (int i = 0; i < DIM; i++) {
         // W.p. p, we replace the 0 by a 1 in u
-        if (generate_probability() < p/2)
+        if (generate_probability() < p)
             update_vector(&u, 1, i);
         // W.p. q, we replace the 0 by a 1 in v
-        if (generate_probability() < q/2)
+        if (generate_probability() < q)
             update_vector(&v, 1, i);
     }
 
     print_vector(&u);
     print_vector(&v);
 
+    Vector w = vector_product(&u, &v);
+    print_vector(&w);
+
     free_vector(&u);
     free_vector(&v);
+    free_vector(&w);
     
-    Matrix m;
+    /*Matrix m;
     
     init_matrix(&m, "M", ROWS, COLS);
     for (int i = 0; i < ROWS; i++) {
@@ -52,6 +56,5 @@ int main() {
     }
     
     print_matrix(&m);
-
-    free_matrix(&m);
+    free_matrix(&m);*/
 }

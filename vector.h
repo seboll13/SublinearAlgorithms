@@ -3,7 +3,7 @@
 
 #include "libs.h"
 
-#define MAX_VEC_CAPACITY 1000
+#define MAX_VEC_CAPACITY 10000
 
 typedef struct Vector {
     int capacity;
@@ -21,6 +21,7 @@ Vector vector_add(Vector *u, Vector *v);
 Vector vector_sub(Vector *u, Vector *v);
 Vector scalar_mult(Vector *u, int a);
 int scalar_product(Vector *u, Vector *v);
+Vector vector_product(Vector *u, Vector *v);
 
 // Norms
 int L1_norm(Vector *u);
