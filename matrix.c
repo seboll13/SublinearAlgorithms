@@ -35,6 +35,7 @@ void free_matrix(Matrix *m) {
     m->rows = 0;
     m->cols = 0;
     m->name = NULL;
+    free(m->items);
 }
 
 /**
@@ -89,15 +90,12 @@ Matrix matrix_mult(Matrix *m1, Matrix *m2) {
     Matrix m;
     init_matrix(&m, "S", m1->rows, m2->cols);
     
-    for (int i = 0; i < m1->rows; i++) {
-        for (int j = 0; j < m2->cols; j++) {
-            update_matrix(&m, 0, i, j); // start at value 0 by default
-            // Perform standard matrix multiplication algorithm
+    // Perform standard matrix multiplication algorithm
+    for (int i = 0; i < m1->rows; i++)
+        for (int j = 0; j < m2->cols; j++)
             for (int k = 0; k < m2->rows; k++)
-                update_matrix(&m, m1->items[i][j] * m2->items[j][k], i, k);
-        }
-    }
-    
+                // We do not use update_matrix() since we must increase the existing value instead of replacing it
+                m.items[i][k] += m1->items[i][j] * m2->items[j][k];
     return m;
 }
 

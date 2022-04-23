@@ -62,11 +62,15 @@ int main() {
     srand(time(NULL)); // Set a different seed for probability generations
     
     Vector v = generate_random_01_vector(true);
-    Matrix m = generate_random_01_matrix(true);
+    Matrix m1 = generate_random_01_matrix(false);
+    Matrix m2 = generate_random_01_matrix(false);
+    Matrix n = matrix_mult(&m1, &m2);
     
     print_vector(&v);
-    print_matrix(&m);
+    print_matrix(&n);
 
     free_vector(&v);
-    free_matrix(&m);
+    free_matrix(&m1);
+    free_matrix(&m2);
+    free_matrix(&n);
 }

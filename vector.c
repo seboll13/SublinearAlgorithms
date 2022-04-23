@@ -28,7 +28,6 @@ void free_vector(Vector *v) {
     v->capacity = 0;
     v->items = NULL;
     v->name = NULL;
-    //free(v);
 }
 
 /**
