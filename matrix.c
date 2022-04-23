@@ -53,6 +53,55 @@ void update_matrix(Matrix *m, int n, int row, int col) {
 }
 
 /**
+ * @brief Element wise addition of two matrices
+ * 
+ * @param m1 first matrix
+ * @param m2 second matrix
+ * @param sub indicator of subtraction
+ * @return Matrix addition if sub is false, otherwise subtraction
+ */
+Matrix matrix_add(Matrix *m1, Matrix *m2, bool sub) {
+    Matrix m;
+    init_matrix(&m, "M", m1->rows, m1->cols);
+    
+    for (int i = 0; i < m.rows; i++)
+        for (int j = 0; j < m.cols; j++)
+            if (sub)
+                update_matrix(&m, m1->items[i][j] - m2->items[i][j], i, j);
+            else
+                update_matrix(&m, m1->items[i][j] + m2->items[i][j], i, j);
+    
+    return m;
+}
+
+/**
+ * @brief Returns the multiplication of two matrices together
+ * 
+ * @param m1 first matrix
+ * @param m2 second matrix
+ * @param div indicator of division
+ * @return Resultant matrix
+ */
+Matrix matrix_mult(Matrix *m1, Matrix *m2) {
+    // Inner dimensions must be the same
+    assert(m1->cols == m2->rows);
+    
+    Matrix m;
+    init_matrix(&m, "S", m1->rows, m2->cols);
+    
+    for (int i = 0; i < m1->rows; i++) {
+        for (int j = 0; j < m2->cols; j++) {
+            update_matrix(&m, 0, i, j); // start at value 0 by default
+            // Perform standard matrix multiplication algorithm
+            for (int k = 0; k < m2->rows; k++)
+                update_matrix(&m, m1->items[i][j] * m2->items[j][k], i, k);
+        }
+    }
+    
+    return m;
+}
+
+/**
  * @brief Print a matrix
  * 
  * @param m 

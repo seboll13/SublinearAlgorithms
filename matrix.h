@@ -16,6 +16,10 @@ void init_matrix(Matrix *m, char *name, int rows, int cols);
 void free_matrix(Matrix *m);
 void update_matrix(Matrix *m, int n, int row, int col);
 
+// Matrix operations
+Matrix matrix_add(Matrix *m1, Matrix *m2, bool sub);
+Matrix matrix_mult(Matrix *m1, Matrix *m2);
+
 // Printing part
 void print_matrix(Matrix *m);
 
