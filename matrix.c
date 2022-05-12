@@ -16,14 +16,12 @@ void init_matrix(Matrix *m, char *name, int rows, int cols) {
     m->cols = cols;
     m->name = name;
     m->items = malloc(rows * sizeof(int *));
-
-    // Set the matrix to all zeros by default
-    for (int i = 0; i < rows; i++)
-        m->items[i] = malloc(cols * sizeof(int));
     
-    for (int i = 0; i < rows; i++)
+    for (int i = 0; i < rows; i++) {
+        m->items[i] = malloc(cols * sizeof(int));
         for (int j = 0; j < rows; j++)
             m->items[i][j] = 0;
+    }
 }
 
 /**
@@ -100,12 +98,75 @@ Matrix matrix_mult(Matrix *m1, Matrix *m2) {
 }
 
 /**
+ * @brief Check if the matrix is diagonal
+ * 
+ * @param m matrix
+ * @return true if all elements off-diagonal are zero
+ * @return false otherwise
+ */
+bool check_diagonality(Matrix *m) {
+    assert(m->rows > 0 && m->cols > 0);
+    
+    for (int i = 0; i < m->rows; i++)
+        for (int j = 0; j < m->cols; j++)
+            if (i != j) // check the off-diagonal elements
+                if (m->items[i][j] != 0)
+                    return false;
+    return true;
+}
+
+/**
+ * @brief check if an entire row or column is made of only zeroes
+ * 
+ * @param m matrix
+ * @return true if at least one row or one col is made of only zeroes
+ * @return false otherwise
+ */
+bool check_entire_line_of_zeroes(Matrix *m) {
+    assert(m->rows > 0 && m->cols > 0);
+    
+    bool ret_value;
+    for (int i = 0; i < m->rows; i++) {
+        int row_sum = 0; int col_sum = 0;
+
+        for (int j = 0; j < m->cols; j++) {
+            row_sum += m->items[i][j]; // sum over each row
+            col_sum += m->items[j][i]; // sum over each line
+        }
+        ret_value = (row_sum == 0 || col_sum == 0);
+    }
+    return ret_value;
+}
+
+/**
+ * @brief compute the determinant of a square matrix
+ * 
+ * @param m matrix
+ * @return int value of the det
+ */
+int det(Matrix *m) {
+    assert(m->cols == m->rows);
+    
+    int determinant = 0;
+    // Case where matrix is diagonal
+    if (check_diagonality(m)) {
+        for (int i = 0; i < m->rows; i++)
+            determinant *= m->items[i][i];
+        return determinant;
+    }
+    // Case in which either an entire row or an entire column is zero
+    if (check_entire_line_of_zeroes(m))
+        return 0;
+    return determinant;
+}
+
+/**
  * @brief Print a matrix
  * 
  * @param m 
  */
 void print_matrix(Matrix *m) {
-    assert(m->rows > -1 && m->cols > -1);
+    assert(m->rows > 0 && m->cols > 0);
 
     printf("%s = (\n", m->name);
     for (int i = 0; i < m->rows; i++) {

@@ -3,7 +3,7 @@
 
 #include "libs.h"
 
-#define MAX_MATRIX_CAPACITY 1000
+#define MAX_MATRIX_CAPACITY 10e6
 
 typedef struct Matrix {
     int rows, cols;
@@ -19,6 +19,13 @@ void update_matrix(Matrix *m, int n, int row, int col);
 // Matrix operations
 Matrix matrix_add(Matrix *m1, Matrix *m2, bool sub);
 Matrix matrix_mult(Matrix *m1, Matrix *m2);
+
+// Helper functions
+bool check_diagonality(Matrix *m);
+bool check_entire_line_of_zeroes(Matrix *m);
+
+// Matrix properties
+int det(Matrix *m1);
 
 // Printing part
 void print_matrix(Matrix *m);
