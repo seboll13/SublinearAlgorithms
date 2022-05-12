@@ -11,12 +11,12 @@ void init_vector(Vector *v, char *name, int rows) {
     assert(rows > 0);
 
     v->capacity = rows;
-    v->items = malloc(rows * sizeof(int));
+    v->items = malloc(rows * sizeof(float _Complex));
     v->name = name;
 
     // Set the vector to all zeros by default
     for (int i = 0; i < rows; i++)
-        v->items[i] = 0;
+        v->items[i] = 0.0f + 0.0f * I;
 }
 
 /**
@@ -25,9 +25,13 @@ void init_vector(Vector *v, char *name, int rows) {
  * @param v vector to be removed
  */
 void free_vector(Vector *v) {
-    v->capacity = 0;
-    v->items = NULL;
-    v->name = NULL;
+    if (v != NULL) {
+        v->capacity = 0;
+        v->name = NULL;
+        free(v->items);
+        free(v);
+    }
+    return;
 }
 
 /**
@@ -37,7 +41,7 @@ void free_vector(Vector *v) {
  * @param n element to add
  * @param idx position at which n is to be added
  */
-void update_vector(Vector *v, int n, int idx) {
+void update_vector(Vector *v, float _Complex n, int idx) {
     assert(idx > -1);
     assert(idx < MAX_VEC_CAPACITY);
     
@@ -49,34 +53,20 @@ void update_vector(Vector *v, int n, int idx) {
  * 
  * @param u vector 1
  * @param v vector 2
- * @return Vector* u+v
+ * @param add subtract the two vectors if true
+ * @return Vector* u+v (or u-v)
  */
-Vector *vector_add(Vector *u, Vector *v) {
+Vector *vector_add(Vector *u, Vector *v, bool add) {
     assert(u->capacity == v->capacity);
 
-    Vector *w = NULL;
+    Vector *w = malloc(sizeof(Vector));
     init_vector(w, "W", u->capacity);
 
     for (int i = 0; i < u->capacity; i++)
-        update_vector(w, u->items[i] + v->items[i], i);
-    return w;
-}
-
-/**
- * @brief Computes the difference between two vectors
- * 
- * @param u vector 1
- * @param v vector 2
- * @return Vector* u-v
- */
-Vector *vector_sub(Vector *u, Vector *v) {
-    assert(u->capacity == v->capacity);
-
-    Vector *w = NULL;
-    init_vector(w, "W", u->capacity);
-
-    for (int i = 0; i < u->capacity; i++)
-        update_vector(w, u->items[i] - v->items[i], i);
+        if (add)
+            update_vector(w, u->items[i] + v->items[i], i);
+        else
+            update_vector(w, u->items[i] - v->items[i], i);
     return w;
 }
 
@@ -88,7 +78,7 @@ Vector *vector_sub(Vector *u, Vector *v) {
  * @return Vector* scaled vector
  */
 Vector *scalar_mult(Vector *u, int a) {
-    Vector *v = NULL;
+    Vector *v = malloc(sizeof(Vector));
     init_vector(v, "V", u->capacity);
 
     for (int i = 0; i < u->capacity; i++)
@@ -98,6 +88,7 @@ Vector *scalar_mult(Vector *u, int a) {
 
 /**
  * @brief Returns the scalar product of two vectors
+ * Note: (a+ib)(c+id)=ac-bd+(ad+bc)i
  * 
  * @param u vector 1
  * @param v vector 2
@@ -106,7 +97,7 @@ Vector *scalar_mult(Vector *u, int a) {
 int scalar_product(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
-    int res = 0;
+    float _Complex res = 0;
     for (int i = 0; i < u->capacity; i++)
         res += u->items[i] * v->items[i];
     return res;
@@ -122,7 +113,7 @@ int scalar_product(Vector *u, Vector *v) {
 Vector *vector_product(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
-    Vector *w = NULL;
+    Vector *w = malloc(sizeof(Vector));
     int vec_size = u->capacity;
     init_vector(w, "W", vec_size);
 
@@ -135,16 +126,20 @@ Vector *vector_product(Vector *u, Vector *v) {
     return w;
 }
 
+float complex_abs(float _Complex z) {
+    return sqrt(pow(creal(z),2) + pow(cimag(z),2));
+}
+
 /**
  * @brief Computes the L1 norm of a vector
  * 
  * @param u vector
  * @return int sum of absolute values of each element of u
  */
-int L1_norm(Vector *u) {
-    int res = 0;
+float L1_norm(Vector *u) {
+    float res = 0;
     for (int i = 0; i < u->capacity; i++)
-        res += abs(u->items[i]);
+        res += complex_abs(u->items[i]);
     return res;
 }
 
@@ -154,8 +149,8 @@ int L1_norm(Vector *u) {
  * @param u vector
  * @return double square root of the sum of squares
  */
-double L2_norm(Vector *u) {
-    double res = 0;
+float L2_norm(Vector *u) {
+    float res = 0;
     for (int i = 0; i < u->capacity; i++)
         res += pow(u->items[i], 2.0);
     return sqrt(res); 
@@ -168,29 +163,15 @@ double L2_norm(Vector *u) {
  * @param p power parameter
  * @return double p'th root of the sum of p-powers
  */
-double Lp_norm(Vector *u, int p) {
+float Lp_norm(Vector *u, int p) {
     if (p == 1)
         return L1_norm(u);
     if (p == 2)
         return L2_norm(u);
-    double res = 0;
+    float res = 0;
     for (int i = 0; i < u->capacity; i++)
-        res += pow(u->items[i], (double) p);
+        res += pow(u->items[i], (float) p);
     return pow(res, 1/p);
-}
-
-/**
- * @brief Computes the L-infinity norm of a vector
- * 
- * @param u vector
- * @return int maximum absolute value in u
- */
-int Linf_norm(Vector *u) {
-    int res = abs(u->items[0]);
-    for (int i = 1; i < u->capacity; i++)
-        if (abs(u->items[i]) > res)
-            res = abs(u->items[i]);
-    return res;
 }
 
 /**
@@ -203,10 +184,12 @@ void print_vector(Vector *v) {
 
     printf("%s = (", v->name);
     for (int i = 0; i < v->capacity; i++) {
+        float re = creal(v->items[i]); float im = cimag(v->items[i]);
+        char sign = (im < 0.0f) ? '-' : '+';
         if (i == v->capacity - 1)
-            printf("%d", v->items[i]);
+            printf("%.3f %c %.3fi", re, sign, fabs(im));
         else
-            printf("%d, ", v->items[i]);
+            printf("%.3f %c %.3fi, ", re, sign, fabs(im));
     }
     printf(")\n");
 }

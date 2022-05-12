@@ -7,17 +7,17 @@
 
 typedef struct Matrix {
     int rows, cols;
-    int **items;
+    float _Complex **items;
     char *name;
 } Matrix;
 
 // Matrix type construction
-void init_matrix(Matrix *m, char *name, int rows, int cols);
+Matrix *init_matrix(char *name, int rows, int cols);
 void free_matrix(Matrix *m);
-void update_matrix(Matrix *m, int n, int row, int col);
+void update_matrix(Matrix *m, float _Complex n, int row, int col);
 
 // Matrix operations
-Matrix *matrix_add(Matrix *m1, Matrix *m2, bool sub);
+Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add);
 Matrix *matrix_mult(Matrix *m1, Matrix *m2);
 Matrix *transpose(Matrix *m);
 
@@ -27,11 +27,11 @@ bool check_diagonality(Matrix *m);
 bool check_entire_line_of_zeroes(Matrix *m);
 
 // Matrix computations
-int det(Matrix *m);
+float det(Matrix *m);
 
 // Matrix norms
-int matrix_L1_norm(Matrix *m);
-int matrix_Linf_norm(Matrix *m);
+float matrix_L1_norm(Matrix *m);
+float matrix_Linf_norm(Matrix *m);
 
 // Printing part
 void print_matrix(Matrix *m);

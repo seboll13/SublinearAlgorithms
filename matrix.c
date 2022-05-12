@@ -8,9 +8,10 @@
  * @param rows number of rows
  * @param cols number of columns
  */
-void init_matrix(Matrix *m, char *name, int rows, int cols) {
-    assert(rows > 0);
-    assert(cols > 0);
+Matrix *init_matrix(char *name, int rows, int cols) {
+    assert(rows > 0 && cols > 0);
+    
+    Matrix *m = malloc(sizeof(Matrix));
 
     m->rows = rows;
     m->cols = cols;
@@ -22,6 +23,7 @@ void init_matrix(Matrix *m, char *name, int rows, int cols) {
         for (int j = 0; j < rows; j++)
             m->items[i][j] = 0;
     }
+    return m;
 }
 
 /**
@@ -30,10 +32,16 @@ void init_matrix(Matrix *m, char *name, int rows, int cols) {
  * @param m matrix
  */
 void free_matrix(Matrix *m) {
-    m->rows = 0;
-    m->cols = 0;
-    m->name = NULL;
-    free(m->items);
+    if (m != NULL) {
+        for (int i = 0; i < m->rows; i++)
+            free(m->items[i]);
+        free(m->items);
+        m->rows = 0;
+        m->cols = 0;
+        m->name = NULL;
+        free(m);
+    }
+    return;
 }
 
 /**
@@ -44,7 +52,7 @@ void free_matrix(Matrix *m) {
  * @param row idx of row
  * @param col idx of column
  */
-void update_matrix(Matrix *m, int n, int row, int col) {
+void update_matrix(Matrix *m, float _Complex n, int row, int col) {
     assert(row > -1 && row < MAX_MATRIX_CAPACITY);
     assert(col > -1 && col < MAX_MATRIX_CAPACITY);
 
@@ -56,19 +64,18 @@ void update_matrix(Matrix *m, int n, int row, int col) {
  * 
  * @param m1 first matrix
  * @param m2 second matrix
- * @param sub indicator of subtraction
+ * @param add indicator of addition
  * @return Matrix addition if sub is false, otherwise subtraction
  */
-Matrix *matrix_add(Matrix *m1, Matrix *m2, bool sub) {
-    Matrix *m = NULL;
-    init_matrix(m, "M", m1->rows, m1->cols);
+Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add) {
+    Matrix *m = init_matrix("M", m1->rows, m1->cols);
     
     for (int i = 0; i < m->rows; i++)
         for (int j = 0; j < m->cols; j++)
-            if (sub)
-                update_matrix(m, m1->items[i][j] - m2->items[i][j], i, j);
-            else
+            if (add)
                 update_matrix(m, m1->items[i][j] + m2->items[i][j], i, j);
+            else
+                update_matrix(m, m1->items[i][j] - m2->items[i][j], i, j);
     
     return m;
 }
@@ -85,8 +92,7 @@ Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
     // Inner dimensions must be the same
     assert(m1->cols == m2->rows);
     
-    Matrix *m = NULL;
-    init_matrix(m, "S", m1->rows, m2->cols);
+    Matrix *m = init_matrix("S", m1->rows, m2->cols);
     
     // Perform standard matrix multiplication algorithm
     for (int i = 0; i < m1->rows; i++)
@@ -98,8 +104,7 @@ Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
 }
 
 Matrix *transpose(Matrix *m) {
-    Matrix *t = NULL;
-    init_matrix(t, "T", m->cols, m->rows);
+    Matrix *t = init_matrix("T", m->cols, m->rows);
 
     for (int i = 0; i < t->rows; i++)
         for (int j = 0; j < t->cols; j++)
@@ -136,9 +141,9 @@ bool check_diagonality(Matrix *m) {
     
     for (int i = 0; i < m->rows; i++)
         for (int j = 0; j < m->cols; j++)
-            if (i != j) // check the off-diagonal elements
-                if (m->items[i][j] != 0)
-                    return false;
+            // check the off-diagonal elements
+            if (i != j && m->items[i][j] != 0)
+                return false;
     return true;
 }
 
@@ -171,7 +176,7 @@ bool check_entire_line_of_zeroes(Matrix *m) {
  * @param m matrix
  * @return int value of the det
  */
-int det(Matrix *m) {
+float det(Matrix *m) {
     assert(m->cols == m->rows);
 
     // If one element on the diagonal is zero, return 0
@@ -179,7 +184,7 @@ int det(Matrix *m) {
         if(m->items[i][i] == 0)
             return 0;
 
-    int determinant = 0;
+    float determinant = 0.0f;
     // Case where matrix is diagonal
     if (check_diagonality(m)) {
         for (int i = 0; i < m->rows; i++)
@@ -188,16 +193,16 @@ int det(Matrix *m) {
     }
     // Case in which either an entire row or an entire column is zero
     if (check_entire_line_of_zeroes(m))
-        return 0;
+        return 0.0f;
     return determinant;
 }
 
-int matrix_L1_Linf_norm_helper(Matrix *m, int x, int y) {
-    int max_sum = 0;
+float matrix_L1_Linf_norm_helper(Matrix *m, int x, int y) {
+    float max_sum = 0.0f;
     for (int j = 0; j < x; j++) {
-        int sum = 0;
+        float sum = 0.0f;
         for (int i = 0; i < y; i++)
-            sum += abs(m->items[i][j]);
+            sum += sqrt(pow(creal(m->items[i][j]),2) + pow(cimag(m->items[i][j]), 2));
         if (sum > max_sum)
             max_sum = sum;
     }
@@ -210,7 +215,7 @@ int matrix_L1_Linf_norm_helper(Matrix *m, int x, int y) {
  * @param m matrix
  * @return int largest sum of absolute values w.r.t. __columns__
  */
-int matrix_L1_norm(Matrix *m) {
+float matrix_L1_norm(Matrix *m) {
     return matrix_L1_Linf_norm_helper(m, m->cols, m->rows);
 }
 
@@ -220,7 +225,7 @@ int matrix_L1_norm(Matrix *m) {
  * @param m matrix
  * @return int largest sum of absolute values w.r.t. __rows__
  */
-int matrix_Linf_norm(Matrix *m) {
+float matrix_Linf_norm(Matrix *m) {
     return matrix_L1_Linf_norm_helper(m, m->rows, m->cols);
 }
 
@@ -234,11 +239,14 @@ void print_matrix(Matrix *m) {
 
     printf("%s = (\n", m->name);
     for (int i = 0; i < m->rows; i++) {
-        for (int j = 0; j < m->cols; j++)
+        for (int j = 0; j < m->cols; j++) {
+            float re = creal(m->items[i][j]); float im = cimag(m->items[i][j]);
+            char sign = (im < 0.0f) ? '-' : '+';
             if (j == m->cols - 1)
-                printf("%d", m->items[i][j]);
+                printf("%.3f %c %.3fi", re, sign, fabs(im));
             else
-                printf("%d ", m->items[i][j]);
+                printf("%.3f %c %.3fi  ", re, sign, fabs(im));
+        }
         printf("\n");
     }
     printf(")\n");
