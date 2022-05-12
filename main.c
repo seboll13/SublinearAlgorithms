@@ -22,9 +22,9 @@ double generate_probability() {
  * @param sparse true if we want only a few non zero values
  * @return Vector 
  */
-Vector generate_random_01_vector(bool sparse) {
-    Vector v;
-    init_vector(&v, "V", DIM);
+Vector *generate_random_01_vector(bool sparse) {
+    Vector *v = NULL;
+    init_vector(v, "V", DIM);
 
     double p = generate_probability();
     if (sparse)
@@ -32,7 +32,7 @@ Vector generate_random_01_vector(bool sparse) {
     for (int i = 0; i < DIM; i++)
         // W.p. p, we replace the 0 by a 1 in v
         if (generate_probability() < p)
-            update_vector(&v, 1, i);
+            update_vector(v, 1, i);
     return v;
 }
 
@@ -42,9 +42,9 @@ Vector generate_random_01_vector(bool sparse) {
  * @param sparse true if we want only a few non zero values
  * @return Matrix 
  */
-Matrix generate_random_01_matrix(bool sparse) {
-    Matrix m;
-    init_matrix(&m, "M", ROWS, COLS);
+Matrix *generate_random_01_matrix(bool sparse) {
+    Matrix *m = NULL;
+    init_matrix(m, "M", ROWS, COLS);
 
     double p = generate_probability();
     if (sparse)
@@ -54,23 +54,23 @@ Matrix generate_random_01_matrix(bool sparse) {
         for (int j = 0; j < COLS; j++)
             //W.p. p, replace the 0 by a 1
             if (generate_probability() < p)
-                update_matrix(&m, 1, i, j);
+                update_matrix(m, 1, i, j);
     return m;
 }
 
 int main() {
     srand(time(NULL)); // Set a different seed for probability generations
     
-    Vector v = generate_random_01_vector(true);
-    Matrix m1 = generate_random_01_matrix(false);
-    Matrix m2 = generate_random_01_matrix(false);
-    Matrix n = matrix_mult(&m1, &m2);
+    Vector *v = generate_random_01_vector(true);
+    Matrix *m1 = generate_random_01_matrix(false);
+    Matrix *m2 = generate_random_01_matrix(false);
+    Matrix *n = matrix_mult(m1, m2);
     
-    print_vector(&v);
-    print_matrix(&n);
+    print_vector(v);
+    print_matrix(n);
 
-    free_vector(&v);
-    free_matrix(&m1);
-    free_matrix(&m2);
-    free_matrix(&n);
+    free_vector(v);
+    free_matrix(m1);
+    free_matrix(m2);
+    free_matrix(n);
 }

@@ -59,16 +59,16 @@ void update_matrix(Matrix *m, int n, int row, int col) {
  * @param sub indicator of subtraction
  * @return Matrix addition if sub is false, otherwise subtraction
  */
-Matrix matrix_add(Matrix *m1, Matrix *m2, bool sub) {
-    Matrix m;
-    init_matrix(&m, "M", m1->rows, m1->cols);
+Matrix *matrix_add(Matrix *m1, Matrix *m2, bool sub) {
+    Matrix *m = NULL;
+    init_matrix(m, "M", m1->rows, m1->cols);
     
-    for (int i = 0; i < m.rows; i++)
-        for (int j = 0; j < m.cols; j++)
+    for (int i = 0; i < m->rows; i++)
+        for (int j = 0; j < m->cols; j++)
             if (sub)
-                update_matrix(&m, m1->items[i][j] - m2->items[i][j], i, j);
+                update_matrix(m, m1->items[i][j] - m2->items[i][j], i, j);
             else
-                update_matrix(&m, m1->items[i][j] + m2->items[i][j], i, j);
+                update_matrix(m, m1->items[i][j] + m2->items[i][j], i, j);
     
     return m;
 }
@@ -81,20 +81,47 @@ Matrix matrix_add(Matrix *m1, Matrix *m2, bool sub) {
  * @param div indicator of division
  * @return Resultant matrix
  */
-Matrix matrix_mult(Matrix *m1, Matrix *m2) {
+Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
     // Inner dimensions must be the same
     assert(m1->cols == m2->rows);
     
-    Matrix m;
-    init_matrix(&m, "S", m1->rows, m2->cols);
+    Matrix *m = NULL;
+    init_matrix(m, "S", m1->rows, m2->cols);
     
     // Perform standard matrix multiplication algorithm
     for (int i = 0; i < m1->rows; i++)
         for (int j = 0; j < m2->cols; j++)
             for (int k = 0; k < m2->rows; k++)
                 // We do not use update_matrix() since we must increase the existing value instead of replacing it
-                m.items[i][k] += m1->items[i][j] * m2->items[j][k];
+                m->items[i][k] += m1->items[i][j] * m2->items[j][k];
     return m;
+}
+
+Matrix *transpose(Matrix *m) {
+    Matrix *t = NULL;
+    init_matrix(t, "T", m->cols, m->rows);
+
+    for (int i = 0; i < t->rows; i++)
+        for (int j = 0; j < t->cols; j++)
+            t->items[i][j] = m->items[j][i];
+    return t;
+}
+
+/**
+ * @brief check if a matrix is symmetric
+ * 
+ * @param m 
+ * @return true 
+ * @return false 
+ */
+bool check_symmetry(Matrix *m) {
+    assert(m->rows == m->cols);
+
+    for (int i = 0; i < m->rows; i++)
+        for (int j = 0; j < m->cols; j++)
+            if (m->items[i][j] != m->items[j][i])
+                return false;
+    return true;
 }
 
 /**
@@ -146,7 +173,12 @@ bool check_entire_line_of_zeroes(Matrix *m) {
  */
 int det(Matrix *m) {
     assert(m->cols == m->rows);
-    
+
+    // If one element on the diagonal is zero, return 0
+    for (int i = 0; i < m->rows; i++)
+        if(m->items[i][i] == 0)
+            return 0;
+
     int determinant = 0;
     // Case where matrix is diagonal
     if (check_diagonality(m)) {
@@ -158,6 +190,38 @@ int det(Matrix *m) {
     if (check_entire_line_of_zeroes(m))
         return 0;
     return determinant;
+}
+
+int matrix_L1_Linf_norm_helper(Matrix *m, int x, int y) {
+    int max_sum = 0;
+    for (int j = 0; j < x; j++) {
+        int sum = 0;
+        for (int i = 0; i < y; i++)
+            sum += abs(m->items[i][j]);
+        if (sum > max_sum)
+            max_sum = sum;
+    }
+    return max_sum;
+}
+
+/**
+ * @brief compute the L1 norm of a matrix
+ * 
+ * @param m matrix
+ * @return int largest sum of absolute values w.r.t. __columns__
+ */
+int matrix_L1_norm(Matrix *m) {
+    return matrix_L1_Linf_norm_helper(m, m->cols, m->rows);
+}
+
+/**
+ * @brief compute the L-infinity norm of a matrix
+ * 
+ * @param m matrix
+ * @return int largest sum of absolute values w.r.t. __rows__
+ */
+int matrix_Linf_norm(Matrix *m) {
+    return matrix_L1_Linf_norm_helper(m, m->rows, m->cols);
 }
 
 /**

@@ -17,15 +17,21 @@ void free_matrix(Matrix *m);
 void update_matrix(Matrix *m, int n, int row, int col);
 
 // Matrix operations
-Matrix matrix_add(Matrix *m1, Matrix *m2, bool sub);
-Matrix matrix_mult(Matrix *m1, Matrix *m2);
+Matrix *matrix_add(Matrix *m1, Matrix *m2, bool sub);
+Matrix *matrix_mult(Matrix *m1, Matrix *m2);
+Matrix *transpose(Matrix *m);
 
 // Helper functions
+bool check_symmetry(Matrix *m);
 bool check_diagonality(Matrix *m);
 bool check_entire_line_of_zeroes(Matrix *m);
 
-// Matrix properties
-int det(Matrix *m1);
+// Matrix computations
+int det(Matrix *m);
+
+// Matrix norms
+int matrix_L1_norm(Matrix *m);
+int matrix_Linf_norm(Matrix *m);
 
 // Printing part
 void print_matrix(Matrix *m);

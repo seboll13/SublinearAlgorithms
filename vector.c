@@ -51,14 +51,14 @@ void update_vector(Vector *v, int n, int idx) {
  * @param v vector 2
  * @return Vector* u+v
  */
-Vector vector_add(Vector *u, Vector *v) {
+Vector *vector_add(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
-    Vector w;
-    init_vector(&w, "W", u->capacity);
+    Vector *w = NULL;
+    init_vector(w, "W", u->capacity);
 
     for (int i = 0; i < u->capacity; i++)
-        update_vector(&w, u->items[i] + v->items[i], i);
+        update_vector(w, u->items[i] + v->items[i], i);
     return w;
 }
 
@@ -69,14 +69,14 @@ Vector vector_add(Vector *u, Vector *v) {
  * @param v vector 2
  * @return Vector* u-v
  */
-Vector vector_sub(Vector *u, Vector *v) {
+Vector *vector_sub(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
-    Vector w;
-    init_vector(&w, "W", u->capacity);
+    Vector *w = NULL;
+    init_vector(w, "W", u->capacity);
 
     for (int i = 0; i < u->capacity; i++)
-        update_vector(&w, u->items[i] - v->items[i], i);
+        update_vector(w, u->items[i] - v->items[i], i);
     return w;
 }
 
@@ -87,12 +87,12 @@ Vector vector_sub(Vector *u, Vector *v) {
  * @param a scalar
  * @return Vector* scaled vector
  */
-Vector scalar_mult(Vector *u, int a) {
-    Vector v;
-    init_vector(&v, "V", u->capacity);
+Vector *scalar_mult(Vector *u, int a) {
+    Vector *v = NULL;
+    init_vector(v, "V", u->capacity);
 
     for (int i = 0; i < u->capacity; i++)
-        update_vector(&v, a * u->items[i], i);
+        update_vector(v, a * u->items[i], i);
     return v;
 }
 
@@ -119,18 +119,18 @@ int scalar_product(Vector *u, Vector *v) {
  * @param v vector 2
  * @return Vector result of vec prod
  */
-Vector vector_product(Vector *u, Vector *v) {
+Vector *vector_product(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
-    Vector w;
+    Vector *w = NULL;
     int vec_size = u->capacity;
-    init_vector(&w, "W", vec_size);
+    init_vector(w, "W", vec_size);
 
     for (int i = 0; i < vec_size; i++) {
         int u_index = (vec_size-2+i) % vec_size;
         int v_index = (u_index + 1) % vec_size;
         // obtain each element by circular permutation
-        update_vector(&w, u->items[u_index]*v->items[v_index]-u->items[v_index]*v->items[u_index], i);
+        update_vector(w, u->items[u_index]*v->items[v_index]-u->items[v_index]*v->items[u_index], i);
     }
     return w;
 }
