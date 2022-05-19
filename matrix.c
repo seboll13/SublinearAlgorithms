@@ -103,6 +103,12 @@ Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
     return m;
 }
 
+/**
+ * @brief compute the transpose of a matrix
+ * 
+ * @param m matrix
+ * @return Matrix* rows and columns are permuted 
+ */
 Matrix *transpose(Matrix *m) {
     Matrix *t = init_matrix("T", m->cols, m->rows);
 
@@ -197,6 +203,14 @@ float det(Matrix *m) {
     return determinant;
 }
 
+/**
+ * @brief helper function to matrix norm computation
+ * 
+ * @param m matrix
+ * @param x rows/cols
+ * @param y cols/rows
+ * @return float largest sum of absolute values w.r.t. x or y
+ */
 float matrix_L1_Linf_norm_helper(Matrix *m, int x, int y) {
     float max_sum = 0.0f;
     for (int j = 0; j < x; j++) {

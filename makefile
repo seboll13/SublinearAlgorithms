@@ -1,14 +1,18 @@
 CC=gcc
 CFLAGS=-c -Wall -Wextra
-OBJ=main.o vector.o matrix.o
+#TESTFLAGS=-lcheck -pthread -pthread -lm
+OBJ=main.o vector.o projections.o matrix.o
 TARGET=main
 
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CC) $^ -o $(TARGET)
+	$(CC) $^ -o $@
 
 vector.o: vector.c
+	$(CC) $(CFLAGS) $^
+
+projections.o: projections.c
 	$(CC) $(CFLAGS) $^
 
 matrix.o: matrix.c
