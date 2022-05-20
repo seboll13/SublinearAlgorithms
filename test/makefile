@@ -18,4 +18,7 @@ vector_test.o : vector_test.c
 .PHONY: clean
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(OBJ) $(TARGET) && clear
+
+test: all
+	./$(TARGET)
