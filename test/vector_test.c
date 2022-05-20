@@ -17,7 +17,7 @@ Suite *vector_suite(void)
     Suite *s;
     TCase *tc_core;
 
-    s = suite_create("Vector");
+    s = suite_create("Core");
 
     tc_core = tcase_create("Core");
     tcase_add_test(tc_core, test_empty_vector_creation);
