@@ -19,7 +19,7 @@ void update_vector(Vector *v, float _Complex n, int idx);
 // Vector basic operations
 Vector *vector_add(Vector *u, Vector *v, bool add);
 Vector *scalar_mult(Vector *u, int a);
-int scalar_product(Vector *u, Vector *v);
+float _Complex dot_product(Vector *u, Vector *v);
 Vector *vector_product(Vector *u, Vector *v);
 
 // Helper functions

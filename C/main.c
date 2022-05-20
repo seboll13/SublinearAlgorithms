@@ -24,7 +24,9 @@ int main() {
     printf("Res: %d\n", vector_random_projection(100, 0.5));
     
     // VECTOR PART
-    // Vector *u = generate_random_vector(3);
+     Vector *u = malloc(sizeof(Vector));
+     init_vector(u, "U", 1);
+     free_vector(u);
     // Vector *v = generate_random_vector(3);
     // Vector *w = vector_add(u, v, 1);
 

@@ -1,7 +1,7 @@
 #include "vector.h"
 
 /**
- * @brief Initialise a vector
+ * @brief initialise a vector
  * 
  * @param v vector to initialise
  * @param name vector id
@@ -20,7 +20,7 @@ void init_vector(Vector *v, char *name, int rows) {
 }
 
 /**
- * @brief Remove vector
+ * @brief remove a vector
  * 
  * @param v vector to be removed
  */
@@ -35,7 +35,7 @@ void free_vector(Vector *v) {
 }
 
 /**
- * @brief Update a vector element
+ * @brief update a vector element
  * 
  * @param v vector to update
  * @param n element to add
@@ -49,7 +49,7 @@ void update_vector(Vector *v, float _Complex n, int idx) {
 }
 
 /**
- * @brief Computes the sum of two vectors
+ * @brief compute the sum of two vectors
  * 
  * @param u vector 1
  * @param v vector 2
@@ -71,7 +71,7 @@ Vector *vector_add(Vector *u, Vector *v, bool add) {
 }
 
 /**
- * @brief Computes the multiplication of a vector by a scalar
+ * @brief compute the multiplication of a vector by a scalar
  * 
  * @param u vector
  * @param a scalar
@@ -87,14 +87,14 @@ Vector *scalar_mult(Vector *u, int a) {
 }
 
 /**
- * @brief Returns the scalar product of two vectors
+ * @brief get the dot product of two vectors
  * Note: (a+ib)(c+id)=ac-bd+(ad+bc)i
  * 
  * @param u vector 1
  * @param v vector 2
  * @return int sum of products of each coefficient
  */
-int scalar_product(Vector *u, Vector *v) {
+float _Complex dot_product(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
     float _Complex res = 0;
@@ -126,12 +126,18 @@ Vector *vector_product(Vector *u, Vector *v) {
     return w;
 }
 
+/**
+ * @brief return the complex absolute value of some complex number
+ * 
+ * @param z complex number
+ * @return float L2 distance on the complex plane (i.e. norm of a complex)
+ */
 float complex_abs(float _Complex z) {
     return sqrt(pow(creal(z),2) + pow(cimag(z),2));
 }
 
 /**
- * @brief Computes the L1 norm of a vector
+ * @brief compute the L1 norm of a vector
  * 
  * @param u vector
  * @return int sum of absolute values of each element of u
@@ -144,7 +150,7 @@ float L1_norm(Vector *u) {
 }
 
 /**
- * @brief Computes the L2 norm of a vector
+ * @brief compute the L2 norm of a vector
  * 
  * @param u vector
  * @return double square root of the sum of squares
@@ -157,13 +163,14 @@ float L2_norm(Vector *u) {
 }
 
 /**
- * @brief Computes the Lp norm of a vector
+ * @brief compute the Lp norm of a vector
  * 
  * @param u vector
  * @param p power parameter
  * @return double p'th root of the sum of p-powers
  */
 float Lp_norm(Vector *u, int p) {
+    assert(p > 0);
     if (p == 1)
         return L1_norm(u);
     if (p == 2)
@@ -175,7 +182,7 @@ float Lp_norm(Vector *u, int p) {
 }
 
 /**
- * @brief Print vector elements to screen
+ * @brief print vector elements to screen
  * 
  * @param v vector to be printed
  */
