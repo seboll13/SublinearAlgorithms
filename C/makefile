@@ -1,6 +1,5 @@
 CC=gcc
 CFLAGS=-c -Wall -Wextra
-#TESTFLAGS=-lcheck -pthread -pthread -lm
 OBJ=main.o vector.o projections.o matrix.o
 TARGET=main
 
