@@ -21,9 +21,14 @@ Vector *vector_add(Vector *u, Vector *v, bool add);
 Vector *scalar_mult(Vector *u, int a);
 float _Complex dot_product(Vector *u, Vector *v);
 Vector *vector_product(Vector *u, Vector *v);
+float scalar_projection(Vector *u, Vector *v);
+Vector *vector_projection(Vector *u, Vector *v);
 
 // Helper functions
+float radians_to_degrees(float radians);
+float vector_angle_between(Vector *u, Vector *v, bool radians);
 float complex_abs(float _Complex z);
+bool check_orthogonality(Vector *u, Vector *v);
 
 // Norms
 float L1_norm(Vector *u);

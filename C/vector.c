@@ -104,7 +104,7 @@ float _Complex dot_product(Vector *u, Vector *v) {
 }
 
 /**
- * @brief Returns the vector product of two vectors
+ * @brief return the vector product of two vectors
  * 
  * @param u vector 1
  * @param v vector 2
@@ -113,8 +113,8 @@ float _Complex dot_product(Vector *u, Vector *v) {
 Vector *vector_product(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
-    Vector *w = malloc(sizeof(Vector));
     int vec_size = u->capacity;
+    Vector *w = malloc(sizeof(Vector));
     init_vector(w, "W", vec_size);
 
     for (int i = 0; i < vec_size; i++) {
@@ -124,6 +124,68 @@ Vector *vector_product(Vector *u, Vector *v) {
         update_vector(w, u->items[u_index]*v->items[v_index]-u->items[v_index]*v->items[u_index], i);
     }
     return w;
+}
+
+/**
+ * @brief return the scalar projection of a vector onto another one
+ * 
+ * @param u vector to project
+ * @param v vector to project on
+ * @return float scalar projection factor
+ */
+float scalar_projection(Vector *u, Vector *v) {
+    assert(u->capacity > 0 && v->capacity > 0);
+    assert(u->capacity == v->capacity);
+
+    return (float) dot_product(u, v) / L2_norm(v);
+}
+
+/**
+ * @brief return the projection of a vector onto another one
+ * 
+ * @param u vector to project
+ * @param v vector to project on
+ * @return Vector* the projection vector of u onto v
+ */
+Vector *vector_projection(Vector *u, Vector *v) {
+    assert(u->capacity > 0 && v->capacity > 0);
+    assert(u->capacity == v->capacity);
+
+    float factor = scalar_projection(u, v);
+
+    Vector *w = malloc(sizeof(Vector));
+    init_vector(w, "W", u->capacity);
+    for (int i = 0; i < w->capacity; i++)
+        update_vector(w, factor * v->items[i] / L2_norm(v), i);
+    return w;
+}
+
+/**
+ * @brief helper to convert radians to degrees
+ * 
+ * @param radians 
+ * @return float 
+ */
+float radians_to_degrees(float radians) {
+    return (float) 180 * fmod(radians, 2*M_PI) / M_PI;
+}
+
+/**
+ * @brief return the angle between two vectors
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @param radians boolean to indicate the result format
+ * @return float angle between u and v in radians if radians is true, in degrees otherwise
+ */
+float vector_angle_between(Vector *u, Vector *v, bool radians) {
+    assert(u->capacity > 0 && v->capacity > 0);
+    assert(u->capacity == v->capacity);
+
+    double res = dot_product(u, v) / (L2_norm(u) * L2_norm(v));
+
+    assert(res >= -1 && res <= 1);
+    return (radians) ? (float) acos(res) : radians_to_degrees(acos(res));
 }
 
 /**
@@ -137,47 +199,67 @@ float complex_abs(float _Complex z) {
 }
 
 /**
+ * @brief check whether or not two vectors are orthogonal
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return true if u and v are orthogonal
+ * @return false otherwise (the angle between u and v is not 90deg)
+ */
+bool check_orthogonality(Vector *u, Vector *v) {
+    assert(u->capacity > 0 && v->capacity > 0);
+    assert(u->capacity == v->capacity);
+
+    return dot_product(u, v) == 0;
+}
+
+/**
  * @brief compute the L1 norm of a vector
  * 
- * @param u vector
- * @return int sum of absolute values of each element of u
+ * @param v vector
+ * @return int sum of absolute values of each element of v
  */
-float L1_norm(Vector *u) {
+float L1_norm(Vector *v) {
+    assert(v->capacity > 0);
+
     float res = 0;
-    for (int i = 0; i < u->capacity; i++)
-        res += complex_abs(u->items[i]);
+    for (int i = 0; i < v->capacity; i++)
+        res += complex_abs(v->items[i]);
     return res;
 }
 
 /**
  * @brief compute the L2 norm of a vector
  * 
- * @param u vector
+ * @param v vector
  * @return double square root of the sum of squares
  */
-float L2_norm(Vector *u) {
+float L2_norm(Vector *v) {
+    assert(v->capacity > 0);
+
     float res = 0;
-    for (int i = 0; i < u->capacity; i++)
-        res += pow(u->items[i], 2.0);
+    for (int i = 0; i < v->capacity; i++)
+        res += pow(v->items[i], 2.0);
     return sqrt(res); 
 }
 
 /**
  * @brief compute the Lp norm of a vector
  * 
- * @param u vector
+ * @param v vector
  * @param p power parameter
  * @return double p'th root of the sum of p-powers
  */
-float Lp_norm(Vector *u, int p) {
-    assert(p > 0);
+float Lp_norm(Vector *v, int p) {
+    assert(p > 0 && v->capacity > 0);
+
     if (p == 1)
-        return L1_norm(u);
+        return L1_norm(v);
     if (p == 2)
-        return L2_norm(u);
+        return L2_norm(v);
     float res = 0;
-    for (int i = 0; i < u->capacity; i++)
-        res += pow(u->items[i], (float) p);
+    for (int i = 0; i < v->capacity; i++)
+        res += pow(v->items[i], (float) p);
     return pow(res, 1/p);
 }
 
@@ -200,4 +282,3 @@ void print_vector(Vector *v) {
     }
     printf(")\n");
 }
-

@@ -13,7 +13,7 @@ tests:
 run_tests: tests
 	$(TESTPATH)vector_test
 
-push:
+push: clean
 	git add .
 	git commit -m "$(M)"
 	git push

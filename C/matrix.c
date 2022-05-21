@@ -20,7 +20,7 @@ Matrix *init_matrix(char *name, int rows, int cols) {
     
     for (int i = 0; i < rows; i++) {
         m->items[i] = malloc(cols * sizeof(int));
-        for (int j = 0; j < rows; j++)
+        for (int j = 0; j < cols; j++)
             m->items[i][j] = 0;
     }
     return m;
