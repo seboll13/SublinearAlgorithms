@@ -42,55 +42,78 @@ void free_matrix(Matrix *m) {
  * @param col idx of column
  */
 void update_matrix(Matrix *m, float _Complex n, int row, int col) {
-    assert(row > -1 && row < MAX_MATRIX_CAPACITY);
-    assert(col > -1 && col < MAX_MATRIX_CAPACITY);
+    assert(row > -1 && row < (int) sqrt(MAX_MATRIX_CAPACITY));
+    assert(col > -1 && col < (int) sqrt(MAX_MATRIX_CAPACITY));
 
-    m->items[row].items[col] = n;
+    m->items[col].items[row] = n;
 }
 
-// /**
-//  * @brief Element wise addition of two matrices
-//  * 
-//  * @param m1 first matrix
-//  * @param m2 second matrix
-//  * @param add indicator of addition
-//  * @return Matrix addition if sub is false, otherwise subtraction
-//  */
-// Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add) {
-//     Matrix *m = init_matrix("M", m1->rows, m1->cols);
-    
-//     for (int i = 0; i < m->rows; i++)
-//         for (int j = 0; j < m->cols; j++)
-//             if (add)
-//                 update_matrix(m, m1->items[i][j] + m2->items[i][j], i, j);
-//             else
-//                 update_matrix(m, m1->items[i][j] - m2->items[i][j], i, j);
-    
-//     return m;
-// }
+/**
+ * @brief element-wise addition of two matrices
+ * 
+ * @param m1 first matrix
+ * @param m2 second matrix
+ * @param add indicator of addition
+ * @return Matrix addition if sub is false, otherwise subtraction
+ */
+Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add) {
+    assert(m1->rows == m2->rows);
+    assert(m1->cols == m2->cols);
 
-// /**
-//  * @brief Returns the multiplication of two matrices together
-//  * 
-//  * @param m1 first matrix
-//  * @param m2 second matrix
-//  * @param div indicator of division
-//  * @return Resultant matrix
-//  */
-// Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
-//     // Inner dimensions must be the same
-//     assert(m1->cols == m2->rows);
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", m1->rows, m1->cols);
     
-//     Matrix *m = init_matrix("S", m1->rows, m2->cols);
+    for (int j = 0; j < m->cols; j++)
+        for (int i = 0; i < m->rows; i++)
+            if (add)
+                update_matrix(m, m1->items[j].items[i] + m2->items[j].items[i], i, j);
+            else
+                update_matrix(m, m1->items[j].items[i] - m2->items[j].items[i], i, j);
+    return m;
+}
+
+/**
+ * @brief return the multiplication of two matrices together
+ * 
+ * @param m1 first matrix
+ * @param m2 second matrix
+ * @param div indicator of division
+ * @return resultant matrix
+ */
+Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
+    // Inner dimensions must be the same
+    assert(m1->cols == m2->rows);
     
-//     // Perform standard matrix multiplication algorithm
-//     for (int i = 0; i < m1->rows; i++)
-//         for (int j = 0; j < m2->cols; j++)
-//             for (int k = 0; k < m2->rows; k++)
-//                 // We do not use update_matrix() since we must increase the existing value instead of replacing it
-//                 m->items[i][k] += m1->items[i][j] * m2->items[j][k];
-//     return m;
-// }
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", m1->rows, m2->cols); // keep outer dimensions
+    
+    // Perform standard matrix multiplication algorithm
+    for (int i = 0; i < m1->rows; i++)
+        for (int j = 0; j < m2->cols; j++)
+            for (int k = 0; k < m2->rows; k++)
+                // We do not use update_matrix() since we must increase the existing value instead of replacing it
+                m->items[j].items[i] += m1->items[k].items[i] * m2->items[j].items[k];
+    return m;
+}
+
+/**
+ * @brief return the Hadamard product of two matrices (i.e. element-wise multiplication)
+ * 
+ * @param m1 first matrix
+ * @param m2 second matrix
+ * @return Matrix* resultant matrix
+ */
+Matrix *hadamard_prod(Matrix *m1, Matrix *m2) {
+    assert(m1->rows == m2->rows && m1->cols == m2->cols);
+
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", m1->rows, m1->cols);
+
+    for (int j = 0; j < m->cols; j++)
+        for (int i = 0; i < m->rows; i++)
+            update_matrix(m, m1->items[j].items[i] * m2->items[j].items[i], i, j);
+    return m;
+}
 
 // /**
 //  * @brief compute the transpose of a matrix

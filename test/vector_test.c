@@ -59,8 +59,7 @@ START_TEST(test_standard_vector_addition)
     Vector *u = create_dummy_real_vector(1.0f);
     Vector *v = create_dummy_real_vector(1.0f);
     
-    Vector *w = malloc(sizeof(Vector));
-    w = vector_add(u, v, true);
+    Vector *w = vector_add(u, v, true);
     for (int i = 0; i < 3; i++)
         ck_assert_float_eq(w->items[i], 2.0f);
     free_vector(u); free_vector(v); free_vector(w);
@@ -73,8 +72,7 @@ START_TEST(test_standard_vector_subtraction)
     Vector *u = create_dummy_real_vector(1.0f);
     Vector *v = create_dummy_real_vector(1.0f);
     
-    Vector *w = malloc(sizeof(Vector));
-    w = vector_add(u, v, false);
+    Vector *w = vector_add(u, v, false);
     for (int i = 0; i < 3; i++)
         ck_assert_float_eq(w->items[i], 0.0f);
     free_vector(u); free_vector(v); free_vector(w);
@@ -85,7 +83,7 @@ END_TEST
 START_TEST(test_standard_scalar_multiplication)
 {
     Vector *u = create_dummy_real_vector(1.0f);
-    Vector *v = scalar_mult(u, 2);
+    Vector *v = vector_scalar_mult(u, 2);
     for (int i = 0; i < 3; i++)
         ck_assert_float_eq(v->items[i], 2.0f);
     free_vector(v);

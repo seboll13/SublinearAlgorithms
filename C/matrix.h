@@ -20,6 +20,7 @@ void update_matrix(Matrix *m, float _Complex n, int row, int col);
 // Matrix operations
 Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add);
 Matrix *matrix_mult(Matrix *m1, Matrix *m2);
+Matrix *hadamard_prod(Matrix *m1, Matrix *m2);
 Matrix *transpose(Matrix *m);
 
 // Helper functions

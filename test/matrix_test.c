@@ -37,10 +37,66 @@ END_TEST
 START_TEST(test_new_matrix_is_updated_correctly)
 {
     Matrix *m = create_dummy_real_matrix(1.0f);
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            ck_assert_float_eq(m->items[i].items[j], 1.0f);    
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            ck_assert_float_eq(m->items[j].items[i], 1.0f);
     free_matrix(m);
     free(m);
+}
+END_TEST
+
+START_TEST(test_standard_matrix_addition)
+{
+    Matrix *m1 = create_dummy_real_matrix(1.0f);
+    Matrix *m2 = create_dummy_real_matrix(1.0f);
+    
+    Matrix *m = matrix_add(m1, m2, true);
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            ck_assert_float_eq(m->items[j].items[i], 2.0f);
+    free_matrix(m1); free_matrix(m2); free_matrix(m);
+    free(m1); free(m2); free(m);
+}
+END_TEST
+
+START_TEST(test_standard_matrix_subtraction)
+{
+    Matrix *m1 = create_dummy_real_matrix(1.0f);
+    Matrix *m2 = create_dummy_real_matrix(1.0f);
+    
+    Matrix *m = matrix_add(m1, m2, false);
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            ck_assert_float_eq(m->items[j].items[i], 0.0f);
+    free_matrix(m1); free_matrix(m2); free_matrix(m);
+    free(m1); free(m2); free(m);
+}
+END_TEST
+
+START_TEST(test_standard_matrix_multiplication)
+{
+    Matrix *m1 = create_dummy_real_matrix(1.0f);
+    Matrix *m2 = create_dummy_real_matrix(2.0f);
+    
+    Matrix *m = matrix_mult(m1, m2);
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            ck_assert_float_eq(m->items[j].items[i], 6.0f);
+    free_matrix(m1); free_matrix(m2); free_matrix(m);
+    free(m1); free(m2); free(m);
+}
+END_TEST
+
+START_TEST(test_standard_hadamard_product)
+{
+    Matrix *m1 = create_dummy_real_matrix(1.0f);
+    Matrix *m2 = create_dummy_real_matrix(2.0f);
+    
+    Matrix *m = hadamard_prod(m1, m2);
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            ck_assert_float_eq(m->items[j].items[i], 2.0f);
+    free_matrix(m1); free_matrix(m2); free_matrix(m);
+    free(m1); free(m2); free(m);
 }
 END_TEST

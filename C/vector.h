@@ -3,7 +3,7 @@
 
 #include "libs.h"
 
-#define MAX_VEC_CAPACITY 10000
+#define MAX_VEC_CAPACITY 10e3
 
 typedef struct Vector {
     int capacity;
@@ -18,7 +18,7 @@ void update_vector(Vector *v, float _Complex n, int idx);
 
 // Vector basic operations
 Vector *vector_add(Vector *u, Vector *v, bool add);
-Vector *scalar_mult(Vector *u, int a);
+Vector *vector_scalar_mult(Vector *u, int a);
 float _Complex dot_product(Vector *u, Vector *v);
 Vector *vector_product(Vector *u, Vector *v);
 float scalar_projection(Vector *u, Vector *v);

@@ -8,19 +8,26 @@ int main() {
     srand(time(NULL)); // Set a different seed for random generation
     
     // VECTOR PART
-    Vector *u = malloc(sizeof(Vector));
-    init_vector(u, "U", 3);
-    free_vector(u);
-    free(u);
+    // Vector *u = malloc(sizeof(Vector));
+    // init_vector(u, "U", 3);
+    // free_vector(u);
+    // free(u);
 
     // MATRIX PART
-    Matrix *m = malloc(sizeof(Matrix));
-    init_matrix(m, "M", 3, 3);
+    Matrix *m1 = malloc(sizeof(Matrix));
+    Matrix *m2 = malloc(sizeof(Matrix));
+    init_matrix(m1, "M1", 3, 3);
+    init_matrix(m2, "M2", 3, 3);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            update_matrix(m1, 1.0f, i, j);
+            update_matrix(m2, 2.0f, i, j);
+        }
+    }
+    Matrix *m = matrix_add(m1, m2, true);
+    free_matrix(m); free_matrix(m1); free_matrix(m2);
+    free(m); free(m1); free(m2);
     
-    for (int i = 0; i < 3; i++)
-        print_vector(m->items+i);
-    free_matrix(m);
-    free(m);
 
     clock_t end = clock();
     double execution_time = (double)(end-start) / CLOCKS_PER_SEC * 1000;

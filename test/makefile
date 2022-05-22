@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-c -Wall -Wextra
 TESTFLAGS=-lcheck -pthread #-pthread -lm
-OBJ=main_test.o vector.o matrix.o
+OBJ=main_test.o vector.o matrix.o tensor.o
 TARGET=main_test
 
 all: $(TARGET)
@@ -16,6 +16,9 @@ vector.o: ../C/vector.c
 	$(CC) $(CFLAGS) $^
 
 matrix.o: ../C/matrix.c
+	$(CC) $(CFLAGS) $^
+
+tensor.o: ../C/tensor.c
 	$(CC) $(CFLAGS) $^
 
 .PHONY: clean

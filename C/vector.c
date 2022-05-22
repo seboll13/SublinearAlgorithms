@@ -74,7 +74,7 @@ Vector *vector_add(Vector *u, Vector *v, bool add) {
  * @param a scalar
  * @return Vector* scaled vector
  */
-Vector *scalar_mult(Vector *u, int a) {
+Vector *vector_scalar_mult(Vector *u, int a) {
     Vector *v = malloc(sizeof(Vector));
     init_vector(v, "V", u->capacity);
 
