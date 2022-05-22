@@ -25,12 +25,9 @@ void init_vector(Vector *v, char *name, int rows) {
  * @param v vector to be removed
  */
 void free_vector(Vector *v) {
-    if (v != NULL) {
-        v->capacity = 0;
-        v->name = NULL;
+    assert(v->items != NULL);
+    if (v != NULL)
         free(v->items);
-        free(v);
-    }
     return;
 }
 

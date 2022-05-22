@@ -33,11 +33,14 @@ START_TEST(test_empty_vector_is_created_correctly)
 {
     Vector *v = malloc(sizeof(Vector));
     init_vector(v, "V", 3);
+    ck_assert_int_eq(v->capacity, 3);
+    ck_assert_str_eq(v->name, "V");
     for (int i = 0; i < 3; i++) {
         ck_assert_float_eq(creal(v->items[i]), 0.0f);
         ck_assert_float_eq(cimag(v->items[i]), 0.0f);
     }
     free_vector(v);
+    free(v);
 }
 END_TEST
 
@@ -47,6 +50,7 @@ START_TEST(test_new_vector_is_updated_correctly)
     for (int i = 0; i < 3; i++)
         ck_assert_float_eq(v->items[i], 1.0f);
     free_vector(v);
+    free(v);
 }
 END_TEST
 
@@ -60,6 +64,7 @@ START_TEST(test_standard_vector_addition)
     for (int i = 0; i < 3; i++)
         ck_assert_float_eq(w->items[i], 2.0f);
     free_vector(u); free_vector(v); free_vector(w);
+    free(u); free(v); free(w);
 }
 END_TEST
 
@@ -73,6 +78,7 @@ START_TEST(test_standard_vector_subtraction)
     for (int i = 0; i < 3; i++)
         ck_assert_float_eq(w->items[i], 0.0f);
     free_vector(u); free_vector(v); free_vector(w);
+    free(u); free(v); free(w);
 }
 END_TEST
 
@@ -83,6 +89,7 @@ START_TEST(test_standard_scalar_multiplication)
     for (int i = 0; i < 3; i++)
         ck_assert_float_eq(v->items[i], 2.0f);
     free_vector(v);
+    free(v);
 }
 END_TEST
 
@@ -93,6 +100,7 @@ START_TEST(test_standard_dot_product)
     int dot_prod = dot_product(u, v);
     ck_assert_float_eq(dot_prod, 3.0f);
     free_vector(u); free_vector(v);
+    free(u); free(v);
 }
 END_TEST
 
@@ -105,6 +113,7 @@ START_TEST(test_standard_vector_product)
     for (int i = 0; i < 3; i++)
         ck_assert_float_eq(w->items[i], 0.0f);
     free_vector(u); free_vector(v); free_vector(w);
+    free(u); free(v); free(w);
 }
 END_TEST
 
@@ -115,6 +124,7 @@ START_TEST(test_standard_scalar_projection)
 
     ck_assert_float_eq(1 / sqrt(2), scalar_projection(u, v));
     free_vector(u); free_vector(v);
+    free(u); free(v);
 }
 END_TEST
 
@@ -127,6 +137,7 @@ START_TEST(test_standard_vector_projection)
     ck_assert_float_eq(0.5f, w->items[1]);
     ck_assert_float_eq(0.0f, w->items[2]);
     free_vector(u); free_vector(v); free_vector(w);
+    free(u); free(v); free(w);
 }
 END_TEST
 
@@ -136,6 +147,7 @@ START_TEST(test_standard_L1_norm)
     float n = L1_norm(u);
     ck_assert_float_eq(n, 6.0f);
     free_vector(u);
+    free(u);
 }
 END_TEST
 
@@ -145,6 +157,7 @@ START_TEST(test_standard_L2_norm)
     float n = L2_norm(u);
     ck_assert_float_eq(n, sqrt(12));
     free_vector(u);
+    free(u);
 }
 END_TEST
 
@@ -154,6 +167,7 @@ START_TEST(test_first_level_Lp_norm)
     float n = Lp_norm(u, 1);
     ck_assert_float_eq(n, 6.0f);
     free_vector(u);
+    free(u);
 }
 END_TEST
 
@@ -163,6 +177,7 @@ START_TEST(test_second_level_Lp_norm)
     float n = Lp_norm(u, 2);
     ck_assert_float_eq(n, sqrt(12));
     free_vector(u);
+    free(u);
 }
 END_TEST
 
@@ -172,6 +187,7 @@ START_TEST(test_third_level_Lp_norm)
     float n = Lp_norm(u, 3);
     ck_assert_float_eq(n, pow(24, 1/3));
     free_vector(u);
+    free(u);
 }
 END_TEST
 
@@ -189,6 +205,7 @@ START_TEST(test_orthogonality_for_two_orthogonal_vectors)
     Vector *v = create_real_3d_vector(1, 1, -1);
     ck_assert(check_orthogonality(u,v));
     free_vector(u); free_vector(v);
+    free(u); free(v);
 }
 END_TEST
 
@@ -198,6 +215,7 @@ START_TEST(test_orthogonality_for_two_non_orthogonal_vectors)
     Vector *v = create_dummy_real_vector(1.0f);
     ck_assert(!check_orthogonality(u,v));
     free_vector(u); free_vector(v);
+    free(u); free(v);
 }
 END_TEST
 
@@ -215,6 +233,7 @@ START_TEST(test_correct_angle_between_vector)
     ck_assert_float_eq(90.0f, vector_angle_between(u, v, false));
     ck_assert_float_eq(M_PI_2, vector_angle_between(u, v, true));
     free_vector(u); free_vector(v);
+    free(u); free(v);
 }
 END_TEST
 
@@ -228,47 +247,6 @@ START_TEST(test_orthogonality_yields_right_angle)
     v->items[0] = 1; v->items[1] = 1; v->items[2] = -1;
     ck_assert_float_eq(90.0f, vector_angle_between(u, v, false));
     free_vector(u); free_vector(v);
+    free(u); free(v);
 }
 END_TEST
-
-Suite *vector_suite(void) {
-    Suite *s = suite_create("Core");
-    
-    TCase *tc_vector_operations = tcase_create("Vector Functions");
-    tcase_add_test(tc_vector_operations, test_empty_vector_is_created_correctly);
-    tcase_add_test(tc_vector_operations, test_new_vector_is_updated_correctly);
-    tcase_add_test(tc_vector_operations, test_standard_vector_addition);
-    tcase_add_test(tc_vector_operations, test_standard_vector_subtraction);
-    tcase_add_test(tc_vector_operations, test_standard_scalar_multiplication);
-    tcase_add_test(tc_vector_operations, test_standard_dot_product);
-    tcase_add_test(tc_vector_operations, test_standard_vector_product);
-    tcase_add_test(tc_vector_operations, test_standard_scalar_projection);
-    tcase_add_test(tc_vector_operations, test_standard_vector_projection);
-    tcase_add_test(tc_vector_operations, test_standard_L1_norm);
-    tcase_add_test(tc_vector_operations, test_standard_L2_norm);
-    tcase_add_test(tc_vector_operations, test_first_level_Lp_norm);
-    tcase_add_test(tc_vector_operations, test_second_level_Lp_norm);
-    tcase_add_test(tc_vector_operations, test_third_level_Lp_norm);
-    suite_add_tcase(s, tc_vector_operations);
-
-    TCase *tc_vector_helpers = tcase_create("Vector Helpers");
-    tcase_add_test(tc_vector_helpers, test_correct_complex_absolute_value);
-    tcase_add_test(tc_vector_helpers, test_orthogonality_for_two_orthogonal_vectors);
-    tcase_add_test(tc_vector_helpers, test_orthogonality_for_two_non_orthogonal_vectors);
-    tcase_add_test(tc_vector_helpers, test_standard_radians_to_degrees);
-    tcase_add_test(tc_vector_helpers, test_correct_angle_between_vector);
-    tcase_add_test(tc_vector_helpers, test_orthogonality_yields_right_angle);
-    suite_add_tcase(s, tc_vector_helpers);
-    return s;
-}
-
-int main(void) {
-    int nb_fails;
-    Suite *s = vector_suite();
-    SRunner *sr = srunner_create(s);
-
-    srunner_run_all(sr, CK_NORMAL);
-    nb_fails = srunner_ntests_failed(sr);
-    srunner_free(sr);
-    return (nb_fails == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
-}

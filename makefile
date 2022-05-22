@@ -11,7 +11,7 @@ tests:
 	$(MAKE) -C $(TESTPATH)
 
 run_tests: tests
-	$(TESTPATH)vector_test
+	$(TESTPATH)main_test
 
 push: clean
 	git add .

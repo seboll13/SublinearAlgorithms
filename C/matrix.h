@@ -2,17 +2,18 @@
 #define MATRIX_HEADER
 
 #include "libs.h"
+#include "vector.h"
 
 #define MAX_MATRIX_CAPACITY 10e6
 
 typedef struct Matrix {
     int rows, cols;
-    float _Complex **items;
+    Vector *items;
     char *name;
 } Matrix;
 
 // Matrix type construction
-Matrix *init_matrix(char *name, int rows, int cols);
+void init_matrix(Matrix *m, char *name, int rows, int cols);
 void free_matrix(Matrix *m);
 void update_matrix(Matrix *m, float _Complex n, int row, int col);
 
