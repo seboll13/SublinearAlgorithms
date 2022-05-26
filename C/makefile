@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-c -Wall -Wextra
-OBJ=main.o vector.o projections.o matrix.o tensor.o
+OBJ=main.o vector.o projections.o matrix.o tensor.o helpers.o
 TARGET=main
 
 all: $(TARGET)
@@ -18,6 +18,9 @@ matrix.o: matrix.c
 	$(CC) $(CFLAGS) $^
 
 tensor.o: tensor.c
+	$(CC) $(CFLAGS) $^
+
+helpers.o: helpers.c
 	$(CC) $(CFLAGS) $^
 
 main.o: main.c

@@ -1,7 +1,6 @@
 #ifndef TENSOR_HEADER
 #define TENSOR_HEADER
 
-#include "libs.h"
 #include "matrix.h"
 
 #define MAX_TENSOR_CAPACITY 10e9

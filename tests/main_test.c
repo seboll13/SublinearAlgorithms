@@ -2,6 +2,7 @@
 #include "vector_test.c"
 #include "matrix_test.c"
 #include "tensor_test.c"
+#include "helpers_test.c"
 
 Suite *vector_suite(void) {
     Suite *s = suite_create("Vector");
@@ -24,12 +25,10 @@ Suite *vector_suite(void) {
     suite_add_tcase(s, tc_vector_operations);
 
     TCase *tc_vector_helpers = tcase_create("Vector helpers");
-    tcase_add_test(tc_vector_helpers, test_correct_complex_absolute_value);
     tcase_add_test(tc_vector_helpers, test_orthogonality_for_two_orthogonal_vectors);
     tcase_add_test(tc_vector_helpers, test_orthogonality_for_two_non_orthogonal_vectors);
-    tcase_add_test(tc_vector_helpers, test_standard_radians_to_degrees);
-    tcase_add_test(tc_vector_helpers, test_correct_angle_between_vector);
     tcase_add_test(tc_vector_helpers, test_orthogonality_yields_right_angle);
+    tcase_add_test(tc_vector_helpers, test_correct_angle_between_vector);
     suite_add_tcase(s, tc_vector_helpers);
     return s;
 }
@@ -68,21 +67,38 @@ Suite *tensor_suite(void) {
     return s;
 }
 
+Suite *helpers_suite(void) {
+    Suite *s = suite_create("Helpers");
+
+    TCase *tc_helper_functions = tcase_create("Helper functions");
+    tcase_add_test(tc_helper_functions, test_correct_complex_absolute_value);
+    tcase_add_test(tc_helper_functions, test_standard_radians_to_degrees);
+    suite_add_tcase(s, tc_helper_functions);
+    return s;
+}
+
 int main(void) {
     int nb_fails;
     Suite *s_vector = vector_suite();
     Suite *s_matrix = matrix_suite();
     Suite *s_tensor = tensor_suite();
+    Suite *s_helpers = helpers_suite();
     SRunner *sr_vector = srunner_create(s_vector);
     SRunner *sr_matrix = srunner_create(s_matrix);
     SRunner *sr_tensor = srunner_create(s_tensor);
+    SRunner *sr_helpers = srunner_create(s_helpers);
 
     srunner_run_all(sr_vector, CK_NORMAL);
     srunner_run_all(sr_matrix, CK_NORMAL);
     srunner_run_all(sr_tensor, CK_NORMAL);
-    nb_fails = srunner_ntests_failed(sr_vector) + srunner_ntests_failed(sr_matrix) + srunner_ntests_failed(sr_tensor);
+    srunner_run_all(sr_helpers, CK_NORMAL);
+    nb_fails = srunner_ntests_failed(sr_vector) \
+        + srunner_ntests_failed(sr_matrix) \
+        + srunner_ntests_failed(sr_tensor) \
+        + srunner_ntests_failed(sr_helpers);
     srunner_free(sr_vector);
     srunner_free(sr_matrix);
     srunner_free(sr_tensor);
+    srunner_free(sr_helpers);
     return (nb_fails == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

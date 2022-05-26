@@ -189,14 +189,6 @@ START_TEST(test_third_level_vector_Lp_norm)
 }
 END_TEST
 
-START_TEST(test_correct_complex_absolute_value) 
-{
-    float _Complex z = 2.0f + 1.0f * I;
-    float cabs = complex_abs(z);
-    ck_assert_float_eq(cabs, sqrt(pow(2,2)+pow(1,2)));
-}
-END_TEST
-
 START_TEST(test_orthogonality_for_two_orthogonal_vectors)
 {
     Vector *u = create_real_3d_vector(1, -1, 0);
@@ -214,13 +206,6 @@ START_TEST(test_orthogonality_for_two_non_orthogonal_vectors)
     ck_assert(!check_orthogonality(u,v));
     free_vector(u); free_vector(v);
     free(u); free(v);
-}
-END_TEST
-
-START_TEST(test_standard_radians_to_degrees)
-{
-    ck_assert_float_eq(180.0f, radians_to_degrees(M_PI));
-    ck_assert_float_eq(180.0f, radians_to_degrees(3*M_PI));
 }
 END_TEST
 

@@ -2,6 +2,7 @@
 #define VECTOR_HEADER
 
 #include "libs.h"
+#include "helpers.h"
 
 #define MAX_VEC_CAPACITY 10e3
 
@@ -23,11 +24,9 @@ float _Complex dot_product(Vector *u, Vector *v);
 Vector *vector_product(Vector *u, Vector *v);
 float scalar_projection(Vector *u, Vector *v);
 Vector *vector_projection(Vector *u, Vector *v);
-
-// Helper functions
-float radians_to_degrees(float radians);
 float vector_angle_between(Vector *u, Vector *v, bool radians);
-float complex_abs(float _Complex z);
+
+// Helper functions (TODO see for change of file)
 bool check_orthogonality(Vector *u, Vector *v);
 
 // Norms

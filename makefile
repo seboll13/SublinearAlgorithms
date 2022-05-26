@@ -1,16 +1,16 @@
 CPATH=./C/
-TESTPATH=./test/
+TESTPATH=./tests/
 M="default push from makefile message"
 
-all: run tests
+all: run test
 
 run:
 	$(MAKE) -C $(CPATH)
 
-tests:
+test:
 	$(MAKE) -C $(TESTPATH)
 
-run_tests: tests
+run_tests: test
 	$(TESTPATH)main_test
 
 push: clean

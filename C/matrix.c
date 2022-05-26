@@ -180,6 +180,33 @@ float _Complex matrix_trace(Matrix *m) {
 }
 
 // /**
+//  * @brief compute the determinant of a square matrix
+//  * 
+//  * @param m matrix
+//  * @return int value of the det
+//  */
+// float det(Matrix *m) {
+//     assert(m->cols == m->rows);
+
+//     // If one element on the diagonal is zero, return 0
+//     for (int i = 0; i < m->rows; i++)
+//         if(m->items[i][i] == 0)
+//             return 0;
+
+//     float determinant = 0.0f;
+//     // Case where matrix is diagonal
+//     if (check_diagonality(m)) {
+//         for (int i = 0; i < m->rows; i++)
+//             determinant *= m->items[i][i];
+//         return determinant;
+//     }
+//     // Case in which either an entire row or an entire column is zero
+//     if (check_entire_line_of_zeroes(m))
+//         return 0.0f;
+//     return determinant;
+// }
+
+// /**
 //  * @brief check if a matrix is symmetric
 //  * 
 //  * @param m 
@@ -235,33 +262,6 @@ float _Complex matrix_trace(Matrix *m) {
 //         ret_value = (row_sum == 0 || col_sum == 0);
 //     }
 //     return ret_value;
-// }
-
-// /**
-//  * @brief compute the determinant of a square matrix
-//  * 
-//  * @param m matrix
-//  * @return int value of the det
-//  */
-// float det(Matrix *m) {
-//     assert(m->cols == m->rows);
-
-//     // If one element on the diagonal is zero, return 0
-//     for (int i = 0; i < m->rows; i++)
-//         if(m->items[i][i] == 0)
-//             return 0;
-
-//     float determinant = 0.0f;
-//     // Case where matrix is diagonal
-//     if (check_diagonality(m)) {
-//         for (int i = 0; i < m->rows; i++)
-//             determinant *= m->items[i][i];
-//         return determinant;
-//     }
-//     // Case in which either an entire row or an entire column is zero
-//     if (check_entire_line_of_zeroes(m))
-//         return 0.0f;
-//     return determinant;
 // }
 
 /**
