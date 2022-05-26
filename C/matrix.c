@@ -73,6 +73,22 @@ Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add) {
 }
 
 /**
+ * @brief return the multiplication of a matrix by some scalar
+ * 
+ * @param n scalar value
+ * @param m matrix
+ * @return Matrix* scaled matrix 
+ */
+Matrix *matrix_scalar_mult(float _Complex n, Matrix *m) {
+    Matrix *scaled = malloc(sizeof(Matrix));
+    init_matrix(scaled, "MS", m->rows, m->cols);
+    for (int j = 0; j < m->cols; j++)
+        for (int i = 0; i < m->rows; i++)
+            scaled->items[j].items[i] = n * m->items[j].items[i];
+    return scaled;
+}
+
+/**
  * @brief return the multiplication of two matrices together
  * 
  * @param m1 first matrix
@@ -103,7 +119,7 @@ Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
  * @param m2 second matrix
  * @return Matrix* resultant matrix
  */
-Matrix *hadamard_prod(Matrix *m1, Matrix *m2) {
+Matrix *matrix_hadamard_prod(Matrix *m1, Matrix *m2) {
     assert(m1->rows == m2->rows && m1->cols == m2->cols);
 
     Matrix *m = malloc(sizeof(Matrix));
@@ -116,10 +132,28 @@ Matrix *hadamard_prod(Matrix *m1, Matrix *m2) {
 }
 
 /**
+ * @brief return the Kronecker product of two matrices
+ * 
+ * @param m1 matrix 1
+ * @param m2 matrix 2
+ * @return Matrix*
+ */
+Matrix *matrix_kronecker_prod(Matrix *m1, Matrix *m2) {
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", m1->rows*m2->rows, m1->cols*m2->cols);
+    for (int j = 0; j < m->cols; j++) {
+        for (int i = 0; i < m->rows; i++) {
+            update_matrix(m, matrix_scalar_mult(m1->items[j / m2->cols].items[i / m2->rows], m2)->items[j % m2->cols].items[i % m2->rows], i, j);
+        }
+    }
+    return matrix_transpose(m);
+}
+
+/**
  * @brief compute the transpose of a matrix
  * 
  * @param m matrix
- * @return Matrix* rows and columns are permuted 
+ * @return Matrix* the original matrix the rows and columns of which are permuted 
  */
 Matrix *matrix_transpose(Matrix *m) {
     Matrix *t = malloc(sizeof(Matrix));
@@ -262,6 +296,20 @@ float matrix_Linf_norm(Matrix *m) {
         max_sum = max(max_sum, sum);
     }
     return max_sum;
+}
+
+/**
+ * @brief return the Frobenius norm of a given matrix
+ * 
+ * @param m matrix
+ * @return float root of sum of squares
+ */
+float matrix_frobenius_norm(Matrix *m) {
+    float norm = 0.0f;
+    for (int j = 0; j < m->cols; j++)
+        for (int i = 0; i < m->rows; i++)
+            norm += pow(m->items[j].items[i], 2);
+    return sqrt(norm);
 }
 
 /**

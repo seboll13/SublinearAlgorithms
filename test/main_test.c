@@ -42,12 +42,15 @@ Suite *matrix_suite(void) {
     tcase_add_test(tc_matrix_operations, test_new_matrix_is_updated_correctly);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_addition);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_subtraction);
+    tcase_add_test(tc_matrix_operations, test_standard_matrix_scalar_mult);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_multiplication);
     tcase_add_test(tc_matrix_operations, test_standard_hadamard_product);
+    tcase_add_test(tc_matrix_operations, test_standard_kroenecker_product);
     tcase_add_test(tc_matrix_operations, test_standard_transpose);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_trace);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_L1_norm);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_Linf_norm);
+    tcase_add_test(tc_matrix_operations, test_standard_matrix_frobenius_norm);
     suite_add_tcase(s, tc_matrix_operations);
     return s;
 }
