@@ -9,4 +9,6 @@
 
 #include <assert.h>
 
+#define max(X,Y) ((X > Y) ? X : Y)
+
 #endif

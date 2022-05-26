@@ -268,14 +268,11 @@ float Lp_norm(Vector *v, int p) {
 void print_vector(Vector *v) {
     assert(v->capacity > 0);
 
-    printf("%s = (", v->name);
+    printf("%s = (\n", v->name);
     for (int i = 0; i < v->capacity; i++) {
         float re = creal(v->items[i]); float im = cimag(v->items[i]);
         char sign = (im < 0.0f) ? '-' : '+';
-        if (i == v->capacity - 1)
-            printf("%.3f %c %.3fi", re, sign, fabs(im));
-        else
-            printf("%.3f %c %.3fi, ", re, sign, fabs(im));
+        printf("     %.3f %c %.3fi\n", re, sign, fabs(im));
     }
     printf(")\n");
 }

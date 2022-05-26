@@ -115,20 +115,35 @@ Matrix *hadamard_prod(Matrix *m1, Matrix *m2) {
     return m;
 }
 
-// /**
-//  * @brief compute the transpose of a matrix
-//  * 
-//  * @param m matrix
-//  * @return Matrix* rows and columns are permuted 
-//  */
-// Matrix *transpose(Matrix *m) {
-//     Matrix *t = init_matrix("T", m->cols, m->rows);
+/**
+ * @brief compute the transpose of a matrix
+ * 
+ * @param m matrix
+ * @return Matrix* rows and columns are permuted 
+ */
+Matrix *matrix_transpose(Matrix *m) {
+    Matrix *t = malloc(sizeof(Matrix));
+    init_matrix(t, "T", m->cols, m->rows);
 
-//     for (int i = 0; i < t->rows; i++)
-//         for (int j = 0; j < t->cols; j++)
-//             t->items[i][j] = m->items[j][i];
-//     return t;
-// }
+    for (int j = 0; j < t->cols; j++)
+        for (int i = 0; i < t->rows; i++)
+            t->items[j].items[i] = m->items[i].items[j];
+    return t;
+}
+
+/**
+ * @brief return the trace of a matrix (sum of all diagonal elements)
+ * 
+ * @param m matrix
+ * @return float resulting sum
+ */
+float _Complex matrix_trace(Matrix *m) {
+    assert(m->rows == m->cols);
+    float _Complex trace = 0.0f + 0.0f * I;
+    for (int j = 0; j < m->cols; j++)
+        trace += m->items[j].items[j];
+    return trace;
+}
 
 // /**
 //  * @brief check if a matrix is symmetric
@@ -215,65 +230,55 @@ Matrix *hadamard_prod(Matrix *m1, Matrix *m2) {
 //     return determinant;
 // }
 
-// /**
-//  * @brief helper function to matrix norm computation
-//  * 
-//  * @param m matrix
-//  * @param x rows/cols
-//  * @param y cols/rows
-//  * @return float largest sum of absolute values w.r.t. x or y
-//  */
-// float matrix_L1_Linf_norm_helper(Matrix *m, int x, int y) {
-//     float max_sum = 0.0f;
-//     for (int j = 0; j < x; j++) {
-//         float sum = 0.0f;
-//         for (int i = 0; i < y; i++)
-//             sum += sqrt(pow(creal(m->items[i][j]),2) + pow(cimag(m->items[i][j]), 2));
-//         if (sum > max_sum)
-//             max_sum = sum;
-//     }
-//     return max_sum;
-// }
+/**
+ * @brief compute the L1 norm of a matrix
+ * 
+ * @param m matrix
+ * @return int largest sum of absolute values w.r.t. __columns__
+ */
+float matrix_L1_norm(Matrix *m) {
+    float max_sum = 0.0f;
+    for (int j = 0; j < m->rows; j++) {
+        float sum = 0.0f;
+        for (int i = 0; i < m->cols; i++)
+            sum += complex_abs(m->items[i].items[j]);
+        max_sum = max(max_sum, sum);
+    }
+    return max_sum;
+}
 
-// /**
-//  * @brief compute the L1 norm of a matrix
-//  * 
-//  * @param m matrix
-//  * @return int largest sum of absolute values w.r.t. __columns__
-//  */
-// float matrix_L1_norm(Matrix *m) {
-//     return matrix_L1_Linf_norm_helper(m, m->cols, m->rows);
-// }
+/**
+ * @brief compute the L-infinity norm of a matrix
+ * 
+ * @param m matrix
+ * @return int largest sum of absolute values w.r.t. __rows__
+ */
+float matrix_Linf_norm(Matrix *m) {
+    float max_sum = 0.0f;
+    for (int j = 0; j < m->cols; j++) {
+        float sum = 0.0f;
+        for (int i = 0; i < m->rows; i++)
+            sum += complex_abs(m->items[j].items[i]);
+        max_sum = max(max_sum, sum);
+    }
+    return max_sum;
+}
 
-// /**
-//  * @brief compute the L-infinity norm of a matrix
-//  * 
-//  * @param m matrix
-//  * @return int largest sum of absolute values w.r.t. __rows__
-//  */
-// float matrix_Linf_norm(Matrix *m) {
-//     return matrix_L1_Linf_norm_helper(m, m->rows, m->cols);
-// }
-
-// /**
-//  * @brief Print a matrix
-//  * 
-//  * @param m 
-//  */
-// void print_matrix(Matrix *m) {
-//     assert(m->rows > 0 && m->cols > 0);
-
-//     printf("%s = (\n", m->name);
-//     for (int i = 0; i < m->rows; i++) {
-//         for (int j = 0; j < m->cols; j++) {
-//             float re = creal(m->items[i][j]); float im = cimag(m->items[i][j]);
-//             char sign = (im < 0.0f) ? '-' : '+';
-//             if (j == m->cols - 1)
-//                 printf("%.3f %c %.3fi", re, sign, fabs(im));
-//             else
-//                 printf("%.3f %c %.3fi  ", re, sign, fabs(im));
-//         }
-//         printf("\n");
-//     }
-//     printf(")\n");
-// }
+/**
+ * @brief print a matrix
+ * 
+ * @param m 
+ */
+void print_matrix(Matrix *m) {
+    assert(m->rows > 0 && m->cols > 0);
+    printf("%s = (\n", m->name);
+    for (int j = 0; j < m->cols; j++) {
+        for (int i = 0; i < m->rows; i++) {
+            float re = creal(m->items[j].items[i]); float im = cimag(m->items[j].items[i]);
+            char sign = (im < 0.0f) ? '-' : '+';
+            printf("     %.3f %c %.3fi", re, sign, fabs(im));
+        }
+        printf("\n");
+    }
+    printf(")\n");
+}

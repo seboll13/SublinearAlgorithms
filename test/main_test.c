@@ -16,11 +16,11 @@ Suite *vector_suite(void) {
     tcase_add_test(tc_vector_operations, test_standard_vector_product);
     tcase_add_test(tc_vector_operations, test_standard_scalar_projection);
     tcase_add_test(tc_vector_operations, test_standard_vector_projection);
-    tcase_add_test(tc_vector_operations, test_standard_L1_norm);
-    tcase_add_test(tc_vector_operations, test_standard_L2_norm);
-    tcase_add_test(tc_vector_operations, test_first_level_Lp_norm);
-    tcase_add_test(tc_vector_operations, test_second_level_Lp_norm);
-    tcase_add_test(tc_vector_operations, test_third_level_Lp_norm);
+    tcase_add_test(tc_vector_operations, test_standard_vector_L1_norm);
+    tcase_add_test(tc_vector_operations, test_standard_vector_L2_norm);
+    tcase_add_test(tc_vector_operations, test_first_level_vector_Lp_norm);
+    tcase_add_test(tc_vector_operations, test_second_level_vector_Lp_norm);
+    tcase_add_test(tc_vector_operations, test_third_level_vector_Lp_norm);
     suite_add_tcase(s, tc_vector_operations);
 
     TCase *tc_vector_helpers = tcase_create("Vector helpers");
@@ -44,6 +44,10 @@ Suite *matrix_suite(void) {
     tcase_add_test(tc_matrix_operations, test_standard_matrix_subtraction);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_multiplication);
     tcase_add_test(tc_matrix_operations, test_standard_hadamard_product);
+    tcase_add_test(tc_matrix_operations, test_standard_transpose);
+    tcase_add_test(tc_matrix_operations, test_standard_matrix_trace);
+    tcase_add_test(tc_matrix_operations, test_standard_matrix_L1_norm);
+    tcase_add_test(tc_matrix_operations, test_standard_matrix_Linf_norm);
     suite_add_tcase(s, tc_matrix_operations);
     return s;
 }

@@ -10,8 +10,8 @@
 Matrix *create_dummy_real_matrix(float _Complex n) {
     Matrix *m = malloc(sizeof(Matrix));
     init_matrix(m, "M", 3, 3);
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
             update_matrix(m, n, i, j);
     return m;
 }
@@ -98,5 +98,61 @@ START_TEST(test_standard_hadamard_product)
             ck_assert_float_eq(m->items[j].items[i], 2.0f);
     free_matrix(m1); free_matrix(m2); free_matrix(m);
     free(m1); free(m2); free(m);
+}
+END_TEST
+
+START_TEST(test_standard_transpose)
+{
+    float _Complex vals[2] = {0.0f, 1.0f};
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", 3, 2);
+    for (int j = 0; j < 2; j++)
+        for (int i = 0; i < 3; i++)
+            update_matrix(m, vals[j], i, j);
+    
+    Matrix *t = matrix_transpose(m);
+    for (int j = 0; j < 2; j++)
+        for (int i = 0; i < 3; i++)
+            ck_assert_float_eq(t->items[i].items[j], vals[j]);
+    free_matrix(t); free_matrix(m);
+    free(t); free(m);
+}
+END_TEST
+
+START_TEST(test_standard_matrix_trace)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    float _Complex trace = matrix_trace(m);
+    ck_assert_float_eq(trace, 3.0f);
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_standard_matrix_L1_norm)
+{
+    float _Complex vals[3] = {1.0f, 2.0f, 3.0f};
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", 3, 3);
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            update_matrix(m, vals[i], i, j);
+    ck_assert_float_eq(matrix_L1_norm(m), 9.0f);
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_standard_matrix_Linf_norm)
+{
+    float _Complex vals[3] = {1.0f, 2.0f, 3.0f};
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", 3, 3);
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            update_matrix(m, vals[i], i, j);
+    ck_assert_float_eq(matrix_Linf_norm(m), 6.0f);
+    free_matrix(m);
+    free(m);
 }
 END_TEST

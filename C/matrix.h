@@ -21,7 +21,8 @@ void update_matrix(Matrix *m, float _Complex n, int row, int col);
 Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add);
 Matrix *matrix_mult(Matrix *m1, Matrix *m2);
 Matrix *hadamard_prod(Matrix *m1, Matrix *m2);
-Matrix *transpose(Matrix *m);
+Matrix *matrix_transpose(Matrix *m);
+float _Complex matrix_trace(Matrix *m);
 
 // Helper functions
 bool check_symmetry(Matrix *m);

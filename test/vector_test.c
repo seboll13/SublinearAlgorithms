@@ -139,7 +139,7 @@ START_TEST(test_standard_vector_projection)
 }
 END_TEST
 
-START_TEST(test_standard_L1_norm)
+START_TEST(test_standard_vector_L1_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
     float n = L1_norm(u);
@@ -149,7 +149,7 @@ START_TEST(test_standard_L1_norm)
 }
 END_TEST
 
-START_TEST(test_standard_L2_norm)
+START_TEST(test_standard_vector_L2_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
     float n = L2_norm(u);
@@ -159,7 +159,7 @@ START_TEST(test_standard_L2_norm)
 }
 END_TEST
 
-START_TEST(test_first_level_Lp_norm)
+START_TEST(test_first_level_vector_Lp_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
     float n = Lp_norm(u, 1);
@@ -169,7 +169,7 @@ START_TEST(test_first_level_Lp_norm)
 }
 END_TEST
 
-START_TEST(test_second_level_Lp_norm)
+START_TEST(test_second_level_vector_Lp_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
     float n = Lp_norm(u, 2);
@@ -179,7 +179,7 @@ START_TEST(test_second_level_Lp_norm)
 }
 END_TEST
 
-START_TEST(test_third_level_Lp_norm)
+START_TEST(test_third_level_vector_Lp_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
     float n = Lp_norm(u, 3);
