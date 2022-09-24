@@ -93,6 +93,26 @@ Tensor *tensor_scalar_mult(Tensor *T, float _Complex n) {
 }
 
 /**
+ * @brief element-wise multiplication of two tensors
+ * 
+ * @param E first tensor
+ * @param F second tensor
+ * @return Tensor* multiplication
+ */
+Tensor *tensor_mult(Tensor *E, Tensor *F) {
+    assert(E->rows == F->rows && E->cols == F->cols && E->depth == F->depth);
+
+    Tensor *T = malloc(sizeof(Tensor));
+    init_tensor(T, "T", E->rows, E->cols, E->depth);
+
+    for (int n_3 = 0; n_3 < T->depth; n_3++)
+        for (int n_2 = 0; n_2 < T->cols; n_2++)
+            for (int n_1 = 0; n_1 < T->rows; n_1++)
+                update_tensor(T, E->items[n_3].items[n_2].items[n_1] * F->items[n_3].items[n_2].items[n_1], n_1, n_2, n_3);
+    return T;
+}
+
+/**
  * @brief return the canonical polyadic decomposition of a tensor
  * TODO: test
  * 

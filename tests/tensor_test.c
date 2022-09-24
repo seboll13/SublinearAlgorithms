@@ -93,3 +93,17 @@ START_TEST(test_standard_tensor_scalar_multiplication)
     free(V); free(T);
 }
 END_TEST
+
+START_TEST(test_standard_tensor_elementwise_multiplication)
+{
+    Tensor *E = create_dummy_real_tensor(1.0f);
+    Tensor *F = create_dummy_real_tensor(1.0f);
+    
+    Tensor *T = tensor_mult(E, F);
+    for (int n_3 = 0; n_3 < 2; n_3++)
+        for (int n_2 = 0; n_2 < 3; n_2++)
+            for (int n_1 = 0; n_1 < 3; n_1++)
+                ck_assert_float_eq(T->items[n_3].items[n_2].items[n_1], 1.0f);
+    free_tensor(E); free_tensor(F); free_tensor(T);
+    free(E); free(F); free(T);
+}

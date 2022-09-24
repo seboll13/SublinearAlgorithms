@@ -18,6 +18,7 @@ void update_tensor(Tensor *T, float _Complex n, int row, int col, int depth);
 
 // Basic tensor operations
 Tensor *tensor_add(Tensor *E, Tensor *F, bool add);
+Tensor *tensor_mult(Tensor *E, Tensor *F);
 Tensor *tensor_scalar_mult(Tensor *T, float _Complex n);
 
 #endif
