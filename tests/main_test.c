@@ -46,6 +46,10 @@ Suite *matrix_suite(void) {
     tcase_add_test(tc_matrix_operations, test_standard_hadamard_product);
     tcase_add_test(tc_matrix_operations, test_standard_kroenecker_product);
     tcase_add_test(tc_matrix_operations, test_standard_transpose);
+    tcase_add_test(tc_matrix_operations, test_standard_matrix_determinant);
+    tcase_add_test(tc_matrix_operations, test_standard_matrix_cofactor);
+    tcase_add_test(tc_matrix_operations, test_standard_matrix_adjoint);
+    tcase_add_test(tc_matrix_operations, test_standard_matrix_inverse);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_trace);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_L1_norm);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_Linf_norm);

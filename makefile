@@ -13,6 +13,10 @@ test:
 run_tests: test
 	$(TESTPATH)main_test
 
+commit: clean
+	git add .
+	git commit -m "$(M)"
+
 push: clean
 	git add .
 	git commit -m "$(M)"

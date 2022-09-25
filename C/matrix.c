@@ -166,6 +166,104 @@ Matrix *matrix_transpose(Matrix *m) {
 }
 
 /**
+ * @brief compute the conjugate transpose of a matrix
+ * 
+ * @param m matrix
+ * @return Matrix* the matrix of the complex conjugates, the rows and columns of which are permuted 
+ */
+Matrix *matrix_conj_transpose(Matrix *m) {
+    Matrix *t = malloc(sizeof(Matrix));
+    init_matrix(t, "T", m->cols, m->rows);
+
+    for (int j = 0; j < t->cols; j++)
+        for (int i = 0; i < t->rows; i++)
+            t->items[j].items[i] = conj(m->items[i].items[j]);
+    return t;
+}
+
+/**
+ * @brief Compute the determinant of a square matrix m
+ * 
+ * @param m matrix
+ * @return int the value of the determinant
+ */
+int matrix_determinant(Matrix *m) {
+    assert(m->rows == m->cols);
+    if (m->rows == 1) return m->items[0].items[0];
+    int det = 0;
+    for (int i = 0; i < m->rows; i++) {
+        Matrix *sub = malloc(sizeof(Matrix));
+        init_matrix(sub, "S", m->rows-1, m->cols-1);
+        for (int j = 0; j < m->rows; j++) {
+            if (j == i) continue;
+            for (int k = 0; k < m->cols; k++) {
+                if (k == 0) continue;
+                update_matrix(sub, m->items[j].items[k], j > i ? j-1 : j, k-1);
+            }
+        }
+        det += m->items[i].items[0] * matrix_determinant(sub) * (i % 2 == 0 ? 1 : -1);
+    }
+    return det;
+}
+
+/**
+ * @brief compute the cofactor matrix of a matrix
+ * 
+ * @param m matrix
+ * @return Matrix* the matrix of the cofactors
+ */
+Matrix *matrix_cofactor(Matrix *m) {
+    assert(m->rows == m->cols);
+    Matrix *c = malloc(sizeof(Matrix));
+    init_matrix(c, "C", m->rows, m->cols);
+
+    for (int j = 0; j < c->cols; j++) {
+        for (int i = 0; i < c->rows; i++) {
+            Matrix *sub = malloc(sizeof(Matrix));
+            init_matrix(sub, "S", m->rows-1, m->cols-1);
+            for (int k = 0; k < m->rows; k++) {
+                if (k == i) continue;
+                for (int l = 0; l < m->cols; l++) {
+                    if (l == j) continue;
+                    update_matrix(sub, m->items[l].items[k], k > i ? k-1 : k, l > j ? l-1 : l);
+                }
+            }
+            update_matrix(c, matrix_determinant(sub) * pow(-1, i+j), i, j);
+        }
+    }
+    return c;
+}
+
+/**
+ * @brief compute the adjoint of a matrix
+ * 
+ * @param m matrix
+ * @return Matrix* the conjugate transposed of the cofactor matrix
+ */
+// compute the adjugate matrix
+Matrix *matrix_adjoint(Matrix *m) {
+    return matrix_conj_transpose(matrix_cofactor(m));
+}
+
+/**
+ * @brief compute the inverse of a matrix
+ * 
+ * @param m matrix
+ * @return Matrix* the inverse of the matrix
+ */
+Matrix *matrix_inverse(Matrix *m) {
+    assert(m->rows == m->cols);
+    Matrix *inv = malloc(sizeof(Matrix));
+    init_matrix(inv, "I", m->rows, m->cols);
+    
+    float det = matrix_determinant(m);
+    for (int j = 0; j < inv->cols; j++)
+        for (int i = 0; i < inv->rows; i++)
+            update_matrix(inv, matrix_adjoint(m)->items[j].items[i] / det, i, j);
+    return inv;
+}
+
+/**
  * @brief return the trace of a matrix (sum of all diagonal elements)
  * 
  * @param m matrix
@@ -178,91 +276,6 @@ float _Complex matrix_trace(Matrix *m) {
         trace += m->items[j].items[j];
     return trace;
 }
-
-// /**
-//  * @brief compute the determinant of a square matrix
-//  * 
-//  * @param m matrix
-//  * @return int value of the det
-//  */
-// float det(Matrix *m) {
-//     assert(m->cols == m->rows);
-
-//     // If one element on the diagonal is zero, return 0
-//     for (int i = 0; i < m->rows; i++)
-//         if(m->items[i][i] == 0)
-//             return 0;
-
-//     float determinant = 0.0f;
-//     // Case where matrix is diagonal
-//     if (check_diagonality(m)) {
-//         for (int i = 0; i < m->rows; i++)
-//             determinant *= m->items[i][i];
-//         return determinant;
-//     }
-//     // Case in which either an entire row or an entire column is zero
-//     if (check_entire_line_of_zeroes(m))
-//         return 0.0f;
-//     return determinant;
-// }
-
-// /**
-//  * @brief check if a matrix is symmetric
-//  * 
-//  * @param m 
-//  * @return true 
-//  * @return false 
-//  */
-// bool check_symmetry(Matrix *m) {
-//     assert(m->rows == m->cols);
-
-//     for (int i = 0; i < m->rows; i++)
-//         for (int j = 0; j < m->cols; j++)
-//             if (m->items[i][j] != m->items[j][i])
-//                 return false;
-//     return true;
-// }
-
-// /**
-//  * @brief Check if the matrix is diagonal
-//  * 
-//  * @param m matrix
-//  * @return true if all elements off-diagonal are zero
-//  * @return false otherwise
-//  */
-// bool check_diagonality(Matrix *m) {
-//     assert(m->rows > 0 && m->cols > 0);
-    
-//     for (int i = 0; i < m->rows; i++)
-//         for (int j = 0; j < m->cols; j++)
-//             // check the off-diagonal elements
-//             if (i != j && m->items[i][j] != 0)
-//                 return false;
-//     return true;
-// }
-
-// /**
-//  * @brief check if an entire row or column is made of only zeroes
-//  * 
-//  * @param m matrix
-//  * @return true if at least one row or one col is made of only zeroes
-//  * @return false otherwise
-//  */
-// bool check_entire_line_of_zeroes(Matrix *m) {
-//     assert(m->rows > 0 && m->cols > 0);
-    
-//     bool ret_value;
-//     for (int i = 0; i < m->rows; i++) {
-//         int row_sum = 0; int col_sum = 0;
-
-//         for (int j = 0; j < m->cols; j++) {
-//             row_sum += m->items[i][j]; // sum over each row
-//             col_sum += m->items[j][i]; // sum over each line
-//         }
-//         ret_value = (row_sum == 0 || col_sum == 0);
-//     }
-//     return ret_value;
-// }
 
 /**
  * @brief compute the L1 norm of a matrix

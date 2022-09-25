@@ -153,6 +153,73 @@ START_TEST(test_standard_transpose)
 }
 END_TEST
 
+START_TEST(test_conj_transpose)
+{
+    float _Complex vals[2] = {0.0f, 1.0f};
+    Matrix *m = create_distinct_vectors_matrix(vals, 2, 3);
+    
+    Matrix *t = matrix_conj_transpose(m);
+    for (int j = 0; j < 2; j++)
+        for (int i = 0; i < 3; i++)
+            ck_assert_float_eq(t->items[j].items[i], conjf(vals[j]));
+    free_matrix(t); free_matrix(m);
+    free(t); free(m);
+}
+END_TEST
+
+START_TEST(test_standard_matrix_determinant)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    float _Complex det = matrix_determinant(m);
+    ck_assert_float_eq(det, 0.0f);
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_standard_matrix_cofactor)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    Matrix *cofactor = matrix_cofactor(m);
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            ck_assert_float_eq(cofactor->items[j].items[i], 0.0f);
+    free_matrix(m); free_matrix(cofactor);
+    free(m); free(cofactor);
+}
+END_TEST
+
+START_TEST(test_standard_matrix_adjoint)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    Matrix *adjoint = matrix_adjoint(m);
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            ck_assert_float_eq(adjoint->items[j].items[i], 0.0f);
+    free_matrix(m); free_matrix(adjoint);
+    free(m); free(adjoint);
+}
+END_TEST
+
+START_TEST(test_standard_matrix_inverse)
+{
+    // Manually create a matrix with non-zero determinant
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", 2, 2);
+    update_matrix(m, 1, 0, 0);
+    update_matrix(m, 2, 0, 1);
+    update_matrix(m, 2, 1, 0);
+    update_matrix(m, 1, 1, 1);
+    Matrix *inv = matrix_inverse(m);
+    ck_assert_float_eq(inv->items[0].items[0], (float) -1/3);
+    ck_assert_float_eq(inv->items[0].items[1], (float) 2/3);
+    ck_assert_float_eq(inv->items[1].items[0], (float) 2/3);
+    ck_assert_float_eq(inv->items[1].items[1], (float) -1/3);
+    free_matrix(m); free_matrix(inv);
+    free(m); free(inv);
+}
+END_TEST
+
 START_TEST(test_standard_matrix_trace)
 {
     Matrix *m = create_dummy_real_matrix(1.0f);

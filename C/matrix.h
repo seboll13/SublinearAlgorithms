@@ -23,6 +23,11 @@ Matrix *matrix_mult(Matrix *m1, Matrix *m2);
 Matrix *matrix_hadamard_prod(Matrix *m1, Matrix *m2);
 Matrix *matrix_kronecker_prod(Matrix *m1, Matrix *m2);
 Matrix *matrix_transpose(Matrix *m);
+Matrix *matrix_conj_transpose(Matrix *m);
+int matrix_determinant(Matrix *m);
+Matrix *matrix_cofactor(Matrix *m);
+Matrix *matrix_adjoint(Matrix *m);
+Matrix *matrix_inverse(Matrix *m);
 float _Complex matrix_trace(Matrix *m);
 float det(Matrix *m);
 
