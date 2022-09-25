@@ -1,6 +1,6 @@
 CPATH=./C/
 TESTPATH=./tests/
-M="default push from makefile message"
+M=default push from makefile message
 
 all: run test
 
