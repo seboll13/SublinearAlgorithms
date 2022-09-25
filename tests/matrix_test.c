@@ -109,6 +109,18 @@ START_TEST(test_standard_matrix_multiplication)
 }
 END_TEST
 
+START_TEST(test_standard_matrix_power)
+{
+    Matrix *m = create_dummy_real_matrix(2.0f);
+    Matrix *m2 = matrix_power(m, 2);
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            ck_assert_float_eq(m2->items[j].items[i], 12.0f);
+    free_matrix(m); free_matrix(m2);
+    free(m); free(m2);
+}
+END_TEST
+
 START_TEST(test_standard_hadamard_product)
 {
     Matrix *m1 = create_dummy_real_matrix(1.0f);
@@ -167,16 +179,6 @@ START_TEST(test_conj_transpose)
 }
 END_TEST
 
-START_TEST(test_standard_matrix_determinant)
-{
-    Matrix *m = create_dummy_real_matrix(1.0f);
-    float _Complex det = matrix_determinant(m);
-    ck_assert_float_eq(det, 0.0f);
-    free_matrix(m);
-    free(m);
-}
-END_TEST
-
 START_TEST(test_standard_matrix_cofactor)
 {
     Matrix *m = create_dummy_real_matrix(1.0f);
@@ -220,6 +222,16 @@ START_TEST(test_standard_matrix_inverse)
 }
 END_TEST
 
+START_TEST(test_standard_matrix_determinant)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    float _Complex det = matrix_determinant(m);
+    ck_assert_float_eq(det, 0.0f);
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
 START_TEST(test_standard_matrix_trace)
 {
     Matrix *m = create_dummy_real_matrix(1.0f);
@@ -229,6 +241,16 @@ START_TEST(test_standard_matrix_trace)
     free(m);
 }
 END_TEST
+
+/*START_TEST(test_standard_matrix_rank)
+{
+    Matrix *m = create_dummy_real_matrix(3.0f);
+    int rank = matrix_rank(m);
+    ck_assert_int_eq(rank, 1);
+    free_matrix(m);
+    free(m);
+}
+END_TEST*/
 
 START_TEST(test_standard_matrix_L1_norm)
 {

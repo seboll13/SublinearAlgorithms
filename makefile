@@ -1,6 +1,6 @@
 CPATH=./C/
 TESTPATH=./tests/
-M=default push from makefile message
+M="default push from makefile message"
 
 all: run test
 
@@ -15,11 +15,11 @@ run_tests: test
 
 commit: clean
 	git add .
-	git commit -m "$(M)"
+	git commit -m $(M)
 
 push: clean
 	git add .
-	git commit -m "$(M)"
+	git commit -m $(M)
 	git push
 
 .PHONY: all clean

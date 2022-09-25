@@ -113,6 +113,25 @@ Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
 }
 
 /**
+ * @brief return the power of a matrix
+ * 
+ * @param m matrix
+ * @param p power
+ * @return Matrix* the matrix m multiplied by itself p times 
+ */
+Matrix *matrix_power(Matrix *m, int p) {
+    assert(m->rows == m->cols);
+    Matrix *pow = malloc(sizeof(Matrix));
+    init_matrix(pow, "P", m->rows, m->cols);
+    for (int j = 0; j < pow->cols; j++)
+        for (int i = 0; i < pow->rows; i++)
+            update_matrix(pow, i == j ? 1 : 0, i, j);
+    for (int i = 0; i < p; i++)
+        pow = matrix_mult(pow, m);
+    return pow;
+}
+
+/**
  * @brief return the Hadamard product of two matrices (i.e. element-wise multiplication)
  * 
  * @param m1 first matrix
@@ -182,31 +201,6 @@ Matrix *matrix_conj_transpose(Matrix *m) {
 }
 
 /**
- * @brief Compute the determinant of a square matrix m
- * 
- * @param m matrix
- * @return int the value of the determinant
- */
-int matrix_determinant(Matrix *m) {
-    assert(m->rows == m->cols);
-    if (m->rows == 1) return m->items[0].items[0];
-    int det = 0;
-    for (int i = 0; i < m->rows; i++) {
-        Matrix *sub = malloc(sizeof(Matrix));
-        init_matrix(sub, "S", m->rows-1, m->cols-1);
-        for (int j = 0; j < m->rows; j++) {
-            if (j == i) continue;
-            for (int k = 0; k < m->cols; k++) {
-                if (k == 0) continue;
-                update_matrix(sub, m->items[j].items[k], j > i ? j-1 : j, k-1);
-            }
-        }
-        det += m->items[i].items[0] * matrix_determinant(sub) * (i % 2 == 0 ? 1 : -1);
-    }
-    return det;
-}
-
-/**
  * @brief compute the cofactor matrix of a matrix
  * 
  * @param m matrix
@@ -255,12 +249,63 @@ Matrix *matrix_inverse(Matrix *m) {
     assert(m->rows == m->cols);
     Matrix *inv = malloc(sizeof(Matrix));
     init_matrix(inv, "I", m->rows, m->cols);
-    
+
     float det = matrix_determinant(m);
     for (int j = 0; j < inv->cols; j++)
         for (int i = 0; i < inv->rows; i++)
             update_matrix(inv, matrix_adjoint(m)->items[j].items[i] / det, i, j);
     return inv;
+}
+
+/**
+ * @brief Compute the eigenvalues of a matrix
+ * TODO: work on this + test
+ * 
+ * @param m matrix
+ * @return Matrix* the collection of eigenvectors 
+ */
+Matrix *matrix_eigenvalues(Matrix *m) {
+    assert(m->rows == m->cols);
+    Matrix *eig = malloc(sizeof(Matrix));
+    init_matrix(eig, "E", m->rows, 1);
+    for (int i = 0; i < eig->rows; i++) {
+        Matrix *sub = malloc(sizeof(Matrix));
+        init_matrix(sub, "S", m->rows-1, m->cols-1);
+        for (int j = 0; j < m->rows; j++) {
+            if (j == i) continue;
+            for (int k = 0; k < m->cols; k++) {
+                if (k == 0) continue;
+                update_matrix(sub, m->items[j].items[k], j > i ? j-1 : j, k-1);
+            }
+        }
+        update_matrix(eig, matrix_determinant(sub) / m->items[i].items[0], i, 0);
+    }
+    return eig;
+}
+
+/**
+ * @brief Compute the determinant of a square matrix m
+ * 
+ * @param m matrix
+ * @return int the value of the determinant
+ */
+int matrix_determinant(Matrix *m) {
+    assert(m->rows == m->cols);
+    if (m->rows == 1) return m->items[0].items[0];
+    int det = 0;
+    for (int i = 0; i < m->rows; i++) {
+        Matrix *sub = malloc(sizeof(Matrix));
+        init_matrix(sub, "S", m->rows-1, m->cols-1);
+        for (int j = 0; j < m->rows; j++) {
+            if (j == i) continue;
+            for (int k = 0; k < m->cols; k++) {
+                if (k == 0) continue;
+                update_matrix(sub, m->items[j].items[k], j > i ? j-1 : j, k-1);
+            }
+        }
+        det += m->items[i].items[0] * matrix_determinant(sub) * (i % 2 == 0 ? 1 : -1);
+    }
+    return det;
 }
 
 /**
@@ -276,6 +321,29 @@ float _Complex matrix_trace(Matrix *m) {
         trace += m->items[j].items[j];
     return trace;
 }
+
+/**
+ * @brief compute the rank of a matrix
+ * TODO: check this
+ * 
+ * @param m matrix
+ * @return int the rank of the matrix
+ */
+/*int matrix_rank(Matrix *m) {
+    int rank = 0;
+    for (int j = 0; j < m->cols; j++) {
+        int zero = 1;
+        for (int i = 0; i < m->rows; i++) {
+            if (m->items[i].items[j] != 0) {
+                zero = 0;
+                break;
+            }
+        }
+        if (!zero) rank++;
+    }
+    return rank;
+}*/
+
 
 /**
  * @brief compute the L1 norm of a matrix

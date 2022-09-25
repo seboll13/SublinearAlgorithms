@@ -20,16 +20,18 @@ void update_matrix(Matrix *m, float _Complex n, int row, int col);
 Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add);
 Matrix *matrix_scalar_mult(float _Complex n, Matrix *m);
 Matrix *matrix_mult(Matrix *m1, Matrix *m2);
+Matrix *matrix_power(Matrix *m, int p);
 Matrix *matrix_hadamard_prod(Matrix *m1, Matrix *m2);
 Matrix *matrix_kronecker_prod(Matrix *m1, Matrix *m2);
 Matrix *matrix_transpose(Matrix *m);
 Matrix *matrix_conj_transpose(Matrix *m);
-int matrix_determinant(Matrix *m);
 Matrix *matrix_cofactor(Matrix *m);
 Matrix *matrix_adjoint(Matrix *m);
 Matrix *matrix_inverse(Matrix *m);
+Matrix *matrix_eigenvalues(Matrix *m);
+int matrix_determinant(Matrix *m);
 float _Complex matrix_trace(Matrix *m);
-float det(Matrix *m);
+int matrix_rank(Matrix *m);
 
 // Helper functions
 bool check_symmetry(Matrix *m);
