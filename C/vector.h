@@ -17,6 +17,9 @@ void init_vector(Vector *v, char *name, int rows);
 void free_vector(Vector *v);
 void update_vector(Vector *v, float _Complex n, int idx);
 
+// Vector population
+Vector *rademacher_vector(int rows);
+
 // Vector basic operations
 Vector *vector_add(Vector *u, Vector *v, bool add);
 Vector *vector_scalar_mult(Vector *u, int a);

@@ -51,9 +51,9 @@ void update_matrix(Matrix *m, float _Complex n, int row, int col) {
 /**
  * @brief Create a random matrix containing +/- 1 with equal probability
  * 
- * @param rows 
- * @param cols 
- * @return Matrix* 
+ * @param rows # of rows
+ * @param cols # of columns
+ * @return Matrix* the resulting matrix
  */
 Matrix *rademacher_matrix(int rows, int cols) {
     Matrix *m = malloc(sizeof(Matrix));
@@ -342,8 +342,8 @@ float _Complex matrix_trace(Matrix *m) {
 /**
  * @brief Rotate a matrix 90 degrees to the left
  * 
- * @param m 
- * @return Matrix* 
+ * @param m matrix
+ * @return Matrix* the rotated matrix 
  */
 Matrix *matrix_rotate_left(Matrix *m) {
     Matrix *r = malloc(sizeof(Matrix));
@@ -358,8 +358,8 @@ Matrix *matrix_rotate_left(Matrix *m) {
 /**
  * @brief Rotate a matrix 90 degrees to the right
  * 
- * @param m 
- * @return Matrix* 
+ * @param m matrix
+ * @return Matrix* the rotated matrix 
  */
 Matrix *matrix_rotate_right(Matrix *m) {
     Matrix *r = malloc(sizeof(Matrix));
@@ -374,9 +374,9 @@ Matrix *matrix_rotate_right(Matrix *m) {
 /**
  * @brief check if a matrix is symmetric
  * 
- * @param m 
- * @return true 
- * @return false 
+ * @param m matrix
+ * @return true if matrix is symmetric
+ * @return false otherwise
  */
 bool check_symmetry(Matrix *m) {
     assert(m->rows == m->cols);
@@ -389,9 +389,9 @@ bool check_symmetry(Matrix *m) {
 /**
  * @brief check if a matrix is diagonal
  * 
- * @param m 
- * @return true 
- * @return false 
+ * @param m matrix
+ * @return true if the matrix contains non-zero elements only on the diagonal
+ * @return false otherwise
  */
 bool check_diagonality(Matrix *m) {
     assert(m->rows == m->cols);
@@ -404,9 +404,9 @@ bool check_diagonality(Matrix *m) {
 /**
  * @brief check if there exists a line of zeroes
  * 
- * @param m 
- * @return true 
- * @return false 
+ * @param m matrix
+ * @return true if there exists a line of zeroes
+ * @return false otherwise
  */
 bool check_entire_line_of_zeroes(Matrix *m) {
     for (int j = 0; j < m->cols; j++) {

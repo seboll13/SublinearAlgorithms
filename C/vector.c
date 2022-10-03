@@ -45,6 +45,17 @@ void update_vector(Vector *v, float _Complex n, int idx) {
     v->items[idx] = n;
 }
 
+Vector *rademacher_vector(int rows) {
+    assert(rows > 0);
+
+    Vector *v = malloc(sizeof(Vector));
+    init_vector(v, "V", rows);
+
+    for (int i = 0; i < rows; i++)
+        update_vector(v, (rand() % 2 == 0) ? 1.0f + 0.0f * I : -1.0f + 0.0f * I, i);
+    return v;
+}
+
 /**
  * @brief compute the sum of two vectors
  * 

@@ -8,6 +8,10 @@ int main() {
     srand(time(NULL)); // Set a different seed for random generation
     
     // VECTOR PART
+    Vector *v = rademacher_vector(3);
+    print_vector(v);
+    free_vector(v);
+    free(v);
 
     // MATRIX PART
     Matrix *m = rademacher_matrix(3,3);
