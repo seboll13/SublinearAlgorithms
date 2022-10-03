@@ -5,7 +5,8 @@ M="default push from makefile message"
 all: run test
 
 run:
-	$(MAKE) -C $(CPATH)
+	@echo "Running..."
+	@cd $(CPATH) && make run
 
 test:
 	$(MAKE) -C $(TESTPATH)

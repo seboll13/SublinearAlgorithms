@@ -49,6 +49,23 @@ void update_matrix(Matrix *m, float _Complex n, int row, int col) {
 }
 
 /**
+ * @brief Create a random matrix containing +/- 1 with equal probability
+ * 
+ * @param rows 
+ * @param cols 
+ * @return Matrix* 
+ */
+Matrix *rademacher_matrix(int rows, int cols) {
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", rows, cols);
+
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+            update_matrix(m, (rand() % 2) ? 1.0f + 0.0f * I : -1.0f + 0.0f * I, i, j);
+    return m;
+}
+
+/**
  * @brief element-wise addition of two matrices
  * 
  * @param m1 first matrix
@@ -289,10 +306,10 @@ Matrix *matrix_eigenvalues(Matrix *m) {
  * @param m matrix
  * @return int the value of the determinant
  */
-int matrix_determinant(Matrix *m) {
+float matrix_determinant(Matrix *m) {
     assert(m->rows == m->cols);
     if (m->rows == 1) return m->items[0].items[0];
-    int det = 0;
+    float det = 0.0f;
     for (int i = 0; i < m->rows; i++) {
         Matrix *sub = malloc(sizeof(Matrix));
         init_matrix(sub, "S", m->rows-1, m->cols-1);
@@ -323,27 +340,83 @@ float _Complex matrix_trace(Matrix *m) {
 }
 
 /**
- * @brief compute the rank of a matrix
- * TODO: check this
+ * @brief Rotate a matrix 90 degrees to the left
  * 
- * @param m matrix
- * @return int the rank of the matrix
+ * @param m 
+ * @return Matrix* 
  */
-/*int matrix_rank(Matrix *m) {
-    int rank = 0;
-    for (int j = 0; j < m->cols; j++) {
-        int zero = 1;
-        for (int i = 0; i < m->rows; i++) {
-            if (m->items[i].items[j] != 0) {
-                zero = 0;
-                break;
-            }
-        }
-        if (!zero) rank++;
-    }
-    return rank;
-}*/
+Matrix *matrix_rotate_left(Matrix *m) {
+    Matrix *r = malloc(sizeof(Matrix));
+    init_matrix(r, "R", m->rows, m->cols);
+    if (m->rows != m->cols) return NULL;
+    for (int j = 0; j < r->cols; j++)
+        for (int i = 0; i < r->rows; i++)
+            update_matrix(r, m->items[i].items[r->cols-1-j], i, j);
+    return r;
+}
 
+/**
+ * @brief Rotate a matrix 90 degrees to the right
+ * 
+ * @param m 
+ * @return Matrix* 
+ */
+Matrix *matrix_rotate_right(Matrix *m) {
+    Matrix *r = malloc(sizeof(Matrix));
+    init_matrix(r, "R", m->rows, m->cols);
+    if (m->rows != m->cols) return NULL;
+    for (int j = 0; j < r->cols; j++)
+        for (int i = 0; i < r->rows; i++)
+            update_matrix(r, m->items[r->rows-1-i].items[j], i, j);
+    return r;
+}
+
+/**
+ * @brief check if a matrix is symmetric
+ * 
+ * @param m 
+ * @return true 
+ * @return false 
+ */
+bool check_symmetry(Matrix *m) {
+    assert(m->rows == m->cols);
+    for (int j = 0; j < m->cols; j++)
+        for (int i = 0; i < m->rows; i++)
+            if (m->items[i].items[j] != m->items[j].items[i]) return false;
+    return true;
+}
+
+/**
+ * @brief check if a matrix is diagonal
+ * 
+ * @param m 
+ * @return true 
+ * @return false 
+ */
+bool check_diagonality(Matrix *m) {
+    assert(m->rows == m->cols);
+    for (int j = 0; j < m->cols; j++)
+        for (int i = 0; i < m->rows; i++)
+            if (i != j && m->items[i].items[j] != 0) return false;
+    return true;
+}
+
+/**
+ * @brief check if there exists a line of zeroes
+ * 
+ * @param m 
+ * @return true 
+ * @return false 
+ */
+bool check_entire_line_of_zeroes(Matrix *m) {
+    for (int j = 0; j < m->cols; j++) {
+        bool all_zeroes = true;
+        for (int i = 0; i < m->rows; i++)
+            if (m->items[i].items[j] != 0) all_zeroes = false;
+        if (all_zeroes) return true;
+    }
+    return false;
+}
 
 /**
  * @brief compute the L1 norm of a matrix
@@ -361,6 +434,8 @@ float matrix_L1_norm(Matrix *m) {
     }
     return max_sum;
 }
+
+
 
 /**
  * @brief compute the L-infinity norm of a matrix

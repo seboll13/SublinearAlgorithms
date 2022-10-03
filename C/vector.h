@@ -26,8 +26,13 @@ float scalar_projection(Vector *u, Vector *v);
 Vector *vector_projection(Vector *u, Vector *v);
 float vector_angle_between(Vector *u, Vector *v, bool radians);
 
-// Helper functions (TODO see for change of file)
+// Helper functions
+bool check_collinearity(Vector *u, Vector *v);
+bool check_parallelism(Vector *u, Vector *v);
 bool check_orthogonality(Vector *u, Vector *v);
+bool check_perpendicularity(Vector *u, Vector *v);
+bool check_equality(Vector *u, Vector *v);
+bool check_oppositeness(Vector *u, Vector *v);
 
 // Norms
 float L1_norm(Vector *u);

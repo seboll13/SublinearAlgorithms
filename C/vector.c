@@ -176,6 +176,36 @@ float vector_angle_between(Vector *u, Vector *v, bool radians) {
 }
 
 /**
+ * @brief check whether or not two vectors are collinear
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return true if u and v are collinear
+ * @return false otherwise (the angle between u and v is not 0deg)
+ */
+bool check_collinearity(Vector *u, Vector *v) {
+    assert(u->capacity > 0 && v->capacity > 0);
+    assert(u->capacity == v->capacity);
+
+    return dot_product(u, v) == L2_norm(u) * L2_norm(v);
+}
+
+/**
+ * @brief check whether or not two vectors are parallel
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return true if u and v are parallel
+ * @return false otherwise (the angle between u and v is not 0deg or 180deg)
+ */
+bool check_parallelism(Vector *u, Vector *v) {
+    assert(u->capacity > 0 && v->capacity > 0);
+    assert(u->capacity == v->capacity);
+
+    return dot_product(u, v) == L2_norm(u) * L2_norm(v) || dot_product(u, v) == -L2_norm(u) * L2_norm(v);
+}
+
+/**
  * @brief check whether or not two vectors are orthogonal
  * 
  * @param u vector 1
@@ -188,6 +218,57 @@ bool check_orthogonality(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
     return dot_product(u, v) == 0;
+}
+
+/**
+ * @brief check whether or not two vectors are perpendicular
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return true if u and v are perpendicular
+ * @return false otherwise (the angle between u and v is not 90deg)
+ */
+bool check_perpendicularity(Vector *u, Vector *v) {
+    assert(u->capacity > 0 && v->capacity > 0);
+    assert(u->capacity == v->capacity);
+
+    return dot_product(u, v) == 0;
+}
+
+/**
+ * @brief check whether or not two vectors are equal
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return true if u and v are equal
+ * @return false otherwise
+ */
+bool check_equality(Vector *u, Vector *v) {
+    assert(u->capacity > 0 && v->capacity > 0);
+    assert(u->capacity == v->capacity);
+
+    for (int i = 0; i < u->capacity; i++)
+        if (u->items[i] != v->items[i])
+            return false;
+    return true;
+}
+
+/**
+ * @brief check whether or not two vectors are opposite
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return true if u and v are opposite
+ * @return false otherwise
+ */
+bool check_oppositeness(Vector *u, Vector *v) {
+    assert(u->capacity > 0 && v->capacity > 0);
+    assert(u->capacity == v->capacity);
+
+    for (int i = 0; i < u->capacity; i++)
+        if (u->items[i] != -v->items[i])
+            return false;
+    return true;
 }
 
 /**

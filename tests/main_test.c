@@ -69,6 +69,7 @@ Suite *tensor_suite(void) {
     tcase_add_test(tc_tensor_operations, test_standard_tensor_addition);
     tcase_add_test(tc_tensor_operations, test_standard_tensor_subtraction);
     tcase_add_test(tc_tensor_operations, test_standard_tensor_scalar_multiplication);
+    tcase_add_test(tc_tensor_operations, test_standard_tensor_elementwise_multiplication);
     suite_add_tcase(s, tc_tensor_operations);
     return s;
 }

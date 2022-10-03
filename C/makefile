@@ -5,6 +5,9 @@ TARGET=main
 
 all: $(TARGET)
 
+run: $(TARGET)
+	./$(TARGET)
+
 $(TARGET): $(OBJ)
 	$(CC) $^ -o $@
 
