@@ -17,6 +17,20 @@ Vector *create_real_3d_vector(float x, float y, float z) {
 }
 
 /**
+ * @brief Create a dummy integer vector object
+ * 
+ * @param n 
+ * @return Vector* 
+ */
+Vector *create_dummy_integer_vector(int n) {
+    Vector *v = malloc(sizeof(Vector));
+    init_vector(v, "V", 3);
+    for (int i = 0; i < 3; i++)
+        update_vector(v, n, i);
+    return v;
+}
+
+/**
  * @brief Create a dummy real vector object
  * 
  * @return Vector* constructed equal coordinate vector
@@ -233,3 +247,100 @@ START_TEST(test_orthogonality_yields_right_angle)
     free(u); free(v);
 }
 END_TEST
+
+START_TEST(test_collinearity_between_two_parallel_vectors)
+{
+    Vector *u = create_real_3d_vector(1, 0, 0);
+    Vector *v = create_real_3d_vector(2, 0, 0);
+    ck_assert(check_collinearity(u, v));
+    free_vector(u); free_vector(v);
+    free(u); free(v);
+}
+END_TEST
+
+START_TEST(test_collinearity_between_two_non_parallel_vectors)
+{
+    Vector *u = create_real_3d_vector(1, 0, 0);
+    Vector *v = create_real_3d_vector(1, 1, 0);
+    ck_assert(!check_collinearity(u, v));
+    free_vector(u); free_vector(v);
+    free(u); free(v);
+}
+END_TEST
+
+START_TEST(test_perpendicularity_between_two_orthogonal_vectors)
+{
+    Vector *u = create_real_3d_vector(1, -1, 0);
+    Vector *v = create_real_3d_vector(1, 1, -1);
+    ck_assert(check_perpendicularity(u, v));
+    free_vector(u); free_vector(v);
+    free(u); free(v);
+}
+END_TEST
+
+START_TEST(test_perpendicularity_between_two_non_orthogonal_vectors)
+{
+    Vector *u = create_real_3d_vector(1, 0, 0);
+    Vector *v = create_real_3d_vector(1, 1, 0);
+    ck_assert(!check_perpendicularity(u, v));
+    free_vector(u); free_vector(v);
+    free(u); free(v);
+}
+END_TEST
+
+START_TEST(test_equality_between_two_identical_vectors)
+{
+    Vector *u = create_dummy_real_vector(1.0f);
+    Vector *v = create_dummy_real_vector(1.0f);
+    ck_assert(check_equality(u, v));
+    free_vector(u); free_vector(v);
+    free(u); free(v);
+}
+END_TEST
+
+START_TEST(test_equality_between_two_different_vectors)
+{
+    Vector *u = create_dummy_real_vector(1.0f);
+    Vector *v = create_dummy_real_vector(2.0f);
+    ck_assert(!check_equality(u, v));
+    free_vector(u); free_vector(v);
+    free(u); free(v);
+}
+
+START_TEST(test_oppositeness_between_two_opposite_vectors)
+{
+    Vector *u = create_dummy_real_vector(1.0f);
+    Vector *v = create_dummy_real_vector(-1.0f);
+    ck_assert(check_oppositeness(u, v));
+    free_vector(u); free_vector(v);
+    free(u); free(v);
+}
+END_TEST
+
+START_TEST(test_oppositeness_between_two_non_opposite_vectors)
+{
+    Vector *u = create_dummy_real_vector(1.0f);
+    Vector *v = create_dummy_real_vector(2.0f);
+    ck_assert(!check_oppositeness(u, v));
+    free_vector(u); free_vector(v);
+    free(u); free(v);
+}
+END_TEST
+
+START_TEST(test_vector_of_integers)
+{
+    Vector *u = create_dummy_integer_vector(1);
+    ck_assert(vector_is_integral(u));
+    ck_assert(vector_is_real(u));
+    free_vector(u);
+    free(u);
+}
+
+START_TEST(test_vector_of_floats)
+{
+    Vector *u = create_dummy_real_vector(1.1f);
+    ck_assert(!vector_is_integral(u));
+    ck_assert(vector_is_real(u));
+    free_vector(u);
+    free(u);
+}

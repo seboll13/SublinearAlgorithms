@@ -29,6 +29,16 @@ Suite *vector_suite(void) {
     tcase_add_test(tc_vector_helpers, test_orthogonality_for_two_non_orthogonal_vectors);
     tcase_add_test(tc_vector_helpers, test_orthogonality_yields_right_angle);
     tcase_add_test(tc_vector_helpers, test_correct_angle_between_vector);
+    tcase_add_test(tc_vector_helpers, test_collinearity_between_two_parallel_vectors);
+    tcase_add_test(tc_vector_helpers, test_collinearity_between_two_non_parallel_vectors);
+    tcase_add_test(tc_vector_helpers, test_perpendicularity_between_two_orthogonal_vectors);
+    tcase_add_test(tc_vector_helpers, test_perpendicularity_between_two_non_orthogonal_vectors);
+    tcase_add_test(tc_vector_helpers, test_equality_between_two_identical_vectors);
+    tcase_add_test(tc_vector_helpers, test_equality_between_two_different_vectors);
+    tcase_add_test(tc_vector_helpers, test_oppositeness_between_two_opposite_vectors);
+    tcase_add_test(tc_vector_helpers, test_oppositeness_between_two_non_opposite_vectors);
+    tcase_add_test(tc_vector_helpers, test_vector_of_integers);
+    tcase_add_test(tc_vector_helpers, test_vector_of_floats);
     suite_add_tcase(s, tc_vector_helpers);
     return s;
 }
@@ -57,6 +67,21 @@ Suite *matrix_suite(void) {
     tcase_add_test(tc_matrix_operations, test_standard_matrix_Linf_norm);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_frobenius_norm);
     suite_add_tcase(s, tc_matrix_operations);
+
+    TCase *tc_matrix_helpers = tcase_create("Matrix helpers");
+    tcase_add_test(tc_matrix_helpers, test_symmetry_of_symmetric_matrix);
+    tcase_add_test(tc_matrix_helpers, test_symmetry_of_asymmetric_matrix);
+    tcase_add_test(tc_matrix_helpers, test_diagonality_of_diagonal_matrix);
+    tcase_add_test(tc_matrix_helpers, test_diagonality_of_non_diagonal_matrix);
+    tcase_add_test(tc_matrix_helpers, test_matrix_with_line_of_all_zeroes);
+    tcase_add_test(tc_matrix_helpers, test_matrix_without_line_of_all_zeroes);
+    tcase_add_test(tc_matrix_helpers, test_matrix_of_integers);
+    tcase_add_test(tc_matrix_helpers, test_matrix_of_floats);
+    tcase_add_test(tc_matrix_helpers, test_stochasticity_of_stochastic_matrix);
+    tcase_add_test(tc_matrix_helpers, test_stochasticity_of_non_stochastic_matrix);
+    tcase_add_test(tc_matrix_helpers, test_doubly_stochasticity_of_doubly_stochastic_matrix);
+    tcase_add_test(tc_matrix_helpers, test_doubly_stochasticity_of_non_doubly_stochastic_matrix);
+    suite_add_tcase(s, tc_matrix_helpers);
     return s;
 }
 

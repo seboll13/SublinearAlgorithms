@@ -134,6 +134,7 @@ Vector *vector_product(Vector *u, Vector *v) {
     return w;
 }
 
+
 /**
  * @brief return the scalar projection of a vector onto another one
  * 
@@ -187,36 +188,6 @@ float vector_angle_between(Vector *u, Vector *v, bool radians) {
 }
 
 /**
- * @brief check whether or not two vectors are collinear
- * 
- * @param u vector 1
- * @param v vector 2
- * @return true if u and v are collinear
- * @return false otherwise (the angle between u and v is not 0deg)
- */
-bool check_collinearity(Vector *u, Vector *v) {
-    assert(u->capacity > 0 && v->capacity > 0);
-    assert(u->capacity == v->capacity);
-
-    return dot_product(u, v) == L2_norm(u) * L2_norm(v);
-}
-
-/**
- * @brief check whether or not two vectors are parallel
- * 
- * @param u vector 1
- * @param v vector 2
- * @return true if u and v are parallel
- * @return false otherwise (the angle between u and v is not 0deg or 180deg)
- */
-bool check_parallelism(Vector *u, Vector *v) {
-    assert(u->capacity > 0 && v->capacity > 0);
-    assert(u->capacity == v->capacity);
-
-    return dot_product(u, v) == L2_norm(u) * L2_norm(v) || dot_product(u, v) == -L2_norm(u) * L2_norm(v);
-}
-
-/**
  * @brief check whether or not two vectors are orthogonal
  * 
  * @param u vector 1
@@ -229,6 +200,22 @@ bool check_orthogonality(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
     return dot_product(u, v) == 0;
+}
+
+/**
+ * @brief check whether or not two vectors are collinear
+ * 
+ * @param u vector 1
+ * @param v vector 2
+ * @return true if u and v are collinear
+ * @return false otherwise (the angle between u and v is not 0deg or 180deg)
+ */
+bool check_collinearity(Vector *u, Vector *v) {
+    assert(u->capacity > 0 && v->capacity > 0);
+    assert(u->capacity == v->capacity);
+
+    // one could also check that the vector product between u and v is 0
+    return dot_product(u, v) == L2_norm(u) * L2_norm(v) || dot_product(u, v) == -L2_norm(u) * L2_norm(v);
 }
 
 /**
@@ -278,6 +265,36 @@ bool check_oppositeness(Vector *u, Vector *v) {
 
     for (int i = 0; i < u->capacity; i++)
         if (u->items[i] != -v->items[i])
+            return false;
+    return true;
+}
+
+/**
+ * @brief check if a vector contains only integers
+ * 
+ * @param v vector
+ * @return true if no element in v is a float
+ * @return false otherwise
+ */
+bool vector_is_integral(Vector *v) {
+    assert(v->capacity > 0);
+    for (int i = 0; i < v->capacity; i++)
+        if (v->items[i] != (int) v->items[i])
+            return false;
+    return true;
+}
+
+/**
+ * @brief check if a vector contains only floats
+ * 
+ * @param v vector
+ * @return true if no element in v is complex
+ * @return false otherwise
+ */
+bool vector_is_real(Vector *v) {
+    assert(v->capacity > 0);
+    for (int i = 0; i < v->capacity; i++)
+        if (cimag(v->items[i]) != 0)
             return false;
     return true;
 }
@@ -339,7 +356,44 @@ float Lp_norm(Vector *v, int p) {
  */
 void print_vector(Vector *v) {
     assert(v->capacity > 0);
+    if (vector_is_integral(v))
+        print_integer_vector(v);
+    else if (vector_is_real(v))
+        print_real_vector(v);
+    else
+        print_complex_vector(v);
+}
 
+/**
+ * @brief print a vector of integers
+ * 
+ * @param v 
+ */
+void print_integer_vector(Vector *v) {
+    printf("%s = (\n", v->name);
+    for (int i = 0; i < v->capacity; i++)
+        printf("     %d\n", (int) v->items[i]);
+    printf(")\n");
+}
+
+/**
+ * @brief print a vector of floats
+ * 
+ * @param v 
+ */
+void print_real_vector(Vector *v) {
+    printf("%s = (\n", v->name);
+    for (int i = 0; i < v->capacity; i++)
+        printf("     %.3f\n", (float) v->items[i]);
+    printf(")\n");
+}
+
+/**
+ * @brief print a vector of complex numbers
+ * 
+ * @param v 
+ */
+void print_complex_vector(Vector *v) {
     printf("%s = (\n", v->name);
     for (int i = 0; i < v->capacity; i++) {
         float re = creal(v->items[i]); float im = cimag(v->items[i]);

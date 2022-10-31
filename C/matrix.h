@@ -26,6 +26,7 @@ Matrix *matrix_mult(Matrix *m1, Matrix *m2);
 Matrix *matrix_power(Matrix *m, int p);
 Matrix *matrix_hadamard_prod(Matrix *m1, Matrix *m2);
 Matrix *matrix_kronecker_prod(Matrix *m1, Matrix *m2);
+Matrix *vector_tensor_prod(Vector *u, Vector *v);
 Matrix *matrix_transpose(Matrix *m);
 Matrix *matrix_conj_transpose(Matrix *m);
 Matrix *matrix_cofactor(Matrix *m);
@@ -40,9 +41,13 @@ Matrix *matrix_rotate_left(Matrix *m);
 Matrix *matrix_rotate_right(Matrix *m);
 
 // Helper functions
-bool check_symmetry(Matrix *m);
-bool check_diagonality(Matrix *m);
-bool check_entire_line_of_zeroes(Matrix *m);
+bool matrix_is_symmetric(Matrix *m);
+bool matrix_is_diagonal(Matrix *m);
+bool matrix_contains_line_of_all_zeroes(Matrix *m);
+bool matrix_is_integral(Matrix *m);
+bool matrix_is_real(Matrix *m);
+bool matrix_is_stochastic(Matrix *m);
+bool matrix_is_doubly_stochastic(Matrix *m);
 
 // Matrix norms
 float matrix_L1_norm(Matrix *m);
@@ -51,5 +56,8 @@ float matrix_frobenius_norm(Matrix *m);
 
 // Printing part
 void print_matrix(Matrix *m);
+void print_integer_matrix(Matrix *m);
+void print_real_matrix(Matrix *m);
+void print_complex_matrix(Matrix *m);
 
 #endif

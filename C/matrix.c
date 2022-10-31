@@ -186,6 +186,23 @@ Matrix *matrix_kronecker_prod(Matrix *m1, Matrix *m2) {
 }
 
 /**
+ * @brief return the tensor product of two vectors
+ * TODO: test this
+ * 
+ * @param u 1st vector
+ * @param v 2nd vector
+ * @return Matrix* resulting element-wise multiplication of the two vectors
+ */
+Matrix *vector_tensor_prod(Vector *u, Vector *v) {
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", u->capacity, v->capacity);
+    for (int j = 0; j < m->cols; j++)
+        for (int i = 0; i < m->rows; i++)
+            update_matrix(m, u->items[i] * v->items[j], i, j);
+    return m;
+}
+
+/**
  * @brief compute the transpose of a matrix
  * 
  * @param m matrix
@@ -275,6 +292,31 @@ Matrix *matrix_inverse(Matrix *m) {
 }
 
 /**
+ * @brief Compute the determinant of a square matrix m
+ * 
+ * @param m matrix
+ * @return int the value of the determinant
+ */
+float matrix_determinant(Matrix *m) {
+    assert(m->rows == m->cols);
+    if (m->rows == 1) return m->items[0].items[0];
+    float det = 0.0f;
+    for (int i = 0; i < m->rows; i++) {
+        Matrix *sub = malloc(sizeof(Matrix));
+        init_matrix(sub, "S", m->rows-1, m->cols-1);
+        for (int j = 0; j < m->rows; j++) {
+            if (j == i) continue;
+            for (int k = 0; k < m->cols; k++) {
+                if (k == 0) continue;
+                update_matrix(sub, m->items[j].items[k], j > i ? j-1 : j, k-1);
+            }
+        }
+        det += m->items[i].items[0] * matrix_determinant(sub) * (i % 2 == 0 ? 1 : -1);
+    }
+    return det;
+}
+
+/**
  * @brief Compute the eigenvalues of a matrix
  * TODO: work on this + test
  * 
@@ -298,31 +340,6 @@ Matrix *matrix_eigenvalues(Matrix *m) {
         update_matrix(eig, matrix_determinant(sub) / m->items[i].items[0], i, 0);
     }
     return eig;
-}
-
-/**
- * @brief Compute the determinant of a square matrix m
- * 
- * @param m matrix
- * @return int the value of the determinant
- */
-float matrix_determinant(Matrix *m) {
-    assert(m->rows == m->cols);
-    if (m->rows == 1) return m->items[0].items[0];
-    float det = 0.0f;
-    for (int i = 0; i < m->rows; i++) {
-        Matrix *sub = malloc(sizeof(Matrix));
-        init_matrix(sub, "S", m->rows-1, m->cols-1);
-        for (int j = 0; j < m->rows; j++) {
-            if (j == i) continue;
-            for (int k = 0; k < m->cols; k++) {
-                if (k == 0) continue;
-                update_matrix(sub, m->items[j].items[k], j > i ? j-1 : j, k-1);
-            }
-        }
-        det += m->items[i].items[0] * matrix_determinant(sub) * (i % 2 == 0 ? 1 : -1);
-    }
-    return det;
 }
 
 /**
@@ -378,7 +395,7 @@ Matrix *matrix_rotate_right(Matrix *m) {
  * @return true if matrix is symmetric
  * @return false otherwise
  */
-bool check_symmetry(Matrix *m) {
+bool matrix_is_symmetric(Matrix *m) {
     assert(m->rows == m->cols);
     for (int j = 0; j < m->cols; j++)
         for (int i = 0; i < m->rows; i++)
@@ -393,7 +410,7 @@ bool check_symmetry(Matrix *m) {
  * @return true if the matrix contains non-zero elements only on the diagonal
  * @return false otherwise
  */
-bool check_diagonality(Matrix *m) {
+bool matrix_is_diagonal(Matrix *m) {
     assert(m->rows == m->cols);
     for (int j = 0; j < m->cols; j++)
         for (int i = 0; i < m->rows; i++)
@@ -408,7 +425,7 @@ bool check_diagonality(Matrix *m) {
  * @return true if there exists a line of zeroes
  * @return false otherwise
  */
-bool check_entire_line_of_zeroes(Matrix *m) {
+bool matrix_contains_line_of_all_zeroes(Matrix *m) {
     for (int j = 0; j < m->cols; j++) {
         bool all_zeroes = true;
         for (int i = 0; i < m->rows; i++)
@@ -416,6 +433,77 @@ bool check_entire_line_of_zeroes(Matrix *m) {
         if (all_zeroes) return true;
     }
     return false;
+}
+
+/**
+ * @brief check that every element in the matrix is an integer
+ * 
+ * @param m matrix
+ * @return true if no element is a float
+ * @return false otherwise
+ */
+bool matrix_is_integral(Matrix *m) {
+    for (int j = 0; j < m->cols; j++)
+        if (!vector_is_integral(&m->items[j])) return false;
+    return true;
+}
+
+/**
+ * @brief check that every element in the matrix is real
+ * 
+ * @param m matrix
+ * @return true if no element is complex
+ * @return false otherwise
+ */
+bool matrix_is_real(Matrix *m) {
+    for (int j = 0; j < m->cols; j++)
+        if (!vector_is_real(&m->items[j])) return false;
+    return true;
+}
+
+/**
+ * @brief check if a matrix is stochastic
+ * 
+ * @param m matrix
+ * @return true if every line in m sums to 1
+ * @return false otherwise
+ */
+bool matrix_is_stochastic(Matrix *m) {
+    // For simplicity, check that there is no imaginary part
+    assert(matrix_is_real(m));
+    // The sum of each line must be 1
+    for (int j = 0; j < m->cols; j++) {
+        float sum = 0.0f;
+        for (int i = 0; i < m->rows; i++) {
+            float curr = m->items[i].items[j];
+            if (curr < 0.0f) return false;
+            sum += curr;
+        }
+        if (sum != 1.0f) return false;
+    }
+    return true;
+}
+
+/**
+ * @brief check if a matrix is doubly stochastic
+ * 
+ * @param m matrix
+ * @return true if every line and column in m sum to 1
+ * @return false otherwise
+ */
+bool matrix_is_doubly_stochastic(Matrix *m) {
+    if (!matrix_is_stochastic(m)) return false;
+    // The sum of each column must be 1
+    for (int i = 0; i < m->rows; i++) {
+        float sum = 0.0f;
+        for (int j = 0; j < m->cols; j++) {
+            float curr = m->items[i].items[j];
+            if (curr < 0.0f) return false;
+            sum += curr;
+        }
+        if (sum != 1.0f) return false;
+    }
+    return true;
 }
 
 /**
@@ -434,8 +522,6 @@ float matrix_L1_norm(Matrix *m) {
     }
     return max_sum;
 }
-
-
 
 /**
  * @brief compute the L-infinity norm of a matrix
@@ -469,12 +555,58 @@ float matrix_frobenius_norm(Matrix *m) {
 }
 
 /**
- * @brief print a matrix
+ * @brief print any kind of matrix
  * 
  * @param m 
  */
 void print_matrix(Matrix *m) {
     assert(m->rows > 0 && m->cols > 0);
+    if (matrix_is_integral(m))
+        print_integer_matrix(m);
+    else if (matrix_is_real(m))
+        print_real_matrix(m);
+    else
+        print_complex_matrix(m);
+}
+
+/**
+ * @brief Print a matrix of integers
+ * 
+ * @param m 
+ */
+void print_integer_matrix(Matrix *m) {
+    printf("%s = (\n", m->name);
+    for (int i = 0; i < m->rows; i++) {
+        for (int j = 0; j < m->cols; j++)
+            printf("  %d", (int) m->items[i].items[j]);
+        printf("\n");
+    }
+    printf(")\n");
+}
+
+/**
+ * @brief print a real matrix
+ * 
+ * @param m 
+ */
+void print_real_matrix(Matrix *m) {
+    printf("%s = (\n", m->name);
+    for (int j = 0; j < m->cols; j++) {
+        for (int i = 0; i < m->rows; i++) {
+            float re = m->items[j].items[i];
+            printf("     %.3f", re);
+        }
+        printf("\n");
+    }
+    printf(")\n");
+}
+
+/**
+ * @brief print a complex matrix
+ * 
+ * @param m 
+ */
+void print_complex_matrix(Matrix *m) {
     printf("%s = (\n", m->name);
     for (int j = 0; j < m->cols; j++) {
         for (int i = 0; i < m->rows; i++) {

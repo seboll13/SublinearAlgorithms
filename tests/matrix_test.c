@@ -16,12 +16,66 @@ Matrix *create_dummy_real_matrix(float _Complex n) {
     return m;
 }
 
+/**
+ * @brief Create a dummy diagonal matrix object
+ * 
+ * @param n 
+ * @return Matrix* 3x3 fixed element matrix, where only diagonal elements are non-zero
+ */
+Matrix *create_dummy_diagonal_matrix(float _Complex n) {
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", 3, 3);
+    for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++)
+            if (i == j)
+                update_matrix(m, n, i, j);
+    return m;
+}
+
+/**
+ * @brief Create a distinct vectors matrix object
+ * 
+ * @param vals list of values for each column
+ * @param rows # of rows
+ * @param cols # of columns
+ * @return Matrix* 3x3 fixed element matrix formed by distinct vectors
+ */
 Matrix *create_distinct_vectors_matrix(float _Complex *vals, int rows, int cols) {
     Matrix *m = malloc(sizeof(Matrix));
     init_matrix(m, "M", 3, 3);
     for (int j = 0; j < cols; j++)
         for (int i = 0; i < rows; i++)
             update_matrix(m, vals[i], i, j);
+    return m;
+}
+
+/**
+ * @brief Create a matrix, the lines of which each sum to 1
+ * 
+ * @return Matrix* 
+ */
+Matrix *create_stochastic_matrix() {
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", 3, 3);
+    float p = 1.0f / 3.0f;
+    update_matrix(m, p, 0, 0); update_matrix(m, 1, 1, 0); update_matrix(m, 0, 2, 0);
+    update_matrix(m, p, 0, 1); update_matrix(m, 0, 1, 1); update_matrix(m, 1, 2, 1);
+    update_matrix(m, p, 0, 2); update_matrix(m, 0, 1, 2); update_matrix(m, 0, 2, 2);
+    return m;
+}
+
+/**
+ * @brief Create a matrix, the lines and columns of which each sum to 1
+ * 
+ * @return Matrix* 
+ */
+Matrix *create_doubly_stochastic_matrix() {
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", 3, 3);
+    float p = 1.0f / 2.0f;
+    update_matrix(m, p, 0, 0); update_matrix(m, p, 1, 0); update_matrix(m, 0, 2, 0);
+    update_matrix(m, p, 0, 1); update_matrix(m, 0, 1, 1); update_matrix(m, p, 2, 1);
+    update_matrix(m, 0, 0, 2); update_matrix(m, p, 1, 2); update_matrix(m, p, 2, 2);
     return m;
 }
 
@@ -277,6 +331,117 @@ START_TEST(test_standard_matrix_frobenius_norm)
     float _Complex vals[3] = {1.0f, 2.0f, 3.0f};
     Matrix *m = create_distinct_vectors_matrix(vals, 3, 3);
     ck_assert_float_eq(matrix_frobenius_norm(m), sqrt(42));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_symmetry_of_symmetric_matrix)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    ck_assert(matrix_is_symmetric(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_symmetry_of_asymmetric_matrix)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    update_matrix(m, 2.0f, 0, 1);
+    ck_assert(!matrix_is_symmetric(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_diagonality_of_diagonal_matrix)
+{
+    Matrix *m = create_dummy_diagonal_matrix(1.0f);
+    ck_assert(matrix_is_diagonal(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_diagonality_of_non_diagonal_matrix)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    ck_assert(!matrix_is_diagonal(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_matrix_with_line_of_all_zeroes)
+{
+    Matrix *m = create_dummy_real_matrix(0.0f);
+    ck_assert(matrix_contains_line_of_all_zeroes(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_matrix_without_line_of_all_zeroes)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    ck_assert(!matrix_contains_line_of_all_zeroes(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_matrix_of_integers)
+{
+    Matrix *m = create_dummy_real_matrix(1);
+    ck_assert(matrix_is_integral(m));
+    ck_assert(matrix_is_real(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_matrix_of_floats)
+{
+    Matrix *m = create_dummy_real_matrix(1.1f);
+    ck_assert(!matrix_is_integral(m));
+    ck_assert(matrix_is_real(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_stochasticity_of_stochastic_matrix)
+{
+    Matrix *m = create_stochastic_matrix();
+    ck_assert(matrix_is_stochastic(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_stochasticity_of_non_stochastic_matrix)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    ck_assert(!matrix_is_stochastic(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_doubly_stochasticity_of_doubly_stochastic_matrix)
+{
+    Matrix *m = create_doubly_stochastic_matrix();
+    ck_assert(matrix_is_doubly_stochastic(m));
+    free_matrix(m);
+    free(m);
+}
+END_TEST
+
+START_TEST(test_doubly_stochasticity_of_non_doubly_stochastic_matrix)
+{
+    Matrix *m = create_dummy_real_matrix(1.0f);
+    ck_assert(!matrix_is_doubly_stochastic(m));
     free_matrix(m);
     free(m);
 }
