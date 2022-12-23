@@ -48,6 +48,7 @@ bool matrix_is_integral(Matrix *m);
 bool matrix_is_real(Matrix *m);
 bool matrix_is_stochastic(Matrix *m);
 bool matrix_is_doubly_stochastic(Matrix *m);
+bool matrix_is_vandermonde(Matrix *m);
 
 // Matrix norms
 float matrix_L1_norm(Matrix *m);

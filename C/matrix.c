@@ -507,6 +507,26 @@ bool matrix_is_doubly_stochastic(Matrix *m) {
 }
 
 /**
+ * @brief check if a matrix is a Vandermonde matrix
+ * 
+ * @param m matrix
+ * @return true if every column is a power of the first column
+ * @return false otherwise
+ */
+bool matrix_is_vandermonde(Matrix *m) {
+    // For simplicity, check that there is no imaginary part
+    assert(matrix_is_real(m));
+    // The first column must be all 1s
+    for (int i = 0; i < m->rows; i++)
+        if (m->items[i].items[0] != 1.0f) return false;
+    // The other columns must be powers of the first column
+    for (int j = 1; j < m->cols; j++)
+        for (int i = 0; i < m->rows; i++)
+            if (m->items[i].items[j] != powf(m->items[i].items[0], j)) return false;
+    return true;
+}
+
+/**
  * @brief compute the L1 norm of a matrix
  * 
  * @param m matrix

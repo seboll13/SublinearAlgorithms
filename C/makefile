@@ -29,6 +29,9 @@ helpers.o: helpers.c
 main.o: main.c
 	$(CC) $(CFLAGS) $^
 
+library: $(OBJ)
+	$(CC) -fPIC -shared $^ -o lib$(TARGET).so
+
 .PHONY: clean
 
 clean:
