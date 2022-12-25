@@ -129,6 +129,83 @@ Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
     return m;
 }
 
+Matrix *create_submatrix(Matrix *m, int row_start, int row_end, int col_start, int col_end) {
+    Matrix *sub = malloc(sizeof(Matrix));
+    init_matrix(sub, "M", row_end - row_start, col_end - col_start);
+    for (int i = row_start; i < row_end; i++)
+        for (int j = col_start; j < col_end; j++)
+            update_matrix(sub, m->items[j].items[i], i - row_start, j - col_start);
+    return sub;
+}
+
+Matrix *set_submatrix(Matrix *m, Matrix *sub, int row_start, int row_end, int col_start, int col_end) {
+    for (int i = row_start; i < row_end; i++)
+        for (int j = col_start; j < col_end; j++)
+            update_matrix(m, sub->items[j - col_start].items[i - row_start], i, j);
+    return m;
+}
+
+/**
+ * @brief return the multiplication of two matrices together using Strassen's algorithm
+ * 
+ * @param m1 first matrix
+ * @param m2 second matrix
+ * @return resultant matrix
+ */
+Matrix *fast_matrix_mult(Matrix *m1, Matrix *m2) {
+    // Inner dimensions must be the same
+    assert(m1->cols == m2->rows);
+
+    // Sanity checks: Strassen's algorithm will not work if the matrix is not a power of 2
+    bool is_power_of_2 = !(m1->rows & (m1->rows - 1)) && !(m1->cols & (m1->cols - 1));
+    // For 2x2 matrices, call the standard matrix multiplication algorithm
+    bool under_threshold = (m1->rows < THRESHOLD) || (m1->cols < THRESHOLD) || (m2->rows < THRESHOLD) || (m2->cols < THRESHOLD);
+
+    if (is_power_of_2 || under_threshold)
+        return matrix_mult(m1, m2);
+    
+    int n = m1->rows;
+    int half = n / 2;
+    Matrix *A11 = create_submatrix(m1, 0, half, 0, half);
+    Matrix *A12 = create_submatrix(m1, 0, half, half, n);
+    Matrix *A21 = create_submatrix(m1, half, n, 0, half);
+    Matrix *A22 = create_submatrix(m1, half, n, half, n);
+    Matrix *B11 = create_submatrix(m2, 0, half, 0, half);
+    Matrix *B12 = create_submatrix(m2, 0, half, half, n);
+    Matrix *B21 = create_submatrix(m2, half, n, 0, half);
+    Matrix *B22 = create_submatrix(m2, half, n, half, n);
+
+    Matrix *S1 = matrix_add(B12, B22, false);
+    Matrix *S2 = matrix_add(A11, A12, true);
+    Matrix *S3 = matrix_add(A21, A22, true);
+    Matrix *S4 = matrix_add(B21, B11, false);
+    Matrix *S5 = matrix_add(A11, A22, true);
+    Matrix *S6 = matrix_add(B11, B22, true);
+    Matrix *S7 = matrix_add(A12, A22, false);
+
+    Matrix *P1 = fast_matrix_mult(A11, S1);
+    Matrix *P2 = fast_matrix_mult(S2, B22);
+    Matrix *P3 = fast_matrix_mult(S3, B11);
+    Matrix *P4 = fast_matrix_mult(A22, S4);
+    Matrix *P5 = fast_matrix_mult(S5, S6);
+    Matrix *P6 = fast_matrix_mult(S7, B21);
+    Matrix *P7 = fast_matrix_mult(S7, S6);
+
+    Matrix *C11 = matrix_add(matrix_add(matrix_add(P5, P4, true), P2, false), P6, true);
+    Matrix *C12 = matrix_add(P1, P2, true);
+    Matrix *C21 = matrix_add(P3, P4, true);
+    Matrix *C22 = matrix_add(matrix_add(P5, P1, true), matrix_add(P3, P7, true), false);
+
+    Matrix *m = malloc(sizeof(Matrix));
+    init_matrix(m, "M", m1->rows, m2->cols); // keep outer dimensions
+
+    set_submatrix(m, C11, 0, half, 0, half);
+    set_submatrix(m, C12, 0, half, half, n);
+    set_submatrix(m, C21, half, n, 0, half);
+    set_submatrix(m, C22, half, n, half, n);
+    return m;
+}
+
 /**
  * @brief return the power of a matrix
  * 

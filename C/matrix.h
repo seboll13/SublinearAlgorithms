@@ -4,6 +4,7 @@
 #include "vector.h"
 
 #define MAX_MATRIX_CAPACITY 10e6
+#define THRESHOLD 4
 
 typedef struct Matrix {
     int rows, cols;
@@ -23,6 +24,9 @@ Matrix *rademacher_matrix(int rows, int cols);
 Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add);
 Matrix *matrix_scalar_mult(float _Complex n, Matrix *m);
 Matrix *matrix_mult(Matrix *m1, Matrix *m2);
+Matrix *create_submatrix(Matrix *m, int row_start, int row_end, int col_start, int col_end);
+Matrix *set_submatrix(Matrix *m, Matrix *sub, int row_start, int row_end, int col_start, int col_end);
+Matrix *fast_matrix_mult(Matrix *m1, Matrix *m2);
 Matrix *matrix_power(Matrix *m, int p);
 Matrix *matrix_hadamard_prod(Matrix *m1, Matrix *m2);
 Matrix *matrix_kronecker_prod(Matrix *m1, Matrix *m2);

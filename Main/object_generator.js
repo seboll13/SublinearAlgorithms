@@ -1,4 +1,4 @@
-const DIM = 100000;
+const DIM = 1000;
 const fs = require('fs');
 const path = '../data/'
 const { performance } = require('perf_hooks');
@@ -19,7 +19,7 @@ function randomInRange(start, end) {
  * @returns 
  */
 function generateVector(name) {
-    // write length random numbers to a file
+    // write DIM random numbers to a file
     let file = path + 'vec_' + name + '.txt';
     let data = '';
     for (let i = 0; i < DIM; i++) {
@@ -29,9 +29,35 @@ function generateVector(name) {
     return;
 }
 
+/**
+ * Generates a random matrix of size DIMxDIM and writes it to the file that Python will read
+ * @param {string} name 
+ * @returns 
+ */
+function generateMatrix(name) {
+    // write DIMxDIM random numbers to a file
+    let file = path + 'mat_' + name + '.txt';
+    let data = '';
+    for (let i = 0; i < DIM; i++) {
+        for (let j = 0; j < DIM; j++) {
+            data += randomInRange(-100, 100) + ' ';
+        }
+        data += '\n';
+    }
+    fs.writeFileSync(file, data);
+    return;
+}
+
+// // generate vectors
+// let start = performance.now();
+// generateVector('U');
+// generateVector('V');
+// let end = performance.now();
+
+// generate matrices
 let start = performance.now();
-generateVector('U');
-generateVector('V');
+generateMatrix('A');
+generateMatrix('B');
 let end = performance.now();
 
 console.log('Time taken: ' + (end - start) + ' [ms]');
