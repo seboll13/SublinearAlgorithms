@@ -12,6 +12,14 @@ typedef struct Matrix {
     char *name;
 } Matrix;
 
+// Threading part
+#define NUM_THREADS 8
+
+pthread_t threads[NUM_THREADS];
+Matrix *results[NUM_THREADS];
+
+void *thread_func(void *arg);
+
 // Matrix type construction
 void init_matrix(Matrix *m, char *name, int rows, int cols);
 void free_matrix(Matrix *m);

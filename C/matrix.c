@@ -1,5 +1,11 @@
 #include "matrix.h"
 
+void *thread_func(void *arg) {
+    Matrix *m1 = ((Matrix **)arg)[0];
+    Matrix *m2 = ((Matrix **)arg)[1];
+    return (void *)fast_matrix_mult(m1, m2);
+}
+
 /**
  * @brief Initialise a new matrix full of zeros
  * 
@@ -183,13 +189,24 @@ Matrix *fast_matrix_mult(Matrix *m1, Matrix *m2) {
     Matrix *S6 = matrix_add(B11, B22, true);
     Matrix *S7 = matrix_add(A12, A22, false);
 
-    Matrix *P1 = fast_matrix_mult(A11, S1);
-    Matrix *P2 = fast_matrix_mult(S2, B22);
-    Matrix *P3 = fast_matrix_mult(S3, B11);
-    Matrix *P4 = fast_matrix_mult(A22, S4);
-    Matrix *P5 = fast_matrix_mult(S5, S6);
-    Matrix *P6 = fast_matrix_mult(S7, B21);
-    Matrix *P7 = fast_matrix_mult(S7, S6);
+    // Recursive calls
+    Matrix *matrices[3][3] = {{A11, S1}, {S2, B22}, {S3, B11}, {A22, S4}, {S5, S6}, {S7, B21}, {S7, S6}};
+    for (int i = 0; i < NUM_THREADS; i++) {
+        pthread_create(&threads[i], NULL, thread_func, (void *)matrices[i]);
+    }
+
+    // Wait for the threads to finish
+    for (int i = 0; i < NUM_THREADS; i++) {
+        pthread_join(threads[i], (void **)&results[i]);
+    }
+
+    Matrix *P1 = results[0];
+    Matrix *P2 = results[1];
+    Matrix *P3 = results[2];
+    Matrix *P4 = results[3];
+    Matrix *P5 = results[4];
+    Matrix *P6 = results[5];
+    Matrix *P7 = results[6];
 
     Matrix *C11 = matrix_add(matrix_add(matrix_add(P5, P4, true), P2, false), P6, true);
     Matrix *C12 = matrix_add(P1, P2, true);

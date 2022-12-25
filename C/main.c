@@ -2,7 +2,7 @@
 #include "projections.h"
 #include "matrix.h"
 
-#define DIM 128
+#define DIM 1024
 
 int main() {
     srand(time(NULL)); // Set a different seed for random generation

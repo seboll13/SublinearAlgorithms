@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <complex.h>
+#include <pthread.h>
 
 #include <assert.h>
 
