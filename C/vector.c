@@ -146,7 +146,7 @@ float scalar_projection(Vector *u, Vector *v) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
-    return (float) dot_product(u, v) / L2_norm(v);
+    return (float) dot_product(u, v) / vector_L2_norm(v);
 }
 
 /**
@@ -165,7 +165,7 @@ Vector *vector_projection(Vector *u, Vector *v) {
     Vector *w = malloc(sizeof(Vector));
     init_vector(w, "W", u->capacity);
     for (int i = 0; i < w->capacity; i++)
-        update_vector(w, factor * v->items[i] / L2_norm(v), i);
+        update_vector(w, factor * v->items[i] / vector_L2_norm(v), i);
     return w;
 }
 
@@ -181,7 +181,7 @@ float vector_angle_between(Vector *u, Vector *v, bool radians) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
-    double res = dot_product(u, v) / (L2_norm(u) * L2_norm(v));
+    double res = dot_product(u, v) / (vector_L2_norm(u) * vector_L2_norm(v));
 
     assert(res >= -1 && res <= 1);
     return (radians) ? (float) acos(res) : radians_to_degrees(acos(res));
@@ -195,7 +195,7 @@ float vector_angle_between(Vector *u, Vector *v, bool radians) {
  * @return true if u and v are orthogonal
  * @return false otherwise (the angle between u and v is not 90deg)
  */
-bool check_orthogonality(Vector *u, Vector *v) {
+bool check_vector_orthogonality(Vector *u, Vector *v) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
@@ -210,12 +210,12 @@ bool check_orthogonality(Vector *u, Vector *v) {
  * @return true if u and v are collinear
  * @return false otherwise (the angle between u and v is not 0deg or 180deg)
  */
-bool check_collinearity(Vector *u, Vector *v) {
+bool check_vector_collinearity(Vector *u, Vector *v) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
     // one could also check that the vector product between u and v is 0
-    return dot_product(u, v) == L2_norm(u) * L2_norm(v) || dot_product(u, v) == -L2_norm(u) * L2_norm(v);
+    return dot_product(u, v) == vector_L2_norm(u) * vector_L2_norm(v) || dot_product(u, v) == -vector_L2_norm(u) * vector_L2_norm(v);
 }
 
 /**
@@ -226,7 +226,7 @@ bool check_collinearity(Vector *u, Vector *v) {
  * @return true if u and v are perpendicular
  * @return false otherwise (the angle between u and v is not 90deg)
  */
-bool check_perpendicularity(Vector *u, Vector *v) {
+bool check_vector_perpendicularity(Vector *u, Vector *v) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
@@ -241,7 +241,7 @@ bool check_perpendicularity(Vector *u, Vector *v) {
  * @return true if u and v are equal
  * @return false otherwise
  */
-bool check_equality(Vector *u, Vector *v) {
+bool check_vector_equality(Vector *u, Vector *v) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
@@ -259,7 +259,7 @@ bool check_equality(Vector *u, Vector *v) {
  * @return true if u and v are opposite
  * @return false otherwise
  */
-bool check_oppositeness(Vector *u, Vector *v) {
+bool check_vector_oppositeness(Vector *u, Vector *v) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
@@ -305,7 +305,7 @@ bool vector_is_real(Vector *v) {
  * @param v vector
  * @return int sum of absolute values of each element of v
  */
-float L1_norm(Vector *v) {
+float vector_L1_norm(Vector *v) {
     assert(v->capacity > 0);
 
     float res = 0;
@@ -320,7 +320,7 @@ float L1_norm(Vector *v) {
  * @param v vector
  * @return double square root of the sum of squares
  */
-float L2_norm(Vector *v) {
+float vector_L2_norm(Vector *v) {
     assert(v->capacity > 0);
 
     float res = 0;
@@ -336,13 +336,13 @@ float L2_norm(Vector *v) {
  * @param p power parameter
  * @return double p'th root of the sum of p-powers
  */
-float Lp_norm(Vector *v, int p) {
+float vector_Lp_norm(Vector *v, int p) {
     assert(p > 0 && v->capacity > 0);
 
     if (p == 1)
-        return L1_norm(v);
+        return vector_L1_norm(v);
     if (p == 2)
-        return L2_norm(v);
+        return vector_L2_norm(v);
     float res = 0;
     for (int i = 0; i < v->capacity; i++)
         res += pow(v->items[i], (float) p);

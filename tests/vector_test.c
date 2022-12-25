@@ -156,7 +156,7 @@ END_TEST
 START_TEST(test_standard_vector_L1_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
-    float n = L1_norm(u);
+    float n = vector_L1_norm(u);
     ck_assert_float_eq(n, 6.0f);
     free_vector(u);
     free(u);
@@ -166,7 +166,7 @@ END_TEST
 START_TEST(test_standard_vector_L2_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
-    float n = L2_norm(u);
+    float n = vector_L2_norm(u);
     ck_assert_float_eq(n, sqrt(12));
     free_vector(u);
     free(u);
@@ -176,7 +176,7 @@ END_TEST
 START_TEST(test_first_level_vector_Lp_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
-    float n = Lp_norm(u, 1);
+    float n = vector_Lp_norm(u, 1);
     ck_assert_float_eq(n, 6.0f);
     free_vector(u);
     free(u);
@@ -186,7 +186,7 @@ END_TEST
 START_TEST(test_second_level_vector_Lp_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
-    float n = Lp_norm(u, 2);
+    float n = vector_Lp_norm(u, 2);
     ck_assert_float_eq(n, sqrt(12));
     free_vector(u);
     free(u);
@@ -196,7 +196,7 @@ END_TEST
 START_TEST(test_third_level_vector_Lp_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
-    float n = Lp_norm(u, 3);
+    float n = vector_Lp_norm(u, 3);
     ck_assert_float_eq(n, pow(24, 1/3));
     free_vector(u);
     free(u);

@@ -114,7 +114,7 @@ Vector *random_vector_on_unit_sphere(int dim) {
 bool vector_random_projection(int m, float delta) {
     Vector *v = generate_random_vector(m);
     
-    float v_norm = L2_norm(v);
+    float v_norm = vector_L2_norm(v);
     float upper_bound = v_norm * delta / sqrt(exp(1) * m);
     
     int cnt = 0;

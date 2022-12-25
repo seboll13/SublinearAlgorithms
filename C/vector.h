@@ -30,18 +30,18 @@ Vector *vector_projection(Vector *u, Vector *v);
 float vector_angle_between(Vector *u, Vector *v, bool radians);
 
 // Helper functions
-bool check_orthogonality(Vector *u, Vector *v);
-bool check_collinearity(Vector *u, Vector *v);
-bool check_perpendicularity(Vector *u, Vector *v);
-bool check_equality(Vector *u, Vector *v);
-bool check_oppositeness(Vector *u, Vector *v);
+bool check_vector_orthogonality(Vector *u, Vector *v);
+bool check_vector_collinearity(Vector *u, Vector *v);
+bool check_vector_perpendicularity(Vector *u, Vector *v);
+bool check_vector_equality(Vector *u, Vector *v);
+bool check_vector_oppositeness(Vector *u, Vector *v);
 bool vector_is_integral(Vector *v);
 bool vector_is_real(Vector *v);
 
 // Norms
-float L1_norm(Vector *u);
-float L2_norm(Vector *u);
-float Lp_norm(Vector *u, int p);
+float vector_L1_norm(Vector *u);
+float vector_L2_norm(Vector *u);
+float vector_Lp_norm(Vector *u, int p);
 
 // Vector str handling
 void print_vector(Vector *v);

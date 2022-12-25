@@ -4,7 +4,7 @@ class Parser:
     def __init__(self, type, name) -> None:
         self.type = type
         self.name = name
-        self.path = f'data/{type}_{name}.txt'
+        self.path = f'../data/{type}_{name}.txt'
     
 
     def read(self) -> list:
