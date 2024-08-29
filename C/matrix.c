@@ -362,7 +362,6 @@ Matrix *matrix_cofactor(Matrix *m) {
  * @param m matrix
  * @return Matrix* the conjugate transposed of the cofactor matrix
  */
-// compute the adjugate matrix
 Matrix *matrix_adjoint(Matrix *m) {
     return matrix_conj_transpose(matrix_cofactor(m));
 }
