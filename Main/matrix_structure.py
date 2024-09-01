@@ -1,6 +1,6 @@
 from ctypes import *
 from vector_structure import CVector
-from float_complex import c_float_complex
+from float_complex import CFloatComplex
 
 libmain = CDLL('../C/libmain.so')
 
@@ -55,7 +55,7 @@ class CMatrix(Structure):
 
     def __scalar_mult__(self, scalar) -> 'CMatrix':
         """Multiply a matrix by a scalar."""
-        libmain.matrix_scalar_mult.argstype = [POINTER(CMatrix), c_float_complex, c_bool]
+        libmain.matrix_scalar_mult.argstype = [POINTER(CMatrix), CFloatComplex, c_bool]
         libmain.matrix_scalar_mult.restype = POINTER(CMatrix)
 
         return libmain.matrix_scalar_mult(self.c_matrix_ptr, scalar).contents

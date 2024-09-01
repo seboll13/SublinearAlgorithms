@@ -1,11 +1,23 @@
 CPATH=./C/
+PYTHONPATH=./Main/
 TESTPATH=./tests/
+PYTHON=python3
+NODE=node
 M="default push from makefile message"
 
-all: run test
+all: run
+
+# cmd to type: make generate TYPE=oneof('vector', 'matrix', 'tensor') SIZE=integer
+generate:
+	@echo "Generating data files..."
+	@cd $(PYTHONPATH) && $(NODE) object_generator.js $(TYPE) $(SIZE)
 
 run:
-	@echo "Running..."
+	@echo "Running Python main..."
+	@cd $(PYTHONPATH) && $(PYTHON) main.py
+
+clib:
+	@echo "Running C library main..."
 	@cd $(CPATH) && make run
 
 test:
@@ -28,3 +40,4 @@ push: clean
 clean:
 	$(MAKE) clean -C $(CPATH)
 	$(MAKE) clean -C $(TESTPATH)
+	clear

@@ -1,42 +1,42 @@
 #include <time.h>
+#include <stdarg.h>
 #include "projections.h"
 #include "matrix.h"
+#include <pthread.h>
 
-#define DIM 1024
+#define DIM 1e6
+
 
 int main() {
     srand(time(NULL)); // Set a different seed for random generation
     
     printf("START OF PROGRAM...\n");
-
-    // MATRIX PART
-    Matrix *A = rademacher_matrix(DIM, DIM);
-    Matrix *B = rademacher_matrix(DIM, DIM);
     
+    Vector *u = rademacher_vector(DIM);
+    Vector *v = rademacher_vector(DIM);
+    
+    // Time function execution
     clock_t start = clock();
-    Matrix *C = matrix_mult(A, B);
+    vector_dot_product(u, v);
     clock_t end = clock();
-    
-    free_matrix(C);
-    free(C);
-    
-    double execution_time = (double)(end-start) / CLOCKS_PER_SEC;
-    printf("Execution time for standard matrix multiplication : %.3f [s]\n", execution_time);
+    double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("Time taken for standard dot product: %.3f\n", time_taken);
 
     clock_t start2 = clock();
-    Matrix *D = fast_matrix_mult(A, B);
+    optimised_vector_dot_product(u, v);
     clock_t end2 = clock();
+    double time_taken2 = (double)(end2 - start2) / CLOCKS_PER_SEC;
+    printf("Time taken for optimised dot product: %.3f\n", time_taken2);
 
-    free_matrix(D);
-    free(D);
-
-    double execution_time2 = (double)(end2-start2) / CLOCKS_PER_SEC;
-    printf("Execution time for fast matrix multiplication : %.3f [s]\n", execution_time2);
-
-    free_matrix(A);
-    free_matrix(B);
-    free(A);
-    free(B);
+    clock_t start3 = clock();
+    vector_dot_product_multithreaded(u, v, 2);
+    clock_t end3 = clock();
+    double time_taken3 = (double)(end3 - start3) / CLOCKS_PER_SEC;
+    printf("Time taken for multithreaded dot product: %.3f\n", time_taken3);
+    
+    // Cleanup
+    free(u);
+    free(v);
 
     printf("END OF PROGRAM.\n");
 }

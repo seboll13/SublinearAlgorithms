@@ -1,4 +1,7 @@
+
 # Other
+Main/py311_*/
+.ruff_cache
 *.vscode/
 *.DS_Store
 __pycache__/

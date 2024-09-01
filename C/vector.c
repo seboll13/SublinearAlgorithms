@@ -94,6 +94,40 @@ Vector *vector_scalar_mult(Vector *u, int a) {
     return v;
 }
 
+void* thread_dot_product(void* arg) {
+    ThreadData *data = (ThreadData*) arg;
+    data->result = 0.0 + 0.0 * I;
+    for (int i = 0; i < data->length; i++)
+        data->result += data->u_items[i] * data->v_items[i];
+    return NULL;
+}
+
+float _Complex vector_dot_product_multithreaded(Vector *u, Vector *v, int num_threads) {
+    assert(u->capacity == v->capacity);
+    assert(num_threads > 0);
+    assert(u->capacity % num_threads == 0);
+
+    pthread_t threads[num_threads];
+    ThreadData thread_data[num_threads];
+    int chunk_size = u->capacity / num_threads;
+
+    // Initialise and start threads
+    for (int i = 0; i < num_threads; i++) {
+        thread_data[i].u_items = &u->items[i * chunk_size];
+        thread_data[i].v_items = &v->items[i * chunk_size];
+        thread_data[i].length = (i == num_threads - 1) ? (u->capacity - i * chunk_size) : chunk_size;
+        pthread_create(&threads[i], NULL, thread_dot_product, &thread_data[i]);
+    }
+
+    // Wait for all threads to finish and accumulate the result
+    float _Complex final_result = 0.0 + 0.0 * I;
+    for (int i = 0; i < num_threads; i++) {
+        pthread_join(threads[i], NULL);
+        final_result += thread_data[i].result;
+    }
+    return final_result;
+}
+
 /**
  * @brief get the dot product of two vectors
  * Note: (a+ib)(c+id)=ac-bd+(ad+bc)i
@@ -102,13 +136,67 @@ Vector *vector_scalar_mult(Vector *u, int a) {
  * @param v vector 2
  * @return int sum of products of each coefficient
  */
-float _Complex dot_product(Vector *u, Vector *v) {
+float _Complex vector_dot_product(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
     float _Complex res = 0;
     for (int i = 0; i < u->capacity; i++)
         res += u->items[i] * v->items[i];
     return res;
+}
+
+/**
+ * @brief an optimised version for the dot product of two vectors
+ *      using SIMD instructions and loop unrolling
+ * 
+ * @param u the first vector
+ * @param v the second vector
+ * @return float _Complex the dot product of the two vectors
+ */
+float _Complex optimised_vector_dot_product(Vector *u, Vector *v) {
+    assert(u->capacity == v->capacity);
+
+    int i = 0;
+    int simd_width = 4;
+    float32x4_t real_sum1 = vdupq_n_f32(0.0);
+    float32x4_t imag_sum1 = vdupq_n_f32(0.0);
+    float32x4_t real_sum2 = vdupq_n_f32(0.0);
+    float32x4_t imag_sum2 = vdupq_n_f32(0.0);
+
+    // Unroll the loop to process more elements per iteration
+    for (; i <= u->capacity - 2 * simd_width; i += 2 * simd_width) {
+        float32x4x2_t u_vec1 = vld2q_f32((float*)&u->items[i]);
+        float32x4x2_t v_vec1 = vld2q_f32((float*)&v->items[i]);
+        float32x4x2_t u_vec2 = vld2q_f32((float*)&u->items[i + simd_width]);
+        float32x4x2_t v_vec2 = vld2q_f32((float*)&v->items[i + simd_width]);
+
+        float32x4_t real_part1 = vmlsq_f32(vmulq_f32(u_vec1.val[0], v_vec1.val[0]), u_vec1.val[1], v_vec1.val[1]);
+        float32x4_t imag_part1 = vmlaq_f32(vmulq_f32(u_vec1.val[0], v_vec1.val[1]), u_vec1.val[1], v_vec1.val[0]);
+
+        float32x4_t real_part2 = vmlsq_f32(vmulq_f32(u_vec2.val[0], v_vec2.val[0]), u_vec2.val[1], v_vec2.val[1]);
+        float32x4_t imag_part2 = vmlaq_f32(vmulq_f32(u_vec2.val[0], v_vec2.val[1]), u_vec2.val[1], v_vec2.val[0]);
+
+        real_sum1 = vaddq_f32(real_sum1, real_part1);
+        imag_sum1 = vaddq_f32(imag_sum1, imag_part1);
+
+        real_sum2 = vaddq_f32(real_sum2, real_part2);
+        imag_sum2 = vaddq_f32(imag_sum2, imag_part2);
+    }
+
+    // Combine the sums
+    real_sum1 = vaddq_f32(real_sum1, real_sum2);
+    imag_sum1 = vaddq_f32(imag_sum1, imag_sum2);
+
+    float real_result = vaddvq_f32(real_sum1);
+    float imag_result = vaddvq_f32(imag_sum1);
+
+    // Handle remaining elements
+    for (; i < u->capacity; i++) {
+        real_result += crealf(u->items[i]) * crealf(v->items[i]) - cimagf(u->items[i]) * cimagf(v->items[i]);
+        imag_result += crealf(u->items[i]) * cimagf(v->items[i]) + cimagf(u->items[i]) * crealf(v->items[i]);
+    }
+
+    return real_result + imag_result * I;
 }
 
 /**
@@ -146,7 +234,7 @@ float scalar_projection(Vector *u, Vector *v) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
-    return (float) dot_product(u, v) / vector_L2_norm(v);
+    return (float) vector_dot_product(u, v) / vector_L2_norm(v);
 }
 
 /**
@@ -181,7 +269,7 @@ float vector_angle_between(Vector *u, Vector *v, bool radians) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
-    double res = dot_product(u, v) / (vector_L2_norm(u) * vector_L2_norm(v));
+    double res = vector_dot_product(u, v) / (vector_L2_norm(u) * vector_L2_norm(v));
 
     assert(res >= -1 && res <= 1);
     return (radians) ? (float) acos(res) : radians_to_degrees(acos(res));
@@ -199,7 +287,7 @@ bool check_vector_orthogonality(Vector *u, Vector *v) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
-    return dot_product(u, v) == 0;
+    return vector_dot_product(u, v) == 0;
 }
 
 /**
@@ -215,7 +303,7 @@ bool check_vector_collinearity(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
     // one could also check that the vector product between u and v is 0
-    return dot_product(u, v) == vector_L2_norm(u) * vector_L2_norm(v) || dot_product(u, v) == -vector_L2_norm(u) * vector_L2_norm(v);
+    return vector_dot_product(u, v) == vector_L2_norm(u) * vector_L2_norm(v) || vector_dot_product(u, v) == -vector_L2_norm(u) * vector_L2_norm(v);
 }
 
 /**
@@ -230,7 +318,7 @@ bool check_vector_perpendicularity(Vector *u, Vector *v) {
     assert(u->capacity > 0 && v->capacity > 0);
     assert(u->capacity == v->capacity);
 
-    return dot_product(u, v) == 0;
+    return vector_dot_product(u, v) == 0;
 }
 
 /**

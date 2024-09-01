@@ -1,7 +1,9 @@
-const DIM = 1000;
 const fs = require('fs');
 const path = '../data/'
 const { performance } = require('perf_hooks');
+
+const TYPE = process.argv[2];
+const DIM = process.argv[3];
 
 /**
  * Generates a random number within [start, end]
@@ -26,7 +28,6 @@ function generateVector(name) {
         data += randomInRange(-100, 100) + '\n';
     }
     fs.writeFileSync(file, data);
-    return;
 }
 
 /**
@@ -45,19 +46,20 @@ function generateMatrix(name) {
         data += '\n';
     }
     fs.writeFileSync(file, data);
-    return;
 }
 
-// // generate vectors
-// let start = performance.now();
-// generateVector('U');
-// generateVector('V');
-// let end = performance.now();
+let start, end;
+if (TYPE == 'vector') {
+    start = performance.now();
+    generateVector('U');
+    generateVector('V');
+    end = performance.now();
+}
+else if (TYPE == 'matrix') {
+    start = performance.now();
+    generateMatrix('A');
+    generateMatrix('B');
+    end = performance.now();
+}
 
-// generate matrices
-let start = performance.now();
-generateMatrix('A');
-generateMatrix('B');
-let end = performance.now();
-
-console.log('Time taken: ' + (end - start) + ' [ms]');
+console.log('Time taken for generation: ' + (end - start) + ' [ms]');

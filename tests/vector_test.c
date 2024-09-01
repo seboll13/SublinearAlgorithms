@@ -109,7 +109,7 @@ START_TEST(test_standard_dot_product)
 {
     Vector *u = create_dummy_real_vector(1.0f);
     Vector *v = create_dummy_real_vector(1.0f);
-    int dot_prod = dot_product(u, v);
+    int dot_prod = vector_dot_product(u, v);
     ck_assert_float_eq(dot_prod, 3.0f);
     free_vector(u); free_vector(v);
     free(u); free(v);

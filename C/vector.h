@@ -3,14 +3,25 @@
 
 #include "libs.h"
 #include "helpers.h"
+#include <arm_neon.h>
+#include <pthread.h>
 
-#define MAX_VEC_CAPACITY 10e3
+#define MAX_VEC_CAPACITY 1e9
 
 typedef struct Vector {
     int capacity;
     float _Complex *items;
     char *name;
 } Vector;
+
+// Data structure to be used for multithreaded vector computations
+typedef struct ThreadData {
+    float _Complex *u_items;
+    float _Complex *v_items;
+    int length;
+    float _Complex result;
+} ThreadData;
+
 
 // Vector type construction
 void init_vector(Vector *v, char *name, int rows);
@@ -23,7 +34,14 @@ Vector *rademacher_vector(int rows);
 // Vector basic operations
 Vector *vector_add(Vector *u, Vector *v, bool add);
 Vector *vector_scalar_mult(Vector *u, int a);
-float _Complex dot_product(Vector *u, Vector *v);
+
+
+void* thread_dot_product(void *arg);
+float _Complex vector_dot_product_multithreaded(Vector *u, Vector *v, int num_threads);
+float _Complex vector_dot_product(Vector *u, Vector *v);
+float _Complex optimised_vector_dot_product(Vector *u, Vector *v);
+
+
 Vector *vector_product(Vector *u, Vector *v);
 float scalar_projection(Vector *u, Vector *v);
 Vector *vector_projection(Vector *u, Vector *v);

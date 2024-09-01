@@ -36,3 +36,4 @@ library: $(OBJ)
 
 clean:
 	rm -f $(OBJ) $(TARGET)
+	clear
