@@ -1,25 +1,31 @@
+from pathlib import Path
 from vector_structure import CVector
 from matrix_structure import CMatrix
 from float_complex import CFloatComplex
+
+DATA_PATH = Path(__file__).parent.parent / 'data'
 
 class Parser:
     """Parser class to read and parse objects from the data files."""
     def __init__(self, object_type, name) -> None:
         self.name = name
         self.object_type = object_type
-        self.path = f'../data/{object_type}_{name}.txt'
+        self.path = DATA_PATH / f'{object_type}_{name}.txt'
+        self._vector_cache = None
 
 
     def read_vector(self) -> list:
         """Read a list of numbers from a file and returns it as a list of complex numbers."""
-        with open(self.path, 'r', encoding='utf-8') as f:
-            elems = f.readlines()
-            return [complex(float(_)) for _ in elems]
+        if self._vector_cache is None:
+            with open(self.path, 'r', encoding='utf-8') as f:
+                elems = f.readlines()
+                self._vector_cache = [complex(float(_)) for _ in elems]
+        return self._vector_cache
 
 
     def parse_vector(self) -> CVector:
         """Parse a vector from a file and returns it as a CVector instance."""
-        elems = self.read_vector()
+        elems = self.read_vector() # will use cached data if available
         _complex = [(vi.real, vi.imag) for vi in elems]
         v = [CFloatComplex(vi_real, vi_imag) for vi_real, vi_imag in _complex]
         return CVector(

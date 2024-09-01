@@ -94,40 +94,6 @@ Vector *vector_scalar_mult(Vector *u, int a) {
     return v;
 }
 
-void* thread_dot_product(void* arg) {
-    ThreadData *data = (ThreadData*) arg;
-    data->result = 0.0 + 0.0 * I;
-    for (int i = 0; i < data->length; i++)
-        data->result += data->u_items[i] * data->v_items[i];
-    return NULL;
-}
-
-float _Complex vector_dot_product_multithreaded(Vector *u, Vector *v, int num_threads) {
-    assert(u->capacity == v->capacity);
-    assert(num_threads > 0);
-    assert(u->capacity % num_threads == 0);
-
-    pthread_t threads[num_threads];
-    ThreadData thread_data[num_threads];
-    int chunk_size = u->capacity / num_threads;
-
-    // Initialise and start threads
-    for (int i = 0; i < num_threads; i++) {
-        thread_data[i].u_items = &u->items[i * chunk_size];
-        thread_data[i].v_items = &v->items[i * chunk_size];
-        thread_data[i].length = (i == num_threads - 1) ? (u->capacity - i * chunk_size) : chunk_size;
-        pthread_create(&threads[i], NULL, thread_dot_product, &thread_data[i]);
-    }
-
-    // Wait for all threads to finish and accumulate the result
-    float _Complex final_result = 0.0 + 0.0 * I;
-    for (int i = 0; i < num_threads; i++) {
-        pthread_join(threads[i], NULL);
-        final_result += thread_data[i].result;
-    }
-    return final_result;
-}
-
 /**
  * @brief get the dot product of two vectors
  * Note: (a+ib)(c+id)=ac-bd+(ad+bc)i
@@ -153,7 +119,7 @@ float _Complex vector_dot_product(Vector *u, Vector *v) {
  * @param v the second vector
  * @return float _Complex the dot product of the two vectors
  */
-float _Complex optimised_vector_dot_product(Vector *u, Vector *v) {
+float _Complex vector_dot_product_optimised(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
     int i = 0;
@@ -197,6 +163,40 @@ float _Complex optimised_vector_dot_product(Vector *u, Vector *v) {
     }
 
     return real_result + imag_result * I;
+}
+
+void* thread_dot_product(void* arg) {
+    ThreadData *data = (ThreadData*) arg;
+    data->result = 0.0 + 0.0 * I;
+    for (int i = 0; i < data->length; i++)
+        data->result += data->u_items[i] * data->v_items[i];
+    return NULL;
+}
+
+float _Complex vector_dot_product_multithreaded(Vector *u, Vector *v, int num_threads) {
+    assert(u->capacity == v->capacity);
+    assert(num_threads > 0);
+    assert(u->capacity % num_threads == 0);
+
+    pthread_t threads[num_threads];
+    ThreadData thread_data[num_threads];
+    int chunk_size = u->capacity / num_threads;
+
+    // Initialise and start threads
+    for (int i = 0; i < num_threads; i++) {
+        thread_data[i].u_items = &u->items[i * chunk_size];
+        thread_data[i].v_items = &v->items[i * chunk_size];
+        thread_data[i].length = (i == num_threads - 1) ? (u->capacity - i * chunk_size) : chunk_size;
+        pthread_create(&threads[i], NULL, thread_dot_product, &thread_data[i]);
+    }
+
+    // Wait for all threads to finish and accumulate the result
+    float _Complex final_result = 0.0 + 0.0 * I;
+    for (int i = 0; i < num_threads; i++) {
+        pthread_join(threads[i], NULL);
+        final_result += thread_data[i].result;
+    }
+    return final_result;
 }
 
 /**

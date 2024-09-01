@@ -17,7 +17,7 @@ class CVector(Structure):
         self.c_vector_ptr = POINTER(CVector)(self)
 
 
-    ################## Vector Operations ##################
+    ################################ Vector Operations #################################
     def __add__(self, other) -> 'CVector':
         """Add two vectors together."""
         libmain.vector_add.argstype = [POINTER(CVector), POINTER(CVector), c_bool]
@@ -48,15 +48,38 @@ class CVector(Structure):
         return libmain.vector_scalar_mult(self.c_vector_ptr, scalar).contents
 
 
-    def __dotprod__(self, other) -> CFloatComplex:
-        """Compute the dot product of two vectors."""
-        libmain.dot_product.argstype = [POINTER(CVector), POINTER(CVector)]
-        libmain.dot_product.restype = CFloatComplex
+    def __dotprod__(self, other, is_optimised: bool) -> CFloatComplex:
+        """
+        Compute the dot product of two vectors.
+
+        This function computes the dot product of the current vector with another vector.
+        If `is_optimised` is set to True, an optimized version of the dot product
+        is used, which leverages loop unrolling and SIMD instructions to enhance
+        performance.
+
+        Parameters
+        ----------
+        other : CVector
+            The other vector to compute the dot product with.
+        is_optimised : bool
+            If True, use the optimized version of the dot product function.
+
+        Returns
+        -------
+        CFloatComplex
+            The computed dot product of the two vectors as a complex number.
+        """
+        if is_optimised:
+            dot_product_func = libmain.vector_dot_product_optimised
+        else:
+            dot_product_func = libmain.vector_dot_product
+        dot_product_func.argstype = [POINTER(CVector), POINTER(CVector)]
+        dot_product_func.restype = CFloatComplex
 
         # Create a pointer to the other CVector instance
         other_ptr = POINTER(CVector)(other)
 
-        return libmain.dot_product(self.c_vector_ptr, other_ptr)
+        return dot_product_func(self.c_vector_ptr, other_ptr)
 
 
     def __vecprod__(self, other) -> 'CVector':
@@ -111,7 +134,7 @@ class CVector(Structure):
         return libmain.vector_Lp_norm(self.c_vector_ptr, deg)
 
 
-    ################## Vector Properties ##################
+    ################################ Vector Properties #################################
     def __eq__(self, other) -> bool:
         """Check if two vectors are equal."""
         libmain.check_vector_equality.argstype = [POINTER(CVector), POINTER(CVector)]

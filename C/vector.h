@@ -36,10 +36,10 @@ Vector *vector_add(Vector *u, Vector *v, bool add);
 Vector *vector_scalar_mult(Vector *u, int a);
 
 
+float _Complex vector_dot_product(Vector *u, Vector *v);
+float _Complex vector_dot_product_optimised(Vector *u, Vector *v);
 void* thread_dot_product(void *arg);
 float _Complex vector_dot_product_multithreaded(Vector *u, Vector *v, int num_threads);
-float _Complex vector_dot_product(Vector *u, Vector *v);
-float _Complex optimised_vector_dot_product(Vector *u, Vector *v);
 
 
 Vector *vector_product(Vector *u, Vector *v);

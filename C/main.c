@@ -23,7 +23,7 @@ int main() {
     printf("Time taken for standard dot product: %.3f\n", time_taken);
 
     clock_t start2 = clock();
-    optimised_vector_dot_product(u, v);
+    vector_dot_product_optimised(u, v);
     clock_t end2 = clock();
     double time_taken2 = (double)(end2 - start2) / CLOCKS_PER_SEC;
     printf("Time taken for optimised dot product: %.3f\n", time_taken2);

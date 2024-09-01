@@ -1,4 +1,4 @@
-from ctypes import *
+from ctypes import CDLL, POINTER, Structure, c_bool, c_char_p, c_int
 from vector_structure import CVector
 from float_complex import CFloatComplex
 
@@ -6,6 +6,7 @@ libmain = CDLL('../C/libmain.so')
 
 
 class CMatrix(Structure):
+    """Structure to represent a matrix."""
     _fields_ = [('rows', c_int), ('cols', c_int), ('items', POINTER(CVector)), ('name', c_char_p)]
 
 
@@ -17,7 +18,7 @@ class CMatrix(Structure):
 
         # Create a pointer to the CMatrix instance
         self.c_matrix_ptr = POINTER(CMatrix)(self)
-    
+
 
     ################## Matrix Operations ##################
     def __add__(self, other) -> 'CMatrix':
@@ -29,7 +30,7 @@ class CMatrix(Structure):
         other_ptr = POINTER(CMatrix)(other)
 
         return libmain.matrix_add(self.c_matrix_ptr, other_ptr, True).contents
-    
+
 
     def __sub__(self, other) -> 'CMatrix':
         """Subtract two matrices."""
@@ -40,7 +41,7 @@ class CMatrix(Structure):
         other_ptr = POINTER(CMatrix)(other)
 
         return libmain.matrix_add(self.c_matrix_ptr, other_ptr, False).contents
-    
+
 
     def __mul__(self, other) -> 'CMatrix':
         """Multiply two matrices together."""
@@ -51,7 +52,7 @@ class CMatrix(Structure):
         other_ptr = POINTER(CMatrix)(other)
 
         return libmain.matrix_mult(self.c_matrix_ptr, other_ptr).contents
-    
+
 
     def __scalar_mult__(self, scalar) -> 'CMatrix':
         """Multiply a matrix by a scalar."""
@@ -59,7 +60,7 @@ class CMatrix(Structure):
         libmain.matrix_scalar_mult.restype = POINTER(CMatrix)
 
         return libmain.matrix_scalar_mult(self.c_matrix_ptr, scalar).contents
-    
+
 
     def __str__(self) -> str:
         """Print the matrix in a nice format."""
