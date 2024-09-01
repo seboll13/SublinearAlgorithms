@@ -4,7 +4,7 @@
 #include "matrix.h"
 #include <pthread.h>
 
-#define DIM 1e6
+#define DIM 1e8
 
 
 int main() {
@@ -12,8 +12,11 @@ int main() {
     
     printf("START OF PROGRAM...\n");
     
+    clock_t init_start = clock();
     Vector *u = rademacher_vector(DIM);
     Vector *v = rademacher_vector(DIM);
+    clock_t init_end = clock();
+    printf("Vectors initialised in %.3f seconds.\n", (double)(init_end - init_start) / CLOCKS_PER_SEC);
     
     // Time function execution
     clock_t start = clock();
@@ -27,12 +30,6 @@ int main() {
     clock_t end2 = clock();
     double time_taken2 = (double)(end2 - start2) / CLOCKS_PER_SEC;
     printf("Time taken for optimised dot product: %.3f\n", time_taken2);
-
-    clock_t start3 = clock();
-    vector_dot_product_multithreaded(u, v, 2);
-    clock_t end3 = clock();
-    double time_taken3 = (double)(end3 - start3) / CLOCKS_PER_SEC;
-    printf("Time taken for multithreaded dot product: %.3f\n", time_taken3);
     
     // Cleanup
     free(u);
