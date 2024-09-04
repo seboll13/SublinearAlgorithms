@@ -80,7 +80,8 @@ Vector *vector_add(Vector *u, Vector *v, bool add);
 Vector *vector_scalar_mult(Vector *u, int a);
 
 /**
- * @brief get the dot product of two vectors
+ * @brief get the dot product of two vectors using SIMD instructions
+ *      and loop unrolling
  * Note: (a+ib)(c+id)=ac-bd+(ad+bc)i
  * 
  * @param u vector 1
@@ -88,16 +89,6 @@ Vector *vector_scalar_mult(Vector *u, int a);
  * @return int sum of products of each coefficient
  */
 float _Complex vector_dot_product(Vector *u, Vector *v);
-
-/**
- * @brief an optimised version for the dot product of two vectors
- *      using SIMD instructions and loop unrolling
- * 
- * @param u the first vector
- * @param v the second vector
- * @return float _Complex the dot product of the two vectors
- */
-float _Complex vector_dot_product_optimised(Vector *u, Vector *v);
 
 /**
  * @brief function to be executed by each thread when computing the dot product

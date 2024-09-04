@@ -6,7 +6,7 @@ from object_parser import Parser
 from vector_structure import CVector
 
 @timer
-def dot_prod(u: CVector, v: CVector, is_optimised: bool = True) -> CFloatComplex:
+def dot_prod(u: CVector, v: CVector, is_optimised: bool = False) -> CFloatComplex:
     """Computes the dot product of two vectors, i.e. the sum of products of
         each pair of elements from the two vectors.
     
@@ -71,9 +71,10 @@ def main():
     u = u_parser.parse_vector()
     v = v_parser.parse_vector()
     logger.debug('Computing C-lib dot product of vectors')
-    dot_prod(u, v, is_optimised=False)
-    logger.debug('Computing Optimised C-lib dot product of vectors')
     dot_prod(u, v)
+    # Uncomment the following line to use the optimised version of the dot product
+    # logger.debug('Computing Optimised C-lib dot product of vectors')
+    # dot_prod(u, v, True)
 
     logger.debug('Running standard dot product')
     std_u = u_parser.read_vector()

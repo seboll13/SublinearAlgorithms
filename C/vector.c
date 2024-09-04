@@ -75,15 +75,6 @@ Vector *vector_scalar_mult(Vector *u, int a) {
 float _Complex vector_dot_product(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
-    float _Complex res = 0;
-    for (int i = 0; i < u->capacity; i++)
-        res += u->items[i] * v->items[i];
-    return res;
-}
-
-float _Complex vector_dot_product_optimised(Vector *u, Vector *v) {
-    assert(u->capacity == v->capacity);
-
     int i = 0;
     const int simd_width = 4; // Number of float pairs processed per NEON operation
     const int unroll_factor = 4; // Unroll the loop to process more elements at once
