@@ -36,11 +36,21 @@ void update_vector(Vector *v, float _Complex n, int idx) {
 }
 
 // ############################## VECTOR SAFETY CHECKS #################################
+
+int check_strictly_positive_sizes(const Vector *u, const Vector *v) {
+    if (u->capacity < 1 || v->capacity < 1) {
+        fprintf(stderr, "Vectors must contain at least one element\n");
+        errno = EINVAL;
+        return VECTOR_FAILURE;
+    }
+    return VECTOR_SUCCESS;
+}
+
 int check_vector_sizes(const Vector *u, const Vector *v) {
     if (u->capacity != v->capacity) {
         fprintf(stderr, "Vectors must have the same size\n");
         errno = EINVAL;
-        return VECTOR_SIZE_MISMATCH;
+        return VECTOR_FAILURE;
     }
     return VECTOR_SUCCESS;
 }
@@ -72,7 +82,8 @@ Vector *vector_scalar_mult(Vector *u, int a) {
 }
 
 float _Complex vector_dot_product(Vector *u, Vector *v) {
-    assert(u->capacity == v->capacity);
+    if (check_vector_sizes(u, v) != VECTOR_SUCCESS)
+        return -1;
 
     float real_result = 0.0f;
     float imag_result = 0.0f;
@@ -118,7 +129,8 @@ float _Complex vector_dot_product(Vector *u, Vector *v) {
 }
 
 Vector *vector_product(Vector *u, Vector *v) {
-    assert(u->capacity == v->capacity);
+    if (check_vector_sizes(u, v) != VECTOR_SUCCESS)
+        return NULL;
 
     int vec_size = u->capacity;
     Vector *w = malloc(sizeof(Vector));
@@ -134,15 +146,19 @@ Vector *vector_product(Vector *u, Vector *v) {
 }
 
 float scalar_projection(Vector *u, Vector *v) {
-    assert(u->capacity > 0 && v->capacity > 0);
-    assert(u->capacity == v->capacity);
+    if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS)
+        return VECTOR_FAILURE;
+    if (vector_L2_norm(v) == 0)
+        return -1;
 
     return (float) vector_dot_product(u, v) / vector_L2_norm(v);
 }
 
 Vector *vector_projection(Vector *u, Vector *v) {
-    assert(u->capacity > 0 && v->capacity > 0);
-    assert(u->capacity == v->capacity);
+    if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS)
+        return VECTOR_FAILURE;
+    if (vector_L2_norm(v) == 0)
+        return -1;
 
     float factor = scalar_projection(u, v);
 
@@ -154,8 +170,10 @@ Vector *vector_projection(Vector *u, Vector *v) {
 }
 
 float vector_angle_between(Vector *u, Vector *v, bool radians) {
-    assert(u->capacity > 0 && v->capacity > 0);
-    assert(u->capacity == v->capacity);
+    if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS)
+        return VECTOR_FAILURE;
+    if (vector_L2_norm(v) == 0)
+        return -1;
 
     double res = vector_dot_product(u, v) / (vector_L2_norm(u) * vector_L2_norm(v));
 
@@ -179,31 +197,19 @@ Vector *rademacher_vector(int rows) {
 // ############################### HELPER FUNCTIONS ####################################
 
 bool check_vector_orthogonality(Vector *u, Vector *v) {
-    assert(u->capacity > 0 && v->capacity > 0);
-    assert(u->capacity == v->capacity);
-
     return vector_dot_product(u, v) == 0;
 }
 
 bool check_vector_collinearity(Vector *u, Vector *v) {
-    assert(u->capacity > 0 && v->capacity > 0);
-    assert(u->capacity == v->capacity);
-
     // one could also check that the vector product between u and v is 0
     return vector_dot_product(u, v) == vector_L2_norm(u) * vector_L2_norm(v) || vector_dot_product(u, v) == -vector_L2_norm(u) * vector_L2_norm(v);
 }
 
 bool check_vector_perpendicularity(Vector *u, Vector *v) {
-    assert(u->capacity > 0 && v->capacity > 0);
-    assert(u->capacity == v->capacity);
-
     return vector_dot_product(u, v) == 0;
 }
 
 bool check_vector_equality(Vector *u, Vector *v) {
-    assert(u->capacity > 0 && v->capacity > 0);
-    assert(u->capacity == v->capacity);
-
     for (int i = 0; i < u->capacity; i++)
         if (u->items[i] != v->items[i])
             return false;
@@ -211,9 +217,6 @@ bool check_vector_equality(Vector *u, Vector *v) {
 }
 
 bool check_vector_oppositeness(Vector *u, Vector *v) {
-    assert(u->capacity > 0 && v->capacity > 0);
-    assert(u->capacity == v->capacity);
-
     for (int i = 0; i < u->capacity; i++)
         if (u->items[i] != -v->items[i])
             return false;
@@ -239,7 +242,8 @@ bool vector_is_real(Vector *v) {
 // ############################### VECTOR NORMS ########################################
 
 float vector_L1_norm(Vector *v) {
-    assert(v->capacity > 0);
+    if (v->capacity == 0)
+        return -1;
 
     float res = 0;
     for (int i = 0; i < v->capacity; i++)
@@ -248,7 +252,8 @@ float vector_L1_norm(Vector *v) {
 }
 
 float vector_L2_norm(Vector *v) {
-    assert(v->capacity > 0);
+    if (v->capacity == 0)
+        return -1;
 
     float res = 0;
     for (int i = 0; i < v->capacity; i++)

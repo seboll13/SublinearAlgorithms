@@ -12,7 +12,7 @@
 #endif
 
 #define VECTOR_SUCCESS 0
-#define VECTOR_SIZE_MISMATCH -1
+#define VECTOR_FAILURE -1
 
 #define MAX_VEC_CAPACITY 1e9
 
@@ -51,6 +51,15 @@ void free_vector(Vector *v);
 void update_vector(Vector *v, float _Complex n, int idx);
 
 // ############################## VECTOR SAFETY CHECKS #################################
+
+/**
+ * @brief check whether or not both vectors contain at least one element
+ * 
+ * @param u first vector
+ * @param v second vector
+ * @return int 0 if both vectors contain at least one element, -1 otherwise (see constants above)
+ */
+int check_strictly_positive_sizes(const Vector *u, const Vector *v);
 /**
  * @brief check whether or not two vectors have the same size
  * 
