@@ -5,6 +5,8 @@ from python.utils.float_complex import CFloatComplex
 from python.models.object_parser import Parser
 from python.models.vector import CVector
 
+DIM = int(1e7)
+
 @timer
 def dot_prod(u: CVector, v: CVector) -> CFloatComplex:
     """Computes the dot product of two vectors, i.e. the sum of products of
@@ -60,19 +62,35 @@ def numpy_dot_prod(u: np.ndarray, v: np.ndarray) -> np.float64:
     """
     return u @ v # replaces np.dot(u, v)
 
+def parse_or_read_vector(vec_name: str, read: bool = False) -> CVector | list:
+    """Parse or read a vector from the command line.
+
+    Parameters
+    ----------
+    vec_name : str
+        The name of the vector
+    read : bool
+        Whether to read the vector from the command line. Default is parse.
+
+    Returns
+    -------
+    CVector | list
+        The list of complex numbers, as a CVector if read is False
+    """
+    parser = Parser('vec', vec_name)
+    return parser.read_vector() if read else parser.parse_vector()
+
 def main():
     """Main function"""
     logger.debug('Parsing vectors')
-    u_parser = Parser('vec', 'u')
-    v_parser = Parser('vec', 'v')
-    u = u_parser.parse_vector()
-    v = v_parser.parse_vector()
+    u = parse_or_read_vector('u')
+    v = parse_or_read_vector('v')
     logger.debug('Computing optimised C-lib dot product of vectors')
     dot_prod(u, v)
 
     logger.debug('Running standard dot product')
-    std_u = u_parser.read_vector()
-    std_v = v_parser.read_vector()
+    std_u = parse_or_read_vector('u', True)
+    std_v = parse_or_read_vector('v', True)
     std_dot_prod(std_u, std_v)
 
     logger.debug('Moving to NumPy')

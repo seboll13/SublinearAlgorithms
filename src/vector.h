@@ -3,8 +3,16 @@
 
 #include "libs.h"
 #include "helpers.h"
+#include <string.h>
+#include <errno.h>
+// The current optimisations are for ARM processors only
+// Future work will include Intel and AMD type processors
+#ifdef __ARM_NEON
 #include <arm_neon.h>
-#include <pthread.h>
+#endif
+
+#define VECTOR_SUCCESS 0
+#define VECTOR_SIZE_MISMATCH -1
 
 #define MAX_VEC_CAPACITY 1e9
 
@@ -14,14 +22,6 @@ typedef struct Vector {
     float _Complex *items;
     char *name;
 } Vector;
-
-// Data structure to be used for multithreaded vector computations
-typedef struct ThreadData {
-    float _Complex *u_items;
-    float _Complex *v_items;
-    int length;
-    float _Complex result;
-} ThreadData;
 
 
 // ############################ VECTOR TYPE CONSTRUCTION ###############################
@@ -50,15 +50,17 @@ void free_vector(Vector *v);
  */
 void update_vector(Vector *v, float _Complex n, int idx);
 
-// ############################### VECTOR OPERATIONS ###################################
+// ############################## VECTOR SAFETY CHECKS #################################
 /**
- * @brief construct a vector with Rademacher random variables, i.e. r.v. that are
- * either -1 or 1 with equal probability
+ * @brief check whether or not two vectors have the same size
  * 
- * @param rows 
- * @return Vector* pointer to the vector
+ * @param u first vector
+ * @param v second vector
+ * @return int 0 if the vectors have the same size, -1 otherwise (see constants above)
  */
-Vector *rademacher_vector(int rows);
+int check_vector_sizes(const Vector *u, const Vector *v);
+
+// ############################### VECTOR OPERATIONS ###################################
 
 /**
  * @brief compute the sum of two vectors
@@ -145,6 +147,17 @@ Vector *vector_projection(Vector *u, Vector *v);
  * @return float angle between the two vectors
  */
 float vector_angle_between(Vector *u, Vector *v, bool radians);
+
+// ############################### VECTOR GENERATION ###################################
+
+/**
+ * @brief construct a vector with Rademacher random variables, i.e. r.v. that are
+ * either -1 or 1 with equal probability
+ * 
+ * @param rows 
+ * @return Vector* pointer to the vector
+ */
+Vector *rademacher_vector(int rows);
 
 // ############################### HELPER FUNCTIONS ####################################
 

@@ -17,15 +17,14 @@ void init_vector(Vector *v, char *name, int rows) {
     }
     v->items = items;
 
-    // Set the vector to all zeros by default
-    for (int i = 0; i < rows; i++)
-        v->items[i] = 0.0f + 0.0f * I;
+    memset(v->items, 0.0f + 0.0f * I, rows * sizeof(float _Complex));
 }
 
 void free_vector(Vector *v) {
-    assert(v->items != NULL);
-    if (v != NULL)
+    if (v->items != NULL)
         free(v->items);
+    if (v != NULL)
+        free(v);
     return;
 }
 
@@ -36,21 +35,21 @@ void update_vector(Vector *v, float _Complex n, int idx) {
     v->items[idx] = n;
 }
 
-// ############################### VECTOR OPERATIONS ###################################
-
-Vector *rademacher_vector(int rows) {
-    assert(rows > 0);
-
-    Vector *v = malloc(sizeof(Vector));
-    init_vector(v, "V", rows);
-
-    for (int i = 0; i < rows; i++)
-        update_vector(v, (rand() % 2 == 0) ? 1.0f + 0.0f * I : -1.0f + 0.0f * I, i);
-    return v;
+// ############################## VECTOR SAFETY CHECKS #################################
+int check_vector_sizes(const Vector *u, const Vector *v) {
+    if (u->capacity != v->capacity) {
+        fprintf(stderr, "Vectors must have the same size\n");
+        errno = EINVAL;
+        return VECTOR_SIZE_MISMATCH;
+    }
+    return VECTOR_SUCCESS;
 }
 
+// ############################### VECTOR OPERATIONS ###################################
+
 Vector *vector_add(Vector *u, Vector *v, bool add) {
-    assert(u->capacity == v->capacity);
+    if (check_vector_sizes(u, v) != VECTOR_SUCCESS)
+        return NULL;
 
     Vector *w = malloc(sizeof(Vector));
     init_vector(w, "W", u->capacity);
@@ -75,6 +74,10 @@ Vector *vector_scalar_mult(Vector *u, int a) {
 float _Complex vector_dot_product(Vector *u, Vector *v) {
     assert(u->capacity == v->capacity);
 
+    float real_result = 0.0f;
+    float imag_result = 0.0f;
+
+    #ifdef __ARM_NEON
     int i = 0;
     const int simd_width = 4; // Number of float pairs processed per NEON operation
     const int unroll_factor = 4; // Unroll the loop to process more elements at once
@@ -95,14 +98,21 @@ float _Complex vector_dot_product(Vector *u, Vector *v) {
     }
 
     // Combine the sums from SIMD operations
-    float real_result = vaddvq_f32(real_sum);
-    float imag_result = vaddvq_f32(imag_sum);
+    real_result = vaddvq_f32(real_sum);
+    imag_result = vaddvq_f32(imag_sum);
 
     // Handle remaining elements that were not processed by the unrolled loop
     for (; i < u->capacity; i++) {
         real_result += crealf(u->items[i]) * crealf(v->items[i]) - cimagf(u->items[i]) * cimagf(v->items[i]);
         imag_result += crealf(u->items[i]) * cimagf(v->items[i]) + cimagf(u->items[i]) * crealf(v->items[i]);
     }
+    #else
+    // We fallback to non-SIMD version for non-ARM architectures
+    for (int i = 0; i < u->capacity; i++) {
+        real_result += crealf(u->items[i]) * crealf(v->items[i]) - cimagf(u->items[i]) * cimagf(v->items[i]);
+        imag_result += crealf(u->items[i]) * cimagf(v->items[i]) + cimagf(u->items[i]) * crealf(v->items[i]);
+    }
+    #endif
 
     return real_result + imag_result * I;
 }
@@ -151,6 +161,19 @@ float vector_angle_between(Vector *u, Vector *v, bool radians) {
 
     assert(res >= -1 && res <= 1);
     return (radians) ? (float) acos(res) : radians_to_degrees(acos(res));
+}
+
+// ############################### VECTOR GENERATION ###################################
+
+Vector *rademacher_vector(int rows) {
+    assert(rows > 0);
+
+    Vector *v = malloc(sizeof(Vector));
+    init_vector(v, "V", rows);
+
+    for (int i = 0; i < rows; i++)
+        update_vector(v, (rand() % 2 == 0) ? 1.0f + 0.0f * I : -1.0f + 0.0f * I, i);
+    return v;
 }
 
 // ############################### HELPER FUNCTIONS ####################################

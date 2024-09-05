@@ -1,8 +1,8 @@
 from ctypes import CDLL, POINTER, Structure, c_bool, c_char_p, c_float, c_int
 from python.utils.float_complex import CFloatComplex
+from python.utils.helpers import timer
 
 libmain = CDLL('../src/libmain.so')
-
 
 class CVector(Structure):
     """Gets the vector struct from the C implementation."""
@@ -66,13 +66,13 @@ class CVector(Structure):
         CFloatComplex
             The computed dot product of the two vectors as a complex number.
         """
-        libmain.vector_dot_product.argstype = [POINTER(CVector), POINTER(CVector)]
+        libmain.vector_dot_product.argtypes = [POINTER(CVector), POINTER(CVector)]
         libmain.vector_dot_product.restype = CFloatComplex
 
         # Create a pointer to the other CVector instance
         other_ptr = POINTER(CVector)(other)
 
-        return libmain.vector_dot_product(self.c_vector_ptr, other_ptr)
+        libmain.vector_dot_product(self.c_vector_ptr, other_ptr)
 
 
     def __vecprod__(self, other) -> 'CVector':
