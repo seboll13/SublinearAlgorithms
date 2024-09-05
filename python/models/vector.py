@@ -1,7 +1,7 @@
 from ctypes import CDLL, POINTER, Structure, c_bool, c_char_p, c_float, c_int
-from float_complex import CFloatComplex
+from python.utils.float_complex import CFloatComplex
 
-libmain = CDLL("../C/libmain.so")
+libmain = CDLL('../src/libmain.so')
 
 
 class CVector(Structure):
@@ -48,38 +48,31 @@ class CVector(Structure):
         return libmain.vector_scalar_mult(self.c_vector_ptr, scalar).contents
 
 
-    def __dotprod__(self, other, is_optimised: bool) -> CFloatComplex:
+    def __dotprod__(self, other) -> CFloatComplex:
         """
         Compute the dot product of two vectors.
 
-        This function computes the dot product of the current vector with another vector.
-        If `is_optimised` is set to True, an optimized version of the dot product
-        is used, which leverages loop unrolling and SIMD instructions to enhance
-        performance.
+        This function computes the dot product of the current vector with another vector
+        using a default optimised version, which leverages loop unrolling and SIMD
+        instructions to enhance performance.
 
         Parameters
         ----------
         other : CVector
             The other vector to compute the dot product with.
-        is_optimised : bool
-            If True, use the optimized version of the dot product function.
 
         Returns
         -------
         CFloatComplex
             The computed dot product of the two vectors as a complex number.
         """
-        if is_optimised:
-            dot_product_func = libmain.vector_dot_product_optimised
-        else:
-            dot_product_func = libmain.vector_dot_product
-        dot_product_func.argstype = [POINTER(CVector), POINTER(CVector)]
-        dot_product_func.restype = CFloatComplex
+        libmain.vector_dot_product.argstype = [POINTER(CVector), POINTER(CVector)]
+        libmain.vector_dot_product.restype = CFloatComplex
 
         # Create a pointer to the other CVector instance
         other_ptr = POINTER(CVector)(other)
 
-        return dot_product_func(self.c_vector_ptr, other_ptr)
+        return libmain.vector_dot_product(self.c_vector_ptr, other_ptr)
 
 
     def __vecprod__(self, other) -> 'CVector':

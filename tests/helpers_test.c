@@ -1,5 +1,5 @@
 #include <check.h>
-#include "../C/helpers.h"
+#include "../src/helpers.h"
 
 START_TEST(test_correct_complex_absolute_value) 
 {

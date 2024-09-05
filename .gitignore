@@ -1,20 +1,20 @@
-
-# Other
-Main/py311_*/
-.ruff_cache
-*.vscode/
+# General
 *.DS_Store
-__pycache__/
+*.vscode/
 data/
 
-# Prerequisites
-*.d
-
-# Object files
+# Compiled Object files
 *.o
 *.ko
 *.obj
 *.elf
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
 
 # Linker output
 *.ilk
@@ -31,7 +31,7 @@ data/
 *.la
 *.lo
 
-# Shared objects (inc. Windows DLLs)
+# Shared objects (includes Windows DLLs, Unix SOs)
 *.dll
 *.so
 *.so.*
@@ -51,11 +51,124 @@ data/
 *.idb
 *.pdb
 
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+# Dependency directories
+build/
+lib/
+lib64/
+bin/
+obj/
+output/
+
+# Package distributions
+dist/
+*.egg-info/
+*.whl
+MANIFEST
+
+# Python byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python distribution / packaging
+.Python
+develop-eggs/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Python environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+.cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff
+instance/
+.webassets-cache
+
+# Scrapy stuff
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# PyCharm and other JetBrains IDEs
+#.idea/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Others
+py311_*/
+.ruff_cache
+__pypackages__/
+.pdm.toml
+.pdm-python
+.pdm-build/

@@ -1,9 +1,9 @@
 from pathlib import Path
-from vector_structure import CVector
-from matrix_structure import CMatrix
-from float_complex import CFloatComplex
+from python.models.vector import CVector
+from python.models.matrix import CMatrix
+from python.utils.float_complex import CFloatComplex
 
-DATA_PATH = Path(__file__).parent.parent / 'data'
+DATA_PATH = Path(__file__).parent.parent.parent / 'data'
 
 class Parser:
     """Parser class to read and parse objects from the data files."""

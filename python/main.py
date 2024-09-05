@@ -1,12 +1,12 @@
 from loguru import logger
 import numpy as np
-from helpers import timer
-from float_complex import CFloatComplex
-from object_parser import Parser
-from vector_structure import CVector
+from python.utils.helpers import timer
+from python.utils.float_complex import CFloatComplex
+from python.models.object_parser import Parser
+from python.models.vector import CVector
 
 @timer
-def dot_prod(u: CVector, v: CVector, is_optimised: bool = False) -> CFloatComplex:
+def dot_prod(u: CVector, v: CVector) -> CFloatComplex:
     """Computes the dot product of two vectors, i.e. the sum of products of
         each pair of elements from the two vectors.
     
@@ -16,15 +16,13 @@ def dot_prod(u: CVector, v: CVector, is_optimised: bool = False) -> CFloatComple
         First vector
     v : CVector
         Second vector
-    is_optimised : bool
-        If True, use the optimised version of the dot product function
     
     Returns
     -------
     float
         The dot product of the two vectors
     """
-    return u.__dotprod__(v, is_optimised)
+    return u.__dotprod__(v)
 
 @timer
 def std_dot_prod(u: list, v: list) -> float:
@@ -42,7 +40,6 @@ def std_dot_prod(u: list, v: list) -> float:
     float
         The dot product of the two lists
     """
-    assert len(u) == len(v), "The vectors must have the same length"
     return sum((u[i] * v[i] for i in range(len(u))))
 
 @timer
@@ -61,7 +58,7 @@ def numpy_dot_prod(u: np.ndarray, v: np.ndarray) -> np.float64:
     np.float64
         The dot product of the two vectors
     """
-    return np.dot(u, v)
+    return u @ v # replaces np.dot(u, v)
 
 def main():
     """Main function"""
@@ -70,11 +67,8 @@ def main():
     v_parser = Parser('vec', 'v')
     u = u_parser.parse_vector()
     v = v_parser.parse_vector()
-    logger.debug('Computing C-lib dot product of vectors')
+    logger.debug('Computing optimised C-lib dot product of vectors')
     dot_prod(u, v)
-    # Uncomment the following line to use the optimised version of the dot product
-    # logger.debug('Computing Optimised C-lib dot product of vectors')
-    # dot_prod(u, v, True)
 
     logger.debug('Running standard dot product')
     std_u = u_parser.read_vector()

@@ -1,5 +1,5 @@
 #include <check.h>
-#include "../C/tensor.h"
+#include "../src/tensor.h"
 
 
 /**

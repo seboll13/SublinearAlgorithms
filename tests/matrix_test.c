@@ -1,5 +1,5 @@
 #include <check.h>
-#include "../C/matrix.h"
+#include "../src/matrix.h"
 
 /**
  * @brief Create a dummy real matrix object

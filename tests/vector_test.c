@@ -1,5 +1,5 @@
 #include <check.h>
-#include "../C/vector.h"
+#include "../src/vector.h"
 
 /**
  * @brief Create a real 3d vector object

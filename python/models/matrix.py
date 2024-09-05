@@ -1,8 +1,8 @@
 from ctypes import CDLL, POINTER, Structure, c_bool, c_char_p, c_int
-from vector_structure import CVector
-from float_complex import CFloatComplex
+from python.models.vector import CVector
+from python.utils.float_complex import CFloatComplex
 
-libmain = CDLL('../C/libmain.so')
+libmain = CDLL('../src/libmain.so')
 
 
 class CMatrix(Structure):

@@ -1,5 +1,5 @@
-CPATH=./C/
-PYTHONPATH=./Main/
+CPATH=./src/
+PYTHONPATH=./python/
 TESTPATH=./tests/
 PYTHON=python3
 NODE=node
