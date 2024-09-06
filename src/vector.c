@@ -16,7 +16,6 @@ void init_vector(Vector *v, char *name, int rows) {
         exit(EXIT_FAILURE);
     }
     v->items = items;
-
     memset(v->items, 0.0f + 0.0f * I, rows * sizeof(float _Complex));
 }
 
@@ -26,10 +25,7 @@ void free_vector(Vector *v) {
     return;
 }
 
-void update_vector(Vector *v, float _Complex n, int idx) {
-    assert(idx > -1);
-    assert(idx < MAX_VEC_CAPACITY);
-    
+inline void update_vector(Vector *v, float _Complex n, int idx) {
     v->items[idx] = n;
 }
 
@@ -98,7 +94,7 @@ float _Complex vector_dot_product(Vector *u, Vector *v) {
             // Prefetch future elements to reduce cache misses
             __builtin_prefetch(&u->items[i + (j + 1) * simd_width], 0, 1);
             __builtin_prefetch(&v->items[i + (j + 1) * simd_width], 0, 1);
-            
+
             float32x4x2_t u_vec = vld2q_f32((float*)&u->items[i + j * simd_width]);
             float32x4x2_t v_vec = vld2q_f32((float*)&v->items[i + j * simd_width]);
 
