@@ -25,6 +25,8 @@ int main() {
 
     free_vector(u);
     free_vector(v);
+    free(u);
+    free(v);
 
     printf("END OF PROGRAM\n");
     return 0;

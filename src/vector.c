@@ -9,7 +9,7 @@ void init_vector(Vector *v, char *name, int rows) {
     v->name = name;
     //v->items = malloc(rows * sizeof(float _Complex));
     float _Complex *items;
-    int ret = posix_memalign((void**)&items, 32, rows * sizeof(float _Complex));
+    int ret = posix_memalign((void**)&items, SIMD_ALIGNMENT, rows * sizeof(float _Complex));
     if (ret != 0) {
         items = NULL;
         perror("posix_memalign failed");
@@ -23,8 +23,6 @@ void init_vector(Vector *v, char *name, int rows) {
 void free_vector(Vector *v) {
     if (v->items != NULL)
         free(v->items);
-    if (v != NULL)
-        free(v);
     return;
 }
 
@@ -146,19 +144,15 @@ Vector *vector_product(Vector *u, Vector *v) {
 }
 
 float scalar_projection(Vector *u, Vector *v) {
-    if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS)
+    if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS || vector_L2_norm(v) == 0)
         return VECTOR_FAILURE;
-    if (vector_L2_norm(v) == 0)
-        return -1;
 
     return (float) vector_dot_product(u, v) / vector_L2_norm(v);
 }
 
 Vector *vector_projection(Vector *u, Vector *v) {
-    if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS)
-        return VECTOR_FAILURE;
-    if (vector_L2_norm(v) == 0)
-        return -1;
+    if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS || vector_L2_norm(v) == 0)
+        return NULL;
 
     float factor = scalar_projection(u, v);
 
@@ -170,10 +164,8 @@ Vector *vector_projection(Vector *u, Vector *v) {
 }
 
 float vector_angle_between(Vector *u, Vector *v, bool radians) {
-    if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS)
+    if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS || vector_L2_norm(u) == 0)
         return VECTOR_FAILURE;
-    if (vector_L2_norm(v) == 0)
-        return -1;
 
     double res = vector_dot_product(u, v) / (vector_L2_norm(u) * vector_L2_norm(v));
 

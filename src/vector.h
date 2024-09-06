@@ -8,7 +8,10 @@
 // The current optimisations are for ARM processors only
 // Future work will include Intel and AMD type processors
 #ifdef __ARM_NEON
-#include <arm_neon.h>
+    #include <arm_neon.h>
+    #define SIMD_ALIGNMENT 32
+#else
+    #define SIMD_ALIGNMENT 16
 #endif
 
 #define VECTOR_SUCCESS 0
