@@ -95,6 +95,10 @@ float _Complex vector_dot_product(Vector *u, Vector *v) {
 
     for (; i <= u->capacity - unroll_factor * simd_width; i += unroll_factor * simd_width) {
         for (int j = 0; j < unroll_factor; j++) {
+            // Prefetch future elements to reduce cache misses
+            __builtin_prefetch(&u->items[i + (j + 1) * simd_width], 0, 1);
+            __builtin_prefetch(&v->items[i + (j + 1) * simd_width], 0, 1);
+            
             float32x4x2_t u_vec = vld2q_f32((float*)&u->items[i + j * simd_width]);
             float32x4x2_t v_vec = vld2q_f32((float*)&v->items[i + j * simd_width]);
 
