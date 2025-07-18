@@ -1,28 +1,30 @@
 CC=gcc
-CFLAGS=-c -Wall -Wextra
-TESTFLAGS=-lcheck -pthread #-pthread -lm
+PKG_CFLAGS=$(shell pkg-config --cflags check)
+PKG_LIBS =$(shell pkg-config --libs check)
+CFLAGS=-Wall -Wextra $(PKG_CFLAGS)
+LDFLAGS=-pthread $(PKG_LIBS)
 OBJ=main_test.o vector.o matrix.o tensor.o helpers.o
 TARGET=main_test
 
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CC) $^ -o $@ $(TESTFLAGS)
+	$(CC) $^ -o $@ $(LDFLAGS)
 
 main_test.o: main_test.c
-	$(CC) $(CFLAGS) $^
+	$(CC) $(CFLAGS) -c $<
 
-vector.o: ../C/vector.c
-	$(CC) $(CFLAGS) $^
+vector.o: ../src/vector.c
+	$(CC) $(CFLAGS) -c $^
 
-matrix.o: ../C/matrix.c
-	$(CC) $(CFLAGS) $^
+matrix.o: ../src/matrix.c
+	$(CC) $(CFLAGS) -c $^
 
-tensor.o: ../C/tensor.c
-	$(CC) $(CFLAGS) $^
+tensor.o: ../src/tensor.c
+	$(CC) $(CFLAGS) -c $^
 
-helpers.o: ../C/helpers.c
-	$(CC) $(CFLAGS) $^
+helpers.o: ../src/helpers.c
+	$(CC) $(CFLAGS) -c $^
 
 .PHONY: clean
 
