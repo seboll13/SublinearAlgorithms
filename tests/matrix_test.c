@@ -1,4 +1,5 @@
 #include <check.h>
+#include "../src/vector.h"
 #include "../src/matrix.h"
 
 /**
@@ -202,6 +203,23 @@ START_TEST(test_standard_kroenecker_product)
             ck_assert_float_eq(m->items[j].items[i], 2.0f);
     free_matrix(m1); free_matrix(m2); free_matrix(m);
     free(m1); free(m2); free(m);
+}
+END_TEST
+
+START_TEST(test_vector_tensor_prod)
+{
+    Vector *u = create_dummy_real_vector(1.0f);
+    Vector *v = create_dummy_real_vector(1.0f);
+    
+    Matrix *m = vector_tensor_prod(u, v);
+
+    ck_assert_int_eq(m->rows, 3);
+    ck_assert_int_eq(m->cols, 3);
+    for (int j = 0; j < m->cols; j++)
+        for (int i = 0; i < m->rows; i++)
+            ck_assert_float_eq(m->items[j].items[i], 1.0f);
+    free_vector(u); free_vector(v); free_matrix(m);
+    free(u); free(v); free(m);
 }
 END_TEST
 

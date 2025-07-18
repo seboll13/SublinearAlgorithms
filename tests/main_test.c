@@ -56,6 +56,7 @@ Suite *matrix_suite(void) {
     tcase_add_test(tc_matrix_operations, test_standard_matrix_power);
     tcase_add_test(tc_matrix_operations, test_standard_hadamard_product);
     tcase_add_test(tc_matrix_operations, test_standard_kroenecker_product);
+    tcase_add_test(tc_matrix_operations, test_vector_tensor_prod);
     tcase_add_test(tc_matrix_operations, test_standard_transpose);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_cofactor);
     tcase_add_test(tc_matrix_operations, test_standard_matrix_adjoint);

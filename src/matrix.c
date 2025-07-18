@@ -281,7 +281,6 @@ Matrix *matrix_kronecker_prod(Matrix *m1, Matrix *m2) {
 
 /**
  * @brief return the tensor product of two vectors
- * TODO: test this
  * 
  * @param u 1st vector
  * @param v 2nd vector
