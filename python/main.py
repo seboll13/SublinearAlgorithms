@@ -45,7 +45,7 @@ def std_dot_prod(u: list, v: list) -> float:
     return sum((u[i] * v[i] for i in range(len(u))))
 
 @timer
-def numpy_dot_prod(u: np.ndarray, v: np.ndarray) -> np.float64:
+def numpy_dot_prod(u: np.ndarray, v: np.ndarray) -> np.ndarray:
     """Compute the dot product of two vectors using NumPy.
 
     Parameters
