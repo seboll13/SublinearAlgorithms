@@ -16,7 +16,7 @@ basicConfig(level=INFO)
 
 def get_category_url(code: str, category: str, year: int) -> str:
     """Gets the WorldBank API URL for a given category and year.
-    
+
     Parameters
     ----------
     code : str
@@ -25,7 +25,7 @@ def get_category_url(code: str, category: str, year: int) -> str:
         The category to get the data for
     year : int
         The year to get the data for
-    
+
     Returns
     ----------
     str

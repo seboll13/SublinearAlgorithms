@@ -1,8 +1,10 @@
 """A library of helper functions."""
+
 from functools import wraps
 from time import process_time
 from typing import Callable
 from loguru import logger
+
 
 def timer(func) -> Callable:
     """
