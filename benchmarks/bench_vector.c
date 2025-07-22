@@ -4,7 +4,7 @@
 #include "../src/vector.h"
 
 #define DIM (int)1e7
-#define REPEAT 100
+#define REPEAT 1
 
 /**
  * @brief Get the elapsed time object
@@ -33,19 +33,19 @@ void time_dot_product(Vector *u, Vector *v) {
            DIM, REPEAT, elapsed, (elapsed * 1000) / REPEAT);
 }
 
-void time_vector_equality(Vector *u, Vector *v) {
+void time_vector_product(Vector *u, Vector *v) {
     struct timespec start, end;
     clock_gettime(CLOCK_MONOTONIC, &start);
 
     for (int i = 0; i < REPEAT; ++i) {
-        bool result = check_vector_equality(u, v);
-        (void)result; // suppress unused warning
+        Vector *w = vector_product(u, v);
+        (void)w; // suppress unused warning
     }
 
     clock_gettime(CLOCK_MONOTONIC, &end);
     double elapsed = get_elapsed_time(start, end);
 
-    printf("[benchmark] vector equality on dim=%d repeated %d times: %.6f sec (%.6f ms avg)\n",
+    printf("[benchmark] vector product on dim=%d repeated %d times: %.6f sec (%.6f ms avg)\n",
            DIM, REPEAT, elapsed, (elapsed * 1000) / REPEAT);
 }
 
@@ -58,7 +58,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    time_vector_equality(u, u);
+    time_vector_product(u, v);
 
     free_vector(u); free_vector(v); free(u); free(v);
     return EXIT_SUCCESS;

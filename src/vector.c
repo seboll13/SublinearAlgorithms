@@ -127,14 +127,20 @@ Vector *vector_product(Vector *u, Vector *v) {
         return NULL;
 
     int vec_size = u->capacity;
+    int N = 1 << (int)ceil(log2(vec_size)); // get the next power of 2
+
     Vector *w = malloc(sizeof(Vector));
     init_vector(w, "W", vec_size);
 
+    int u_index = vec_size - 2;
+    int v_index = vec_size - 1;
     for (int i = 0; i < vec_size; i++) {
-        int u_index = (vec_size-2+i) % vec_size;
-        int v_index = (u_index + 1) % vec_size;
         // obtain each element by circular permutation
-        update_vector(w, u->items[u_index]*v->items[v_index]-u->items[v_index]*v->items[u_index], i);
+        update_vector(w, u->items[u_index] * v->items[v_index] - u->items[v_index] * v->items[u_index], i);
+
+        // update indices using bitwise operations for better performance
+        u_index = (u_index + 1) & (N - 1);
+        v_index = (v_index + 1) & (N - 1);
     }
     return w;
 }
@@ -154,8 +160,10 @@ Vector *vector_projection(Vector *u, Vector *v) {
 
     Vector *w = malloc(sizeof(Vector));
     init_vector(w, "W", u->capacity);
+    
+    float l2_norm = vector_L2_norm(v);
     for (int i = 0; i < w->capacity; i++)
-        update_vector(w, factor * v->items[i] / vector_L2_norm(v), i);
+        update_vector(w, factor * v->items[i] / l2_norm, i);
     return w;
 }
 
@@ -198,10 +206,8 @@ bool check_vector_perpendicularity(Vector *u, Vector *v) {
 }
 
 bool check_vector_equality(Vector *u, Vector *v) {
-    for (int i = 0; i < u->capacity; i++)
-        if (u->items[i] != v->items[i])
-            return false;
-    return true;
+    return memcmp(u->items, v->items,
+                  u->capacity * sizeof *u->items) == 0;
 }
 
 bool check_vector_oppositeness(Vector *u, Vector *v) {
