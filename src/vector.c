@@ -71,7 +71,8 @@ Vector *vector_scalar_mult(Vector *u, int a) {
     return v;
 }
 
-float _Complex vector_dot_product(Vector *u, Vector *v) {
+__attribute__((hot))
+float _Complex vector_dot_product(const Vector *restrict u, const Vector *restrict v) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS)
         return -1;
 

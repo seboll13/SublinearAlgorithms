@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-c -Wall -Wextra -O3#-mcpu=apple-m1 -mtune=apple-m1 -funroll-loops
+CFLAGS=-c -Wall -Wextra -O2#-mcpu=apple-m1 -mtune=apple-m1 -funroll-loops
 OBJ=main.o vector.o projections.o matrix.o tensor.o helpers.o
 TARGET=main
 

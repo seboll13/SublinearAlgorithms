@@ -107,7 +107,7 @@ Vector *vector_scalar_mult(Vector *u, int a);
  * @param v vector 2
  * @return int sum of products of each coefficient
  */
-float _Complex vector_dot_product(Vector *u, Vector *v);
+float _Complex vector_dot_product(const Vector *restrict u, const Vector *restrict v);
 
 /**
  * @brief function to be executed by each thread when computing the dot product
