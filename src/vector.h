@@ -47,19 +47,17 @@ void free_vector(Vector *v);
 /**
  * @brief update a vector element
  * 
- * Due to the high number of calls to this function, it is declared as (extern) inline, 
+ * Due to the high number of calls to this function, it is declared as inline, 
  * so that each GCC call to it will be replaced by the function's body at compile time
  * for faster execution.
- * Note that the extern keyword is used to recognise the function in other files, as
- * the inline keyword localises it to the current file. This solution is also preferred
- * to that of adding the source code directly in the header file.
  * 
  * @param v vector to update
  * @param n element to add
  * @param idx position at which n is to be added
  */
-extern inline void update_vector(Vector *v, float _Complex n, int idx);
-
+static inline void update_vector(Vector *v, float _Complex n, int idx) {
+    v->items[idx] = n;
+}
 // ############################## VECTOR SAFETY CHECKS #################################
 
 /**

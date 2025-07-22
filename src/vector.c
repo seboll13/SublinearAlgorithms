@@ -25,10 +25,6 @@ void free_vector(Vector *v) {
     return;
 }
 
-inline void update_vector(Vector *v, float _Complex n, int idx) {
-    v->items[idx] = n;
-}
-
 // ############################## VECTOR SAFETY CHECKS #################################
 
 int check_strictly_positive_sizes(const Vector *u, const Vector *v) {

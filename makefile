@@ -1,6 +1,7 @@
 CPATH=./src/
 PYTHONPATH=./python/
 TESTPATH=./tests/
+BENCHPATH=./benchmarks/
 PYTHON=python3
 NODE=node
 M="default push from makefile message"
@@ -26,6 +27,9 @@ test:
 run_tests: test
 	$(TESTPATH)main_test
 
+bench:
+	$(MAKE) -C $(BENCHPATH)
+
 commit: clean
 	git add .
 	git commit -m $(M)
@@ -40,4 +44,5 @@ push: clean
 clean:
 	$(MAKE) clean -C $(CPATH)
 	$(MAKE) clean -C $(TESTPATH)
+	$(MAKE) clean -C $(BENCHPATH)
 	clear

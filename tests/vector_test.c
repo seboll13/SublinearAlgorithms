@@ -19,7 +19,7 @@ Vector *create_real_3d_vector(float x, float y, float z) {
 /**
  * @brief Create a dummy integer vector object
  * 
- * @param n 
+ * @param n
  * @return Vector* 
  */
 Vector *create_dummy_integer_vector(int n) {
