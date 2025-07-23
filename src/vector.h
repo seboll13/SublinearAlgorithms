@@ -14,8 +14,11 @@
     #define SIMD_ALIGNMENT 16
 #endif
 
-#define VECTOR_SUCCESS 0
-#define VECTOR_FAILURE -1
+enum {
+    VECTOR_SUCCESS = 0,
+    VECTOR_ERR_BAD_SIZE = -1,
+    VECTOR_ERR_OOM = -2
+};
 
 #define MAX_VEC_CAPACITY 1e9
 
@@ -34,8 +37,9 @@ typedef struct Vector {
  * @param v vector to initialise
  * @param name vector id
  * @param rows number of rows the vector will have
+ * @return int status of the initialization (0 for success, negative int for failure)
  */
-void init_vector(Vector *v, char *name, int rows);
+int init_vector(Vector *v, const char *name, int rows);
 
 /**
  * @brief remove a vector from memory

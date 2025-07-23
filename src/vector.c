@@ -2,20 +2,37 @@
 
 // ############################ VECTOR TYPE CONSTRUCTION ###############################
 
-void init_vector(Vector *v, char *name, int rows) {
-    assert(rows > 0);
+__attribute__((cold))
+int init_vector(Vector *v, const char *name, int rows) {
+    if (rows <= 0) {
+        fprintf(stderr, "init_vector: bad size %d\n", rows);
+        errno = EINVAL;
+        return VECTOR_ERR_BAD_SIZE;
+    }
+
+    v->name = strdup(name);
+    if (!v->name) {
+        perror("strdup failed");
+        errno = ENOMEM;
+        return VECTOR_ERR_OOM;
+    }
 
     v->capacity = rows;
-    v->name = name;
+    
     float _Complex *items;
-    int ret = posix_memalign((void**)&items, SIMD_ALIGNMENT, rows * sizeof(float _Complex));
+
+    int ret = posix_memalign((void **)&items, SIMD_ALIGNMENT, rows * sizeof *items);
     if (ret != 0) {
         items = NULL;
         perror("posix_memalign failed");
-        exit(EXIT_FAILURE);
+        free(v->name);
+        errno = ENOMEM;
+        return VECTOR_ERR_OOM;
     }
+
     v->items = __builtin_assume_aligned(items, SIMD_ALIGNMENT);
-    memset(v->items, 0, rows * sizeof *v->items);
+    memset(v->items, 0, (size_t) rows * sizeof *v->items);
+    return VECTOR_SUCCESS;
 }
 
 void free_vector(Vector *v) {
@@ -30,7 +47,7 @@ int check_strictly_positive_sizes(const Vector *u, const Vector *v) {
     if (u->capacity < 1 || v->capacity < 1) {
         fprintf(stderr, "Vectors must contain at least one element\n");
         errno = EINVAL;
-        return VECTOR_FAILURE;
+        return VECTOR_ERR_BAD_SIZE;
     }
     return VECTOR_SUCCESS;
 }
@@ -39,7 +56,7 @@ int check_vector_sizes(const Vector *u, const Vector *v) {
     if (u->capacity != v->capacity) {
         fprintf(stderr, "Vectors must have the same size\n");
         errno = EINVAL;
-        return VECTOR_FAILURE;
+        return VECTOR_ERR_BAD_SIZE;
     }
     return VECTOR_SUCCESS;
 }
@@ -147,7 +164,7 @@ Vector *vector_product(Vector *u, Vector *v) {
 
 float scalar_projection(Vector *u, Vector *v) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS || vector_L2_norm(v) == 0)
-        return VECTOR_FAILURE;
+        return VECTOR_ERR_BAD_SIZE;
 
     return (float) vector_dot_product(u, v) / vector_L2_norm(v);
 }
@@ -169,7 +186,7 @@ Vector *vector_projection(Vector *u, Vector *v) {
 
 float vector_angle_between(Vector *u, Vector *v, bool radians) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS || vector_L2_norm(u) == 0)
-        return VECTOR_FAILURE;
+        return VECTOR_ERR_BAD_SIZE;
 
     double res = vector_dot_product(u, v) / (vector_L2_norm(u) * vector_L2_norm(v));
 
