@@ -1,8 +1,8 @@
 #include "matrix.h"
 
 void *thread_func(void *arg) {
-    Matrix *m1 = ((Matrix **)arg)[0];
-    Matrix *m2 = ((Matrix **)arg)[1];
+    const Matrix *m1 = ((Matrix **)arg)[0];
+    const Matrix *m2 = ((Matrix **)arg)[1];
     return (void *)fast_matrix_mult(m1, m2);
 }
 
@@ -79,7 +79,7 @@ Matrix *rademacher_matrix(int rows, int cols) {
  * @param add indicator of addition
  * @return Matrix addition if sub is false, otherwise subtraction
  */
-Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add) {
+Matrix *matrix_add(const Matrix *m1, const Matrix *m2, bool add) {
     assert(m1->rows == m2->rows);
     assert(m1->cols == m2->cols);
 
@@ -102,7 +102,7 @@ Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add) {
  * @param m matrix
  * @return Matrix* scaled matrix 
  */
-Matrix *matrix_scalar_mult(float _Complex n, Matrix *m) {
+Matrix *matrix_scalar_mult(float _Complex n, const Matrix *m) {
     Matrix *scaled = malloc(sizeof(Matrix));
     init_matrix(scaled, "MS", m->rows, m->cols);
     for (int j = 0; j < m->cols; j++)
@@ -119,7 +119,7 @@ Matrix *matrix_scalar_mult(float _Complex n, Matrix *m) {
  * @param div indicator of division
  * @return resultant matrix
  */
-Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
+Matrix *matrix_mult(const Matrix *m1, const Matrix *m2) {
     // Inner dimensions must be the same
     assert(m1->cols == m2->rows);
     
@@ -135,7 +135,7 @@ Matrix *matrix_mult(Matrix *m1, Matrix *m2) {
     return m;
 }
 
-Matrix *create_submatrix(Matrix *m, int row_start, int row_end, int col_start, int col_end) {
+Matrix *create_submatrix(const Matrix *m, int row_start, int row_end, int col_start, int col_end) {
     Matrix *sub = malloc(sizeof(Matrix));
     init_matrix(sub, "M", row_end - row_start, col_end - col_start);
     for (int i = row_start; i < row_end; i++)
@@ -144,7 +144,7 @@ Matrix *create_submatrix(Matrix *m, int row_start, int row_end, int col_start, i
     return sub;
 }
 
-Matrix *set_submatrix(Matrix *m, Matrix *sub, int row_start, int row_end, int col_start, int col_end) {
+Matrix *set_submatrix(Matrix *m, const Matrix *sub, int row_start, int row_end, int col_start, int col_end) {
     for (int i = row_start; i < row_end; i++)
         for (int j = col_start; j < col_end; j++)
             update_matrix(m, sub->items[j - col_start].items[i - row_start], i, j);
@@ -158,7 +158,7 @@ Matrix *set_submatrix(Matrix *m, Matrix *sub, int row_start, int row_end, int co
  * @param m2 second matrix
  * @return resultant matrix
  */
-Matrix *fast_matrix_mult(Matrix *m1, Matrix *m2) {
+Matrix *fast_matrix_mult(const Matrix *m1, const Matrix *m2) {
     // Inner dimensions must be the same
     assert(m1->cols == m2->rows);
 
@@ -173,11 +173,11 @@ Matrix *fast_matrix_mult(Matrix *m1, Matrix *m2) {
     int n = m1->rows;
     int half = n / 2;
     Matrix *A11 = create_submatrix(m1, 0, half, 0, half);
-    Matrix *A12 = create_submatrix(m1, 0, half, half, n);
-    Matrix *A21 = create_submatrix(m1, half, n, 0, half);
-    Matrix *A22 = create_submatrix(m1, half, n, half, n);
+    const Matrix *A12 = create_submatrix(m1, 0, half, half, n);
+    const Matrix *A21 = create_submatrix(m1, half, n, 0, half);
+    const Matrix *A22 = create_submatrix(m1, half, n, half, n);
     Matrix *B11 = create_submatrix(m2, 0, half, 0, half);
-    Matrix *B12 = create_submatrix(m2, 0, half, half, n);
+    const Matrix *B12 = create_submatrix(m2, 0, half, half, n);
     Matrix *B21 = create_submatrix(m2, half, n, 0, half);
     Matrix *B22 = create_submatrix(m2, half, n, half, n);
 
@@ -200,18 +200,18 @@ Matrix *fast_matrix_mult(Matrix *m1, Matrix *m2) {
         pthread_join(threads[i], (void **)&results[i]);
     }
 
-    Matrix *P1 = results[0];
-    Matrix *P2 = results[1];
-    Matrix *P3 = results[2];
-    Matrix *P4 = results[3];
-    Matrix *P5 = results[4];
-    Matrix *P6 = results[5];
-    Matrix *P7 = results[6];
+    const Matrix *P1 = results[0];
+    const Matrix *P2 = results[1];
+    const Matrix *P3 = results[2];
+    const Matrix *P4 = results[3];
+    const Matrix *P5 = results[4];
+    const Matrix *P6 = results[5];
+    const Matrix *P7 = results[6];
 
-    Matrix *C11 = matrix_add(matrix_add(matrix_add(P5, P4, true), P2, false), P6, true);
-    Matrix *C12 = matrix_add(P1, P2, true);
-    Matrix *C21 = matrix_add(P3, P4, true);
-    Matrix *C22 = matrix_add(matrix_add(P5, P1, true), matrix_add(P3, P7, true), false);
+    const Matrix *C11 = matrix_add(matrix_add(matrix_add(P5, P4, true), P2, false), P6, true);
+    const Matrix *C12 = matrix_add(P1, P2, true);
+    const Matrix *C21 = matrix_add(P3, P4, true);
+    const Matrix *C22 = matrix_add(matrix_add(P5, P1, true), matrix_add(P3, P7, true), false);
 
     Matrix *m = malloc(sizeof(Matrix));
     init_matrix(m, "M", m1->rows, m2->cols); // keep outer dimensions
@@ -230,7 +230,7 @@ Matrix *fast_matrix_mult(Matrix *m1, Matrix *m2) {
  * @param p power
  * @return Matrix* the matrix m multiplied by itself p times 
  */
-Matrix *matrix_power(Matrix *m, int p) {
+Matrix *matrix_power(const Matrix *m, int p) {
     assert(m->rows == m->cols);
     Matrix *pow = malloc(sizeof(Matrix));
     init_matrix(pow, "P", m->rows, m->cols);
@@ -249,7 +249,7 @@ Matrix *matrix_power(Matrix *m, int p) {
  * @param m2 second matrix
  * @return Matrix* resultant matrix
  */
-Matrix *matrix_hadamard_prod(Matrix *m1, Matrix *m2) {
+Matrix *matrix_hadamard_prod(const Matrix *m1, const Matrix *m2) {
     assert(m1->rows == m2->rows && m1->cols == m2->cols);
 
     Matrix *m = malloc(sizeof(Matrix));
@@ -268,7 +268,7 @@ Matrix *matrix_hadamard_prod(Matrix *m1, Matrix *m2) {
  * @param m2 matrix 2
  * @return Matrix*
  */
-Matrix *matrix_kronecker_prod(Matrix *m1, Matrix *m2) {
+Matrix *matrix_kronecker_prod(const Matrix *m1, const Matrix *m2) {
     Matrix *m = malloc(sizeof(Matrix));
     init_matrix(m, "M", m1->rows*m2->rows, m1->cols*m2->cols);
     for (int j = 0; j < m->cols; j++) {
@@ -286,7 +286,7 @@ Matrix *matrix_kronecker_prod(Matrix *m1, Matrix *m2) {
  * @param v 2nd vector
  * @return Matrix* resulting element-wise multiplication of the two vectors
  */
-Matrix *vector_tensor_prod(Vector *u, Vector *v) {
+Matrix *vector_tensor_prod(const Vector *u, const Vector *v) {
     Matrix *m = malloc(sizeof(Matrix));
     init_matrix(m, "M", u->capacity, v->capacity);
     for (int j = 0; j < m->cols; j++)
@@ -301,7 +301,7 @@ Matrix *vector_tensor_prod(Vector *u, Vector *v) {
  * @param m matrix
  * @return Matrix* the original matrix the rows and columns of which are permuted 
  */
-Matrix *matrix_transpose(Matrix *m) {
+Matrix *matrix_transpose(const Matrix *m) {
     Matrix *t = malloc(sizeof(Matrix));
     init_matrix(t, "T", m->cols, m->rows);
 
@@ -317,7 +317,7 @@ Matrix *matrix_transpose(Matrix *m) {
  * @param m matrix
  * @return Matrix* the matrix of the complex conjugates, the rows and columns of which are permuted 
  */
-Matrix *matrix_conj_transpose(Matrix *m) {
+Matrix *matrix_conj_transpose(const Matrix *m) {
     Matrix *t = malloc(sizeof(Matrix));
     init_matrix(t, "T", m->cols, m->rows);
 
@@ -333,7 +333,7 @@ Matrix *matrix_conj_transpose(Matrix *m) {
  * @param m matrix
  * @return Matrix* the matrix of the cofactors
  */
-Matrix *matrix_cofactor(Matrix *m) {
+Matrix *matrix_cofactor(const Matrix *m) {
     assert(m->rows == m->cols);
     Matrix *c = malloc(sizeof(Matrix));
     init_matrix(c, "C", m->rows, m->cols);
@@ -361,7 +361,7 @@ Matrix *matrix_cofactor(Matrix *m) {
  * @param m matrix
  * @return Matrix* the conjugate transposed of the cofactor matrix
  */
-Matrix *matrix_adjoint(Matrix *m) {
+Matrix *matrix_adjoint(const Matrix *m) {
     return matrix_conj_transpose(matrix_cofactor(m));
 }
 
@@ -371,7 +371,7 @@ Matrix *matrix_adjoint(Matrix *m) {
  * @param m matrix
  * @return Matrix* the inverse of the matrix
  */
-Matrix *matrix_inverse(Matrix *m) {
+Matrix *matrix_inverse(const Matrix *m) {
     assert(m->rows == m->cols);
     Matrix *inv = malloc(sizeof(Matrix));
     init_matrix(inv, "I", m->rows, m->cols);
@@ -384,38 +384,13 @@ Matrix *matrix_inverse(Matrix *m) {
 }
 
 /**
- * @brief Compute the determinant of a square matrix m
- * 
- * @param m matrix
- * @return int the value of the determinant
- */
-float matrix_determinant(Matrix *m) {
-    assert(m->rows == m->cols);
-    if (m->rows == 1) return m->items[0].items[0];
-    float det = 0.0f;
-    for (int i = 0; i < m->rows; i++) {
-        Matrix *sub = malloc(sizeof(Matrix));
-        init_matrix(sub, "S", m->rows-1, m->cols-1);
-        for (int j = 0; j < m->rows; j++) {
-            if (j == i) continue;
-            for (int k = 0; k < m->cols; k++) {
-                if (k == 0) continue;
-                update_matrix(sub, m->items[j].items[k], j > i ? j-1 : j, k-1);
-            }
-        }
-        det += m->items[i].items[0] * matrix_determinant(sub) * (i % 2 == 0 ? 1 : -1);
-    }
-    return det;
-}
-
-/**
  * @brief Compute the eigenvalues of a matrix
  * TODO: work on this + test
  * 
  * @param m matrix
  * @return Matrix* the collection of eigenvectors 
  */
-Matrix *matrix_eigenvalues(Matrix *m) {
+Matrix *matrix_eigenvalues(const Matrix *m) {
     assert(m->rows == m->cols);
     Matrix *eig = malloc(sizeof(Matrix));
     init_matrix(eig, "E", m->rows, 1);
@@ -435,12 +410,37 @@ Matrix *matrix_eigenvalues(Matrix *m) {
 }
 
 /**
+ * @brief Compute the determinant of a square matrix m
+ * 
+ * @param m matrix
+ * @return int the value of the determinant
+ */
+float matrix_determinant(const Matrix *m) {
+    assert(m->rows == m->cols);
+    if (m->rows == 1) return m->items[0].items[0];
+    float det = 0.0f;
+    for (int i = 0; i < m->rows; i++) {
+        Matrix *sub = malloc(sizeof(Matrix));
+        init_matrix(sub, "S", m->rows-1, m->cols-1);
+        for (int j = 0; j < m->rows; j++) {
+            if (j == i) continue;
+            for (int k = 0; k < m->cols; k++) {
+                if (k == 0) continue;
+                update_matrix(sub, m->items[j].items[k], j > i ? j-1 : j, k-1);
+            }
+        }
+        det += m->items[i].items[0] * matrix_determinant(sub) * (i % 2 == 0 ? 1 : -1);
+    }
+    return det;
+}
+
+/**
  * @brief return the trace of a matrix (sum of all diagonal elements)
  * 
  * @param m matrix
  * @return float resulting sum
  */
-float _Complex matrix_trace(Matrix *m) {
+float _Complex matrix_trace(const Matrix *m) {
     assert(m->rows == m->cols);
     float _Complex trace = 0.0f + 0.0f * I;
     for (int j = 0; j < m->cols; j++)
@@ -454,7 +454,7 @@ float _Complex matrix_trace(Matrix *m) {
  * @param m matrix
  * @return Matrix* the rotated matrix 
  */
-Matrix *matrix_rotate_left(Matrix *m) {
+Matrix *matrix_rotate_left(const Matrix *m) {
     Matrix *r = malloc(sizeof(Matrix));
     init_matrix(r, "R", m->rows, m->cols);
     if (m->rows != m->cols) return NULL;
@@ -470,7 +470,7 @@ Matrix *matrix_rotate_left(Matrix *m) {
  * @param m matrix
  * @return Matrix* the rotated matrix 
  */
-Matrix *matrix_rotate_right(Matrix *m) {
+Matrix *matrix_rotate_right(const Matrix *m) {
     Matrix *r = malloc(sizeof(Matrix));
     init_matrix(r, "R", m->rows, m->cols);
     if (m->rows != m->cols) return NULL;
@@ -487,7 +487,7 @@ Matrix *matrix_rotate_right(Matrix *m) {
  * @return true if matrix is symmetric
  * @return false otherwise
  */
-bool matrix_is_symmetric(Matrix *m) {
+bool matrix_is_symmetric(const Matrix *m) {
     assert(m->rows == m->cols);
     for (int j = 0; j < m->cols; j++)
         for (int i = 0; i < m->rows; i++)
@@ -502,7 +502,7 @@ bool matrix_is_symmetric(Matrix *m) {
  * @return true if the matrix contains non-zero elements only on the diagonal
  * @return false otherwise
  */
-bool matrix_is_diagonal(Matrix *m) {
+bool matrix_is_diagonal(const Matrix *m) {
     assert(m->rows == m->cols);
     for (int j = 0; j < m->cols; j++)
         for (int i = 0; i < m->rows; i++)
@@ -517,7 +517,7 @@ bool matrix_is_diagonal(Matrix *m) {
  * @return true if there exists a line of zeroes
  * @return false otherwise
  */
-bool matrix_contains_line_of_all_zeroes(Matrix *m) {
+bool matrix_contains_line_of_all_zeroes(const Matrix *m) {
     for (int j = 0; j < m->cols; j++) {
         bool all_zeroes = true;
         for (int i = 0; i < m->rows; i++)
@@ -624,7 +624,7 @@ bool matrix_is_vandermonde(Matrix *m) {
  * @param m matrix
  * @return int largest sum of absolute values w.r.t. __columns__
  */
-float matrix_L1_norm(Matrix *m) {
+float matrix_L1_norm(const Matrix *m) {
     float max_sum = 0.0f;
     for (int j = 0; j < m->rows; j++) {
         float sum = 0.0f;
@@ -641,7 +641,7 @@ float matrix_L1_norm(Matrix *m) {
  * @param m matrix
  * @return int largest sum of absolute values w.r.t. __rows__
  */
-float matrix_Linf_norm(Matrix *m) {
+float matrix_Linf_norm(const Matrix *m) {
     float max_sum = 0.0f;
     for (int j = 0; j < m->cols; j++) {
         float sum = 0.0f;
@@ -658,7 +658,7 @@ float matrix_Linf_norm(Matrix *m) {
  * @param m matrix
  * @return float root of sum of squares
  */
-float matrix_frobenius_norm(Matrix *m) {
+float matrix_frobenius_norm(const Matrix *m) {
     float norm = 0.0f;
     for (int j = 0; j < m->cols; j++)
         for (int i = 0; i < m->rows; i++)

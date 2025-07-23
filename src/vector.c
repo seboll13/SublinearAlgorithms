@@ -78,7 +78,7 @@ Vector *vector_add(Vector *u, Vector *v, bool add) {
     return w;
 }
 
-Vector *vector_scalar_mult(Vector *u, int a) {
+Vector *vector_scalar_mult(const Vector *u, int a) {
     Vector *v = malloc(sizeof(Vector));
     init_vector(v, "V", u->capacity);
 
@@ -88,7 +88,7 @@ Vector *vector_scalar_mult(Vector *u, int a) {
 }
 
 __attribute__((hot))
-float _Complex vector_dot_product(const Vector *restrict u, const Vector *restrict v) {
+float _Complex vector_dot_product(const Vector *u, const Vector *v) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS)
         return -1;
 

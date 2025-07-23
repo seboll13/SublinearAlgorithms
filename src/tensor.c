@@ -59,7 +59,7 @@ void update_tensor(Tensor *T, float _Complex n, int row, int col, int depth) {
  * @param add boolean to indicate addition
  * @return Tensor* addition if sub is false, otherwise subtraction
  */
-Tensor *tensor_add(Tensor *E, Tensor *F, bool add) {
+Tensor *tensor_add(const Tensor *E, const Tensor *F, bool add) {
     assert(E->rows == F->rows && E->cols == F->cols && E->depth == F->depth);
 
     Tensor *T = malloc(sizeof(Tensor));
@@ -82,7 +82,7 @@ Tensor *tensor_add(Tensor *E, Tensor *F, bool add) {
  * @param n scalar value
  * @return Tensor* resulting scaled tensor
  */
-Tensor *tensor_scalar_mult(Tensor *T, float _Complex n) {
+Tensor *tensor_scalar_mult(const Tensor *T, float _Complex n) {
     Tensor *V = malloc(sizeof(Tensor));
     init_tensor(V, "V", T->rows, T->cols, T->depth);
     for (int n_3 = 0; n_3 < V->depth; n_3++)
@@ -99,7 +99,7 @@ Tensor *tensor_scalar_mult(Tensor *T, float _Complex n) {
  * @param F second tensor
  * @return Tensor* multiplication
  */
-Tensor *tensor_mult(Tensor *E, Tensor *F) {
+Tensor *tensor_mult(const Tensor *E, const Tensor *F) {
     assert(E->rows == F->rows && E->cols == F->cols && E->depth == F->depth);
 
     Tensor *T = malloc(sizeof(Tensor));
@@ -120,7 +120,7 @@ Tensor *tensor_mult(Tensor *E, Tensor *F) {
  * @param F second tensor
  * @return Tensor* resulting tensor
  */
-Tensor *tensor_contract(Tensor *E, Tensor *F) {
+Tensor *tensor_contract(const Tensor *E, const Tensor *F) {
     assert(E->cols == F->rows && E->depth == F->depth);
 
     Tensor *T = malloc(sizeof(Tensor));
@@ -143,7 +143,7 @@ Tensor *tensor_contract(Tensor *E, Tensor *F) {
  * @param C third matrix
  * @return Tensor* resulting tensor
  */
-Tensor *tensor_cdp(Matrix *A, Matrix *B, Matrix *C) {
+Tensor *tensor_cdp(const Matrix *A, const Matrix *B, const Matrix *C) {
     Tensor *V = malloc(sizeof(Tensor));
     init_tensor(V, "V", A->rows, B->rows, C->rows);
     for (int n_3 = 0; n_3 < V->depth; n_3++)

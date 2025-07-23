@@ -17,10 +17,10 @@ void free_tensor(Tensor *T);
 void update_tensor(Tensor *T, float _Complex n, int row, int col, int depth);
 
 // Basic tensor operations
-Tensor *tensor_add(Tensor *E, Tensor *F, bool add);
-Tensor *tensor_scalar_mult(Tensor *T, float _Complex n);
-Tensor *tensor_mult(Tensor *E, Tensor *F);
-Tensor *tensor_contract(Tensor *E, Tensor *F);
-Tensor *tensor_cdp(Matrix *A, Matrix *B, Matrix *C);
+Tensor *tensor_add(const Tensor *E, const Tensor *F, bool add);
+Tensor *tensor_scalar_mult(const Tensor *T, float _Complex n);
+Tensor *tensor_mult(const Tensor *E, const Tensor *F);
+Tensor *tensor_contract(const Tensor *E, const Tensor *F);
+Tensor *tensor_cdp(const Matrix *A, const Matrix *B, const Matrix *C);
 
 #endif

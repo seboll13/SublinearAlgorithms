@@ -100,7 +100,7 @@ Vector *vector_add(Vector *u, Vector *v, bool add);
  * @param a scalar
  * @return Vector* scaled vector
  */
-Vector *vector_scalar_mult(Vector *u, int a);
+Vector *vector_scalar_mult(const Vector *u, int a);
 
 /**
  * @brief get the dot product of two vectors using SIMD instructions
@@ -111,26 +111,7 @@ Vector *vector_scalar_mult(Vector *u, int a);
  * @param v vector 2
  * @return int sum of products of each coefficient
  */
-float _Complex vector_dot_product(const Vector *restrict u, const Vector *restrict v);
-
-/**
- * @brief function to be executed by each thread when computing the dot product
- * 
- * @param arg 
- * @return void* pointer to the result of the computation
- */
-//void* thread_dot_product(void *arg);
-
-/**
- * @brief compute the dot product of two vectors using multiple threads
- * 
- * @param u vector 1
- * @param v vector 2
- * @param num_threads number of threads to use
- * @return float _Complex the dot product of the two vectors
- */
-//float _Complex vector_dot_product_multithreaded(Vector *u, Vector *v, int num_threads);
-
+float _Complex vector_dot_product(const Vector *u, const Vector *v);
 
 /**
  * @brief compute the vector product of two vectors

@@ -7,7 +7,8 @@
 #define THRESHOLD 4
 
 typedef struct Matrix {
-    int rows, cols;
+    int rows;
+    int cols;
     Vector *items;
     char *name;
 } Matrix;
@@ -29,33 +30,33 @@ void update_matrix(Matrix *m, float _Complex n, int row, int col);
 Matrix *rademacher_matrix(int rows, int cols);
 
 // Matrix operations
-Matrix *matrix_add(Matrix *m1, Matrix *m2, bool add);
-Matrix *matrix_scalar_mult(float _Complex n, Matrix *m);
-Matrix *matrix_mult(Matrix *m1, Matrix *m2);
-Matrix *create_submatrix(Matrix *m, int row_start, int row_end, int col_start, int col_end);
-Matrix *set_submatrix(Matrix *m, Matrix *sub, int row_start, int row_end, int col_start, int col_end);
-Matrix *fast_matrix_mult(Matrix *m1, Matrix *m2);
-Matrix *matrix_power(Matrix *m, int p);
-Matrix *matrix_hadamard_prod(Matrix *m1, Matrix *m2);
-Matrix *matrix_kronecker_prod(Matrix *m1, Matrix *m2);
-Matrix *vector_tensor_prod(Vector *u, Vector *v);
-Matrix *matrix_transpose(Matrix *m);
-Matrix *matrix_conj_transpose(Matrix *m);
-Matrix *matrix_cofactor(Matrix *m);
-Matrix *matrix_adjoint(Matrix *m);
-Matrix *matrix_inverse(Matrix *m);
-Matrix *matrix_eigenvalues(Matrix *m);
-float matrix_determinant(Matrix *m);
-float _Complex matrix_trace(Matrix *m);
+Matrix *matrix_add(const Matrix *m1, const Matrix *m2, bool add);
+Matrix *matrix_scalar_mult(float _Complex n, const Matrix *m);
+Matrix *matrix_mult(const Matrix *m1, const Matrix *m2);
+Matrix *create_submatrix(const Matrix *m, int row_start, int row_end, int col_start, int col_end);
+Matrix *set_submatrix(Matrix *m, const Matrix *sub, int row_start, int row_end, int col_start, int col_end);
+Matrix *fast_matrix_mult(const Matrix *m1, const Matrix *m2);
+Matrix *matrix_power(const Matrix *m, int p);
+Matrix *matrix_hadamard_prod(const Matrix *m1, const Matrix *m2);
+Matrix *matrix_kronecker_prod(const Matrix *m1, const Matrix *m2);
+Matrix *vector_tensor_prod(const Vector *u, const Vector *v);
+Matrix *matrix_transpose(const Matrix *m);
+Matrix *matrix_conj_transpose(const Matrix *m);
+Matrix *matrix_cofactor(const Matrix *m);
+Matrix *matrix_adjoint(const Matrix *m);
+Matrix *matrix_inverse(const Matrix *m);
+Matrix *matrix_eigenvalues(const Matrix *m);
+float matrix_determinant(const Matrix *m);
+float _Complex matrix_trace(const Matrix *m);
 
 // Other matrix functions
-Matrix *matrix_rotate_left(Matrix *m);
-Matrix *matrix_rotate_right(Matrix *m);
+Matrix *matrix_rotate_left(const Matrix *m);
+Matrix *matrix_rotate_right(const Matrix *m);
 
 // Helper functions
-bool matrix_is_symmetric(Matrix *m);
-bool matrix_is_diagonal(Matrix *m);
-bool matrix_contains_line_of_all_zeroes(Matrix *m);
+bool matrix_is_symmetric(const Matrix *m);
+bool matrix_is_diagonal(const Matrix *m);
+bool matrix_contains_line_of_all_zeroes(const Matrix *m);
 bool matrix_is_integral(Matrix *m);
 bool matrix_is_real(Matrix *m);
 bool matrix_is_stochastic(Matrix *m);
@@ -63,9 +64,9 @@ bool matrix_is_doubly_stochastic(Matrix *m);
 bool matrix_is_vandermonde(Matrix *m);
 
 // Matrix norms
-float matrix_L1_norm(Matrix *m);
-float matrix_Linf_norm(Matrix *m);
-float matrix_frobenius_norm(Matrix *m);
+float matrix_L1_norm(const Matrix *m);
+float matrix_Linf_norm(const Matrix *m);
+float matrix_frobenius_norm(const Matrix *m);
 
 // Printing part
 void print_matrix(Matrix *m);
