@@ -1,21 +1,27 @@
-CC = gcc
-CFLAGS = -O3 -Wall -march=native -ffast-math -funroll-loops
-INCLUDES = -I../src
-SRC = ../src/vector.c ../src/helpers.c
-LIBS = -lm
+CC=gcc
+CFLAGS=-Wall -Wextra -O2
+INCLUDES=-I../src
+SRC=../src/vector.c ../src/matrix.c ../src/helpers.c
+LIBS=-lm
 
-TARGET = bench_vector
-OBJS = bench_vector.c
+TARGETS=bench_vector bench_matrix run_vector run_matrix
+OBJS=bench_vector.c
 
-all: $(TARGET) run
+all: $(TARGETS)
 
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(TARGET) $(OBJS) $(SRC) $(LIBS)
+bench_vector: bench_vector.c $(SRC)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(SRC) $(LIBS)
 
-run: $(TARGET)
-	./$(TARGET)
+bench_matrix: bench_matrix.c $(SRC)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(SRC) $(LIBS)
+
+run_vector: bench_vector
+	./bench_vector
+
+run_matrix: bench_matrix
+	./bench_matrix
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGETS)
 
 .PHONY: all clean

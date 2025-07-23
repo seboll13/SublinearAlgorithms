@@ -32,8 +32,8 @@ void init_matrix(Matrix *m, char *name, int rows, int cols) {
  * @param m matrix
  */
 void free_matrix(Matrix *m) {
-    assert(m->items != NULL);
-    if (m != NULL)
+    assert(m != NULL);
+    if (m->items != NULL)
         for (int i = 0; i < m->cols; i++)
             free_vector(m->items+i);
     return;
@@ -48,8 +48,8 @@ void free_matrix(Matrix *m) {
  * @param col idx of column
  */
 void update_matrix(Matrix *m, float _Complex n, int row, int col) {
-    assert(row > -1 && row < (int) sqrt(MAX_MATRIX_CAPACITY));
-    assert(col > -1 && col < (int) sqrt(MAX_MATRIX_CAPACITY));
+    assert(row > -1 && row < MAX_MATRIX_DIM);
+    assert(col > -1 && col < MAX_MATRIX_DIM);
 
     m->items[col].items[row] = n;
 }

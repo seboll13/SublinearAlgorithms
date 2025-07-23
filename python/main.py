@@ -44,7 +44,7 @@ def std_dot_prod(u: list, v: list) -> float:
     float
         The dot product of the two lists
     """
-    return sum((u[i] * v[i] for i in range(len(u))))
+    return sum(x * y for x, y in zip(u, v))
 
 
 @timer

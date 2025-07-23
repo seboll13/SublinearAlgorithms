@@ -3,7 +3,7 @@
 
 #include "vector.h"
 
-#define MAX_MATRIX_CAPACITY 10e6
+#define MAX_MATRIX_DIM (int)1e4
 #define THRESHOLD 4
 
 typedef struct Matrix {

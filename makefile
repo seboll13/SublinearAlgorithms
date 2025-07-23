@@ -2,7 +2,7 @@ CPATH=./src/
 PYTHONPATH=./python/
 TESTPATH=./tests/
 BENCHPATH=./benchmarks/
-PYTHON=python3
+PYTHON=python
 NODE=node
 M="default push from makefile message"
 

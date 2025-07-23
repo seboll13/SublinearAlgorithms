@@ -1,0 +1,87 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-O3",
+      "main.c"
+    ],
+    "directory": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src",
+    "file": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src/main.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-O3",
+      "vector.c"
+    ],
+    "directory": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src",
+    "file": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src/vector.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-O3",
+      "projections.c"
+    ],
+    "directory": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src",
+    "file": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src/projections.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-O3",
+      "matrix.c"
+    ],
+    "directory": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src",
+    "file": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src/matrix.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-O3",
+      "tensor.c"
+    ],
+    "directory": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src",
+    "file": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src/tensor.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-O3",
+      "helpers.c"
+    ],
+    "directory": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src",
+    "file": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/src/helpers.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-D_THREAD_SAFE",
+      "-I/opt/homebrew/Cellar/check/0.15.2/include",
+      "-c",
+      "main_test.c"
+    ],
+    "directory": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/tests",
+    "file": "/Users/seboll/Desktop/IN_MY_MIND/PROGRAMMING/SublinearAlgorithms/tests/main_test.c"
+  }
+]

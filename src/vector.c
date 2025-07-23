@@ -7,7 +7,6 @@ void init_vector(Vector *v, char *name, int rows) {
 
     v->capacity = rows;
     v->name = name;
-    //v->items = malloc(rows * sizeof(float _Complex));
     float _Complex *items;
     int ret = posix_memalign((void**)&items, SIMD_ALIGNMENT, rows * sizeof(float _Complex));
     if (ret != 0) {
@@ -15,8 +14,8 @@ void init_vector(Vector *v, char *name, int rows) {
         perror("posix_memalign failed");
         exit(EXIT_FAILURE);
     }
-    v->items = items;
-    memset(v->items, 0.0f + 0.0f * I, rows * sizeof(float _Complex));
+    v->items = __builtin_assume_aligned(items, SIMD_ALIGNMENT);
+    memset(v->items, 0, rows * sizeof *v->items);
 }
 
 void free_vector(Vector *v) {
