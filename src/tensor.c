@@ -1,14 +1,5 @@
 #include "tensor.h"
 
-/**
- * @brief initialise a new tensor full of zeroes
- * 
- * @param T tensor to initialise
- * @param name tensor id
- * @param rows number of rows
- * @param cols number of columns
- * @param depth number of superposed matrices
- */
 void init_tensor(Tensor *T, char *name, int rows, int cols, int depth) {
     assert(rows > 0 && cols > 0 && depth > 0);
     
@@ -21,11 +12,6 @@ void init_tensor(Tensor *T, char *name, int rows, int cols, int depth) {
         init_matrix(T->items+i, "M", rows, cols);
 }
 
-/**
- * @brief Remove current tensor
- * 
- * @param T tensor
- */
 void free_tensor(Tensor *T) {
     assert(T->items != NULL);
     if (T != NULL)
@@ -34,15 +20,6 @@ void free_tensor(Tensor *T) {
     return;
 }
 
-/**
- * @brief update a tensor element
- * 
- * @param T tensor
- * @param n element to add
- * @param row index of row
- * @param col index of column
- * @param depth index of depth
- */
 void update_tensor(Tensor *T, float _Complex n, int row, int col, int depth) {
     assert(row > -1 && row < (int) pow(MAX_TENSOR_CAPACITY, 1.f/3));
     assert(col > -1 && col < (int) pow(MAX_TENSOR_CAPACITY, 1.f/3));
@@ -51,14 +28,6 @@ void update_tensor(Tensor *T, float _Complex n, int row, int col, int depth) {
     T->items[depth].items[col].items[row] = n;
 }
 
-/**
- * @brief element-wise addition of two tensors
- * 
- * @param E first tensor
- * @param F second tensor
- * @param add boolean to indicate addition
- * @return Tensor* addition if sub is false, otherwise subtraction
- */
 Tensor *tensor_add(const Tensor *E, const Tensor *F, bool add) {
     assert(E->rows == F->rows && E->cols == F->cols && E->depth == F->depth);
 
@@ -75,13 +44,6 @@ Tensor *tensor_add(const Tensor *E, const Tensor *F, bool add) {
     return T;
 }
 
-/**
- * @brief return the multiplication of a tensor by some scalar
- * 
- * @param T tensor
- * @param n scalar value
- * @return Tensor* resulting scaled tensor
- */
 Tensor *tensor_scalar_mult(const Tensor *T, float _Complex n) {
     Tensor *V = malloc(sizeof(Tensor));
     init_tensor(V, "V", T->rows, T->cols, T->depth);
@@ -92,13 +54,6 @@ Tensor *tensor_scalar_mult(const Tensor *T, float _Complex n) {
     return V;
 }
 
-/**
- * @brief element-wise multiplication of two tensors
- * 
- * @param E first tensor
- * @param F second tensor
- * @return Tensor* multiplication
- */
 Tensor *tensor_mult(const Tensor *E, const Tensor *F) {
     assert(E->rows == F->rows && E->cols == F->cols && E->depth == F->depth);
 
@@ -112,14 +67,6 @@ Tensor *tensor_mult(const Tensor *E, const Tensor *F) {
     return T;
 }
 
-/**
- * @brief return the contraction of two tensors
- * TODO: test
- * 
- * @param E first tensor
- * @param F second tensor
- * @return Tensor* resulting tensor
- */
 Tensor *tensor_contract(const Tensor *E, const Tensor *F) {
     assert(E->cols == F->rows && E->depth == F->depth);
 
@@ -134,15 +81,6 @@ Tensor *tensor_contract(const Tensor *E, const Tensor *F) {
     return T;
 }
 
-/**
- * @brief return the canonical polyadic decomposition of a tensor
- * TODO: test
- * 
- * @param A first matrix
- * @param B second matrix
- * @param C third matrix
- * @return Tensor* resulting tensor
- */
 Tensor *tensor_cdp(const Matrix *A, const Matrix *B, const Matrix *C) {
     Tensor *V = malloc(sizeof(Tensor));
     init_tensor(V, "V", A->rows, B->rows, C->rows);
