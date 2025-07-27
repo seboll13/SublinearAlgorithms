@@ -91,7 +91,7 @@ int check_vector_sizes(const Vector *u, const Vector *v);
  * @param add subtract the two vectors if true
  * @return Vector* u+v (or u-v)
  */
-Vector *vector_add(Vector *u, Vector *v, bool add);
+Vector *vector_add(const Vector *u, const Vector *v, bool add);
 
 /**
  * @brief compute the multiplication of a vector by a scalar
@@ -120,7 +120,7 @@ float _Complex vector_dot_product(const Vector *u, const Vector *v);
  * @param v vector 2
  * @return Vector result of vec prod
  */
-Vector *vector_product(Vector *u, Vector *v);
+Vector *vector_product(const Vector *u, const Vector *v);
 
 /**
  * @brief get the scalar projection of a vector onto another one
@@ -129,7 +129,7 @@ Vector *vector_product(Vector *u, Vector *v);
  * @param v vector to project on
  * @return float scalar projection factor
  */
-float scalar_projection(Vector *u, Vector *v);
+float scalar_projection(const Vector *u, const Vector *v);
 
 /**
  * @brief get the vector projection of a vector onto another one
@@ -138,7 +138,7 @@ float scalar_projection(Vector *u, Vector *v);
  * @param v vector to project on
  * @return Vector* vector projection
  */
-Vector *vector_projection(Vector *u, Vector *v);
+Vector *vector_projection(const Vector *u, const Vector *v);
 
 /**
  * @brief compute the angle between two vectors
@@ -148,7 +148,7 @@ Vector *vector_projection(Vector *u, Vector *v);
  * @param radians return the angle in radians if true
  * @return float angle between the two vectors
  */
-float vector_angle_between(Vector *u, Vector *v, bool radians);
+float vector_angle_between(const Vector *u, const Vector *v, bool radians);
 
 // ############################### VECTOR GENERATION ###################################
 
@@ -171,7 +171,7 @@ Vector *rademacher_vector(int rows);
  * @return true if u and v are orthogonal
  * @return false otherwise (the angle between u and v is not 90deg)
  */
-bool check_vector_orthogonality(Vector *u, Vector *v);
+bool check_vector_orthogonality(const Vector *u, const Vector *v);
 
 /**
  * @brief check whether or not two vectors are collinear
@@ -181,7 +181,7 @@ bool check_vector_orthogonality(Vector *u, Vector *v);
  * @return true if u and v are collinear
  * @return false otherwise
  */
-bool check_vector_collinearity(Vector *u, Vector *v);
+bool check_vector_collinearity(const Vector *u, const Vector *v);
 
 /**
  * @brief check whether or not two vectors are perpendicular
@@ -191,7 +191,7 @@ bool check_vector_collinearity(Vector *u, Vector *v);
  * @return true if u and v are perpendicular
  * @return false otherwise
  */
-bool check_vector_perpendicularity(Vector *u, Vector *v);
+bool check_vector_perpendicularity(const Vector *u, const Vector *v);
 
 /**
  * @brief check whether or not two vectors are equal
@@ -201,7 +201,7 @@ bool check_vector_perpendicularity(Vector *u, Vector *v);
  * @return true if u and v's elements are all one-to-one equal
  * @return false otherwise
  */
-bool check_vector_equality(Vector *u, Vector *v);
+bool check_vector_equality(const Vector *u, const Vector *v);
 
 /**
  * @brief check whether or not two vectors are opposite
@@ -211,7 +211,7 @@ bool check_vector_equality(Vector *u, Vector *v);
  * @return true if u and v are opposite
  * @return false otherwise
  */
-bool check_vector_oppositeness(Vector *u, Vector *v);
+bool check_vector_oppositeness(const Vector *u, const Vector *v);
 
 /**
  * @brief check whether or not a vector is integral
@@ -220,7 +220,7 @@ bool check_vector_oppositeness(Vector *u, Vector *v);
  * @return true if v is integral
  * @return false otherwise
  */
-bool vector_is_integral(Vector *v);
+bool vector_is_integral(const Vector *v);
 
 /**
  * @brief check whether or not a vector is real
@@ -229,7 +229,7 @@ bool vector_is_integral(Vector *v);
  * @return true if v is real
  * @return false otherwise
  */
-bool vector_is_real(Vector *v);
+bool vector_is_real(const Vector *v);
 
 // ############################### VECTOR NORMS ########################################
 
@@ -239,7 +239,7 @@ bool vector_is_real(Vector *v);
  * @param v vector
  * @return int sum of absolute values of each element of v
  */
-float vector_L1_norm(Vector *u);
+float vector_L1_norm(const Vector *u);
 
 /**
  * @brief compute the L2 norm of a vector
@@ -247,7 +247,7 @@ float vector_L1_norm(Vector *u);
  * @param v vector
  * @return int square root of the sum of squares of each element of v
  */
-float vector_L2_norm(Vector *u);
+float vector_L2_norm(const Vector *u);
 
 /**
  * @brief compute the Lp norm of a vector
@@ -256,7 +256,7 @@ float vector_L2_norm(Vector *u);
  * @param p norm to compute
  * @return int p-th root of the sum of p-th powers of each element of v
  */
-float vector_Lp_norm(Vector *u, int p);
+float vector_Lp_norm(const Vector *u, int p);
 
 // ############################### VECTOR PRINTING #####################################
 
@@ -265,27 +265,27 @@ float vector_Lp_norm(Vector *u, int p);
  * 
  * @param v vector to be printed
  */
-void print_vector(Vector *v);
+void print_vector(const Vector *v);
 
 /**
  * @brief print function to call in case of integer vectors
  * 
  * @param v vector to be printed
  */
-void print_integer_vector(Vector *v);
+void print_integer_vector(const Vector *v);
 
 /**
  * @brief print function to call when vector elements are real
  * 
  * @param v vector to be printed
  */
-void print_real_vector(Vector *v);
+void print_real_vector(const Vector *v);
 
 /**
  * @brief print function to call when vector elements are complex
  * 
  * @param v vector to be printed
  */
-void print_complex_vector(Vector *v);
+void print_complex_vector(const Vector *v);
 
 #endif

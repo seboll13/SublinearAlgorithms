@@ -63,7 +63,7 @@ int check_vector_sizes(const Vector *u, const Vector *v) {
 
 // ############################### VECTOR OPERATIONS ###################################
 
-Vector *vector_add(Vector *u, Vector *v, bool add) {
+Vector *vector_add(const Vector *u, const Vector *v, bool add) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS)
         return NULL;
 
@@ -139,7 +139,7 @@ float _Complex vector_dot_product(const Vector *u, const Vector *v) {
     return real_result + imag_result * I;
 }
 
-Vector *vector_product(Vector *u, Vector *v) {
+Vector *vector_product(const Vector *u, const Vector *v) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS)
         return NULL;
 
@@ -162,14 +162,14 @@ Vector *vector_product(Vector *u, Vector *v) {
     return w;
 }
 
-float scalar_projection(Vector *u, Vector *v) {
+float scalar_projection(const Vector *u, const Vector *v) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS || vector_L2_norm(v) == 0)
         return VECTOR_ERR_BAD_SIZE;
 
     return (float) vector_dot_product(u, v) / vector_L2_norm(v);
 }
 
-Vector *vector_projection(Vector *u, Vector *v) {
+Vector *vector_projection(const Vector *u, const Vector *v) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS || vector_L2_norm(v) == 0)
         return NULL;
 
@@ -184,7 +184,7 @@ Vector *vector_projection(Vector *u, Vector *v) {
     return w;
 }
 
-float vector_angle_between(Vector *u, Vector *v, bool radians) {
+float vector_angle_between(const Vector *u, const Vector *v, bool radians) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS || vector_L2_norm(u) == 0)
         return VECTOR_ERR_BAD_SIZE;
 
@@ -209,32 +209,32 @@ Vector *rademacher_vector(int rows) {
 
 // ############################### HELPER FUNCTIONS ####################################
 
-bool check_vector_orthogonality(Vector *u, Vector *v) {
+bool check_vector_orthogonality(const Vector *u, const Vector *v) {
     return vector_dot_product(u, v) == 0;
 }
 
-bool check_vector_collinearity(Vector *u, Vector *v) {
+bool check_vector_collinearity(const Vector *u, const Vector *v) {
     // one could also check that the vector product between u and v is 0
     return vector_dot_product(u, v) == vector_L2_norm(u) * vector_L2_norm(v) || vector_dot_product(u, v) == -vector_L2_norm(u) * vector_L2_norm(v);
 }
 
-bool check_vector_perpendicularity(Vector *u, Vector *v) {
+bool check_vector_perpendicularity(const Vector *u, const Vector *v) {
     return vector_dot_product(u, v) == 0;
 }
 
-bool check_vector_equality(Vector *u, Vector *v) {
+bool check_vector_equality(const Vector *u, const Vector *v) {
     return memcmp(u->items, v->items,
                   u->capacity * sizeof *u->items) == 0;
 }
 
-bool check_vector_oppositeness(Vector *u, Vector *v) {
+bool check_vector_oppositeness(const Vector *u, const Vector *v) {
     for (int i = 0; i < u->capacity; i++)
         if (u->items[i] != -v->items[i])
             return false;
     return true;
 }
 
-bool vector_is_integral(Vector *v) {
+bool vector_is_integral(const Vector *v) {
     assert(v->capacity > 0);
     for (int i = 0; i < v->capacity; i++)
         if (v->items[i] != (int) v->items[i])
@@ -242,7 +242,7 @@ bool vector_is_integral(Vector *v) {
     return true;
 }
 
-bool vector_is_real(Vector *v) {
+bool vector_is_real(const Vector *v) {
     assert(v->capacity > 0);
     for (int i = 0; i < v->capacity; i++)
         if (cimag(v->items[i]) != 0)
@@ -252,7 +252,7 @@ bool vector_is_real(Vector *v) {
 
 // ############################### VECTOR NORMS ########################################
 
-float vector_L1_norm(Vector *v) {
+float vector_L1_norm(const Vector *v) {
     if (v->capacity == 0)
         return -1;
 
@@ -262,7 +262,7 @@ float vector_L1_norm(Vector *v) {
     return res;
 }
 
-float vector_L2_norm(Vector *v) {
+float vector_L2_norm(const Vector *v) {
     if (v->capacity == 0)
         return -1;
 
@@ -272,7 +272,7 @@ float vector_L2_norm(Vector *v) {
     return sqrt(res); 
 }
 
-float vector_Lp_norm(Vector *v, int p) {
+float vector_Lp_norm(const Vector *v, int p) {
     assert(p > 0 && v->capacity > 0);
 
     if (p == 1)
@@ -287,7 +287,7 @@ float vector_Lp_norm(Vector *v, int p) {
 
 // ############################### VECTOR PRINTING #####################################
 
-void print_vector(Vector *v) {
+void print_vector(const Vector *v) {
     assert(v->capacity > 0);
     if (vector_is_integral(v))
         print_integer_vector(v);
@@ -297,21 +297,21 @@ void print_vector(Vector *v) {
         print_complex_vector(v);
 }
 
-void print_integer_vector(Vector *v) {
+void print_integer_vector(const Vector *v) {
     printf("%s = (\n", v->name);
     for (int i = 0; i < v->capacity; i++)
         printf("     %d\n", (int) v->items[i]);
     printf(")\n");
 }
 
-void print_real_vector(Vector *v) {
+void print_real_vector(const Vector *v) {
     printf("%s = (\n", v->name);
     for (int i = 0; i < v->capacity; i++)
         printf("     %.3f\n", (float) v->items[i]);
     printf(")\n");
 }
 
-void print_complex_vector(Vector *v) {
+void print_complex_vector(const Vector *v) {
     printf("%s = (\n", v->name);
     for (int i = 0; i < v->capacity; i++) {
         float re = creal(v->items[i]); float im = cimag(v->items[i]);
