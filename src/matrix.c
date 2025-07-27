@@ -420,7 +420,7 @@ float matrix_L1_norm(const Matrix *m) {
     for (int j = 0; j < m->rows; j++) {
         float sum = 0.0f;
         for (int i = 0; i < m->cols; i++)
-            sum += complex_abs(m->items[i].items[j]);
+            sum += cabsf(m->items[i].items[j]);
         max_sum = max(max_sum, sum);
     }
     return max_sum;
@@ -431,7 +431,7 @@ float matrix_Linf_norm(const Matrix *m) {
     for (int j = 0; j < m->cols; j++) {
         float sum = 0.0f;
         for (int i = 0; i < m->rows; i++)
-            sum += complex_abs(m->items[j].items[i]);
+            sum += cabsf(m->items[j].items[i]);
         max_sum = max(max_sum, sum);
     }
     return max_sum;

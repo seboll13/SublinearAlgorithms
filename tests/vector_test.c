@@ -33,9 +33,24 @@ Vector *create_dummy_integer_vector(int n) {
 /**
  * @brief Create a dummy real vector object
  * 
+ * @param n real number to fill the vector with
  * @return Vector* constructed equal coordinate vector
  */
 Vector *create_dummy_real_vector(float n) {
+    Vector *v = malloc(sizeof(Vector));
+    init_vector(v, "V", 3);
+    for (int i = 0; i < 3; i++)
+        update_vector(v, n, i);
+    return v;
+}
+
+/**
+ * @brief Create a dummy complex vector object
+ * 
+ * @param n complex number to fill the vector with
+ * @return Vector* constructed equal coordinate vector
+ */
+Vector *create_dummy_complex_vector(float _Complex n) {
     Vector *v = malloc(sizeof(Vector));
     init_vector(v, "V", 3);
     for (int i = 0; i < 3; i++)
@@ -96,7 +111,7 @@ END_TEST
 
 START_TEST(test_standard_scalar_multiplication)
 {
-    Vector *u = create_dummy_real_vector(1.0f);
+    const Vector *u = create_dummy_real_vector(1.0f);
     Vector *v = vector_scalar_mult(u, 2);
     for (int i = 0; i < 3; i++)
         ck_assert_float_eq(v->items[i], 2.0f);
@@ -105,16 +120,27 @@ START_TEST(test_standard_scalar_multiplication)
 }
 END_TEST
 
-START_TEST(test_standard_dot_product)
+START_TEST(test_standard_inner_product)
 {
     Vector *u = create_dummy_real_vector(1.0f);
     Vector *v = create_dummy_real_vector(1.0f);
-    int dot_prod = vector_dot_product(u, v);
+    float dot_prod = (float) vector_inner_product(u, v);
     ck_assert_float_eq(dot_prod, 3.0f);
     free_vector(u); free_vector(v);
     free(u); free(v);
 }
 END_TEST
+
+START_TEST(test_complex_inner_product)
+{
+    Vector *u = create_dummy_complex_vector(1.0f + I);
+    Vector *v = create_dummy_complex_vector(2.0f + 2.0f * I);
+    float _Complex dot_prod = vector_inner_product(u, v);
+    ck_assert_float_eq(crealf(dot_prod), 12.0f);
+    ck_assert_float_eq(cimagf(dot_prod), 0.0f);
+    free_vector(u); free_vector(v);
+    free(u); free(v);
+}
 
 START_TEST(test_standard_vector_product)
 {
@@ -167,7 +193,7 @@ START_TEST(test_standard_vector_L2_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
     float n = vector_L2_norm(u);
-    ck_assert_float_eq(n, sqrt(12));
+    ck_assert_float_eq(n, sqrtf(12));
     free_vector(u);
     free(u);
 }
@@ -187,7 +213,7 @@ START_TEST(test_second_level_vector_Lp_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
     float n = vector_Lp_norm(u, 2);
-    ck_assert_float_eq(n, sqrt(12));
+    ck_assert_float_eq(n, sqrtf(12));
     free_vector(u);
     free(u);
 }
@@ -197,7 +223,7 @@ START_TEST(test_third_level_vector_Lp_norm)
 {
     Vector *u = create_dummy_real_vector(2.0f);
     float n = vector_Lp_norm(u, 3);
-    ck_assert_float_eq(n, pow(24, 1/3));
+    ck_assert_float_eq(n, powf(24, 1.0f/3.0f));
     free_vector(u);
     free(u);
 }

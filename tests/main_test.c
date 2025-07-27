@@ -13,7 +13,8 @@ Suite *vector_suite(void) {
     tcase_add_test(tc_vector_operations, test_standard_vector_addition);
     tcase_add_test(tc_vector_operations, test_standard_vector_subtraction);
     tcase_add_test(tc_vector_operations, test_standard_scalar_multiplication);
-    tcase_add_test(tc_vector_operations, test_standard_dot_product);
+    tcase_add_test(tc_vector_operations, test_standard_inner_product);
+    tcase_add_test(tc_vector_operations, test_complex_inner_product);
     tcase_add_test(tc_vector_operations, test_standard_vector_product);
     tcase_add_test(tc_vector_operations, test_standard_scalar_projection);
     tcase_add_test(tc_vector_operations, test_standard_vector_projection);
@@ -104,7 +105,6 @@ Suite *helpers_suite(void) {
     Suite *s = suite_create("Helpers");
 
     TCase *tc_helper_functions = tcase_create("Helper functions");
-    tcase_add_test(tc_helper_functions, test_correct_complex_absolute_value);
     tcase_add_test(tc_helper_functions, test_standard_radians_to_degrees);
     suite_add_tcase(s, tc_helper_functions);
     return s;

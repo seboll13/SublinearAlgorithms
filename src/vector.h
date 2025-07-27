@@ -103,15 +103,16 @@ Vector *vector_add(const Vector *u, const Vector *v, bool add);
 Vector *vector_scalar_mult(const Vector *u, int a);
 
 /**
- * @brief get the dot product of two vectors using SIMD instructions
- *      and loop unrolling
+ * @brief get the inner product of two vectors using SIMD instructions
+ *        and loop unrolling
  * Note: (a+ib)(c+id)=ac-bd+(ad+bc)i
+ * Moreover, we conjugate the imaginary part of v if it is complex (Hermitian dot product)
  * 
  * @param u vector 1
  * @param v vector 2
  * @return int sum of products of each coefficient
  */
-float _Complex vector_dot_product(const Vector *u, const Vector *v);
+float _Complex vector_inner_product(const Vector *u, const Vector *v);
 
 /**
  * @brief compute the vector product of two vectors

@@ -83,12 +83,12 @@ Vector *vector_scalar_mult(const Vector *u, int a) {
     init_vector(v, "V", u->capacity);
 
     for (int i = 0; i < u->capacity; i++)
-        update_vector(v, a * u->items[i], i);
+        update_vector(v, (float _Complex) a * u->items[i], i);
     return v;
 }
 
 __attribute__((hot))
-float _Complex vector_dot_product(const Vector *u, const Vector *v) {
+float _Complex vector_inner_product(const Vector *u, const Vector *v) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS)
         return -1;
 
@@ -102,6 +102,7 @@ float _Complex vector_dot_product(const Vector *u, const Vector *v) {
     float32x4_t real_sum = vdupq_n_f32(0.0);
     float32x4_t imag_sum = vdupq_n_f32(0.0);
 
+    bool is_v_real = vector_is_real(v);
     for (; i <= u->capacity - unroll_factor * simd_width; i += unroll_factor * simd_width) {
         for (int j = 0; j < unroll_factor; j++) {
             // Prefetch future elements to reduce cache misses
@@ -111,8 +112,12 @@ float _Complex vector_dot_product(const Vector *u, const Vector *v) {
             float32x4x2_t u_vec = vld2q_f32((float*)&u->items[i + j * simd_width]);
             float32x4x2_t v_vec = vld2q_f32((float*)&v->items[i + j * simd_width]);
 
+            // Complex vectors require the Hermitian dot product, i.e.
+            // conjugating the imaginary part of v
+            if (!is_v_real) v_vec.val[1] = vmulq_n_f32(v_vec.val[1], -1.0f);
+
             float32x4_t real_part = vmlsq_f32(vmulq_f32(u_vec.val[0], v_vec.val[0]), u_vec.val[1], v_vec.val[1]);
-            float32x4_t imag_part = vmlaq_f32(vmulq_f32(u_vec.val[0], v_vec.val[1]), u_vec.val[1], v_vec.val[0]);
+            float32x4_t imag_part = vmlaq_f32(vmulq_f32(u_vec.val[1], v_vec.val[0]), u_vec.val[0], v_vec.val[1]);
 
             real_sum = vaddq_f32(real_sum, real_part);
             imag_sum = vaddq_f32(imag_sum, imag_part);
@@ -125,14 +130,26 @@ float _Complex vector_dot_product(const Vector *u, const Vector *v) {
 
     // Handle remaining elements that were not processed by the unrolled loop
     for (; i < u->capacity; i++) {
-        real_result += crealf(u->items[i]) * crealf(v->items[i]) - cimagf(u->items[i]) * cimagf(v->items[i]);
-        imag_result += crealf(u->items[i]) * cimagf(v->items[i]) + cimagf(u->items[i]) * crealf(v->items[i]);
+        float a = crealf(u->items[i]);
+        float b = cimagf(u->items[i]);
+        float c = crealf(v->items[i]);
+        float d = cimagf(v->items[i]);
+
+        if (!is_v_real) d = -d; // Conjugate the imaginary part if v is complex
+        real_result += a * c - b * d;
+        imag_result += a * d + b * c;
     }
     #else
     // We fallback to non-SIMD version for non-ARM architectures
     for (int i = 0; i < u->capacity; i++) {
-        real_result += crealf(u->items[i]) * crealf(v->items[i]) - cimagf(u->items[i]) * cimagf(v->items[i]);
-        imag_result += crealf(u->items[i]) * cimagf(v->items[i]) + cimagf(u->items[i]) * crealf(v->items[i]);
+        float a = crealf(u->items[i]);
+        float b = cimagf(u->items[i]);
+        float c = crealf(v->items[i]);
+        float d = cimagf(v->items[i]);
+
+        if (!is_v_real) d = -d; // Conjugate the imaginary part if v is complex
+        real_result += a * c - b * d;
+        imag_result += a * d + b * c;
     }
     #endif
 
@@ -166,7 +183,7 @@ float scalar_projection(const Vector *u, const Vector *v) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS || vector_L2_norm(v) == 0)
         return VECTOR_ERR_BAD_SIZE;
 
-    return (float) vector_dot_product(u, v) / vector_L2_norm(v);
+    return (float) vector_inner_product(u, v) / vector_L2_norm(v);
 }
 
 Vector *vector_projection(const Vector *u, const Vector *v) {
@@ -179,7 +196,7 @@ Vector *vector_projection(const Vector *u, const Vector *v) {
     init_vector(w, "W", u->capacity);
     
     float l2_norm = vector_L2_norm(v);
-    for (int i = 0; i < w->capacity; i++)
+    for (int i = 0; i < u->capacity; i++)
         update_vector(w, factor * v->items[i] / l2_norm, i);
     return w;
 }
@@ -188,10 +205,10 @@ float vector_angle_between(const Vector *u, const Vector *v, bool radians) {
     if (check_vector_sizes(u, v) != VECTOR_SUCCESS || check_strictly_positive_sizes(u, v) != VECTOR_SUCCESS || vector_L2_norm(u) == 0)
         return VECTOR_ERR_BAD_SIZE;
 
-    double res = vector_dot_product(u, v) / (vector_L2_norm(u) * vector_L2_norm(v));
+    float res = crealf(vector_inner_product(u, v)) / (vector_L2_norm(u) * vector_L2_norm(v));
 
     assert(res >= -1 && res <= 1);
-    return (radians) ? (float) acos(res) : radians_to_degrees(acos(res));
+    return radians ? acosf(res) : radians_to_degrees(acosf(res));
 }
 
 // ############################### VECTOR GENERATION ###################################
@@ -210,16 +227,16 @@ Vector *rademacher_vector(int rows) {
 // ############################### HELPER FUNCTIONS ####################################
 
 bool check_vector_orthogonality(const Vector *u, const Vector *v) {
-    return vector_dot_product(u, v) == 0;
+    return vector_inner_product(u, v) == 0;
 }
 
 bool check_vector_collinearity(const Vector *u, const Vector *v) {
     // one could also check that the vector product between u and v is 0
-    return vector_dot_product(u, v) == vector_L2_norm(u) * vector_L2_norm(v) || vector_dot_product(u, v) == -vector_L2_norm(u) * vector_L2_norm(v);
+    return vector_inner_product(u, v) == vector_L2_norm(u) * vector_L2_norm(v) || vector_inner_product(u, v) == -vector_L2_norm(u) * vector_L2_norm(v);
 }
 
 bool check_vector_perpendicularity(const Vector *u, const Vector *v) {
-    return vector_dot_product(u, v) == 0;
+    return vector_inner_product(u, v) == 0;
 }
 
 bool check_vector_equality(const Vector *u, const Vector *v) {
@@ -236,16 +253,19 @@ bool check_vector_oppositeness(const Vector *u, const Vector *v) {
 
 bool vector_is_integral(const Vector *v) {
     assert(v->capacity > 0);
-    for (int i = 0; i < v->capacity; i++)
-        if (v->items[i] != (int) v->items[i])
+    for (int i = 0; i < v->capacity; i++) {
+        float real = crealf(v->items[i]);
+        float imag = cimagf(v->items[i]);
+        if (fabs(imag) > 1e-6f || fabs(real - roundf(real)) > 1e-6f)
             return false;
+    }
     return true;
 }
 
 bool vector_is_real(const Vector *v) {
     assert(v->capacity > 0);
     for (int i = 0; i < v->capacity; i++)
-        if (cimag(v->items[i]) != 0)
+        if (cimagf(v->items[i]) != 0)
             return false;
     return true;
 }
@@ -258,7 +278,7 @@ float vector_L1_norm(const Vector *v) {
 
     float res = 0;
     for (int i = 0; i < v->capacity; i++)
-        res += complex_abs(v->items[i]);
+        res += cabsf(v->items[i]);
     return res;
 }
 
@@ -267,9 +287,12 @@ float vector_L2_norm(const Vector *v) {
         return -1;
 
     float res = 0;
-    for (int i = 0; i < v->capacity; i++)
-        res += pow(v->items[i], 2.0);
-    return sqrt(res); 
+    for (int i = 0; i < v->capacity; i++) {
+        float a = crealf(v->items[i]);
+        float b = cimagf(v->items[i]);
+        res += a * a + b * b;
+    }
+    return sqrtf(res);
 }
 
 float vector_Lp_norm(const Vector *v, int p) {
@@ -281,8 +304,8 @@ float vector_Lp_norm(const Vector *v, int p) {
         return vector_L2_norm(v);
     float res = 0;
     for (int i = 0; i < v->capacity; i++)
-        res += pow(v->items[i], (float) p);
-    return pow(res, 1/p);
+        res += powf(cabsf(v->items[i]), (float) p);
+    return powf(res, 1.0f / (float) p);
 }
 
 // ############################### VECTOR PRINTING #####################################
@@ -314,9 +337,9 @@ void print_real_vector(const Vector *v) {
 void print_complex_vector(const Vector *v) {
     printf("%s = (\n", v->name);
     for (int i = 0; i < v->capacity; i++) {
-        float re = creal(v->items[i]); float im = cimag(v->items[i]);
+        float re = crealf(v->items[i]); float im = cimagf(v->items[i]);
         char sign = (im < 0.0f) ? '-' : '+';
-        printf("     %.3f %c %.3fi\n", re, sign, fabs(im));
+        printf("     %.3f %c %.3fi\n", re, sign, fabsf(im));
     }
     printf(")\n");
 }

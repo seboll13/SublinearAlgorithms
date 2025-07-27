@@ -121,7 +121,7 @@ bool vector_random_projection(int m, float delta) {
     int range = 1;
     while (range--) {
         Vector *a = random_vector_on_unit_sphere(m);
-        float dot_prod = complex_abs(vector_dot_product(a, v));
+        float dot_prod = cabsf(vector_inner_product(a, v));
         if (dot_prod <= upper_bound)
             cnt += 1;
     }

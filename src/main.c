@@ -19,9 +19,9 @@ int main() {
     printf("Vectors initialised in %.3f seconds\n", get_total_time(start_init, end_init));
 
     clock_t start = clock();
-    vector_dot_product(u, v);
+    vector_inner_product(u, v);
     clock_t end = clock();
-    printf("Dot product computed in %.3f seconds\n", get_total_time(start, end));
+    printf("Inner product computed in %.3f seconds\n", get_total_time(start, end));
 
     free_vector(u);
     free_vector(v);

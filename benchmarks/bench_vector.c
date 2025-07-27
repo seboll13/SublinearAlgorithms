@@ -22,7 +22,7 @@ void time_dot_product(Vector *u, Vector *v) {
     clock_gettime(CLOCK_MONOTONIC, &start);
 
     for (int i = 0; i < REPEAT; ++i) {
-        float _Complex result = vector_dot_product(u, v);
+        float _Complex result = vector_inner_product(u, v);
         (void)result; // suppress unused warning
     }
 
